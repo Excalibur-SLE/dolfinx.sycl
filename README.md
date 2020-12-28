@@ -20,6 +20,7 @@ Supported (tested) SYCL implementation:
 Building for CPUs:
 ```bash
 ffcx --sycl_defines=True poisson.ufl
+export HIPSYCL_PLATFORM=omp
 
 mkdir build
 cd build
