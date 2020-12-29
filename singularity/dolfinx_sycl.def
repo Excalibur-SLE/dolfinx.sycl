@@ -5,7 +5,7 @@ From: dolfinx/dev-env:latest
     export PETSC_ARCH=linux-gnu-real-32
     export GINKGO_DIR=/usr/local/ginkgo
     export PATH=/usr/local/cuda-11.2/bin${PATH:+:${PATH}}
-    export LD_LIBRARY_PATH=/usr/local/cuda-11.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+    export LD_LIBRARY_PATH=${GINKGO_DIR}:/usr/local/cuda-11.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
 %post
     export DEBIAN_FRONTEND=noninteractive
@@ -14,7 +14,7 @@ From: dolfinx/dev-env:latest
     apt-get -y install software-properties-common
     apt-get -y install libboost-fiber-dev
 
-    echo "Installing CUDA..."
+    echo " === Installing CUDA..."
     apt update
     add-apt-repository ppa:graphics-drivers
     apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
@@ -22,20 +22,20 @@ From: dolfinx/dev-env:latest
     apt update
     apt install -yq cuda-11-2
 
-    echo "Installing clang..."
+    echo " === Installing clang..."
     apt update
     apt-get install -y clang-format clang-tidy clang-tools clang clangd libc++-dev
     apt-get install -y libc++1 libc++abi-dev libc++abi1 libclang-dev libclang1 liblldb-dev libllvm-ocaml-dev
     apt-get install -y libomp-dev libomp5 lld lldb llvm-dev llvm-runtime llvm python-clang
 
-    echo "Installing hipSYCL..."
+    echo " === Installing hipSYCL..."
     mkdir -p /tmp/ && cd /tmp
     git clone --recurse-submodules https://github.com/illuhad/hipSYCL
     cd hipSYCL && mkdir build
     cd build && cmake ..
     make -j4 && make install
     
-    echo "Installing ginkgo..."
+    echo " === Installing ginkgo..."
     cd /tmp/
     git clone https://github.com/ginkgo-project/ginkgo.git
     cd ginkgo && mkdir build && cd build
@@ -46,5 +46,21 @@ From: dolfinx/dev-env:latest
     -DCMAKE_INSTALL_PREFIX=/usr/local/ginkgo ..
     make -j3 && make install
 
+    echo " === Installing dolfinx..."
+    pip3 install git+https://github.com/FEniCS/fiat.git --upgrade
+    pip3 install git+https://github.com/FEniCS/ufl.git --upgrade
+    pip3 install git+https://github.com/FEniCS/ffcx.git@igor/sycl --upgrade
+
+    cd /tmp/
+    export PETSC_ARCH=linux-gnu-real-32
+    git clone https://github.com/FEniCS/dolfinx.git
+    cd dolfinx && mkdir -p build && cd build
+    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ../cpp/
+    ninja -j3 install
+
 %labels
     Author IgorBaratta
+
+%help
+    This is a environment container used to install all software needed to 
+    run dolfinx_sycl.
