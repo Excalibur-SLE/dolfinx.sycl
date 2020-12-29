@@ -98,3 +98,9 @@ Totalizing 750000 cells ($`6 \times N_x \times N_y \times N_z`$).
 ## Limitations
 Too many to mention ...
 - Assemble on cells only
+
+
+## Docker
+```bash
+docker run --gpus all -v $(pwd):/home/fenics/shared --name sycl igorbaratta/dolfinx_sycl:latest nvidia-smi
+```
