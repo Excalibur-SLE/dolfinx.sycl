@@ -1,0 +1,50 @@
+BootStrap: docker
+From: dolfinx/dev-env:latest
+
+%environment
+    export PETSC_ARCH=linux-gnu-real-32
+    export GINKGO_DIR=/usr/local/ginkgo
+    export PATH=/usr/local/cuda-11.2/bin${PATH:+:${PATH}}
+    export LD_LIBRARY_PATH=/usr/local/cuda-11.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    
+    apt-get -y update
+    apt-get -y install software-properties-common
+    apt-get -y install libboost-fiber-dev
+
+    echo "Installing CUDA..."
+    apt update
+    add-apt-repository ppa:graphics-drivers
+    apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
+    bash -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
+    apt update
+    apt install -yq cuda-11-2
+
+    echo "Installing clang..."
+    apt update
+    apt-get install -y clang-format clang-tidy clang-tools clang clangd libc++-dev
+    apt-get install -y libc++1 libc++abi-dev libc++abi1 libclang-dev libclang1 liblldb-dev libllvm-ocaml-dev
+    apt-get install -y libomp-dev libomp5 lld lldb llvm-dev llvm-runtime llvm python-clang
+
+    echo "Installing hipSYCL..."
+    mkdir -p /tmp/ && cd /tmp
+    git clone --recurse-submodules https://github.com/illuhad/hipSYCL
+    cd hipSYCL && mkdir build
+    cd build && cmake ..
+    make -j4 && make install
+    
+    echo "Installing ginkgo..."
+    cd /tmp/
+    git clone https://github.com/ginkgo-project/ginkgo.git
+    cd ginkgo && mkdir build && cd build
+    export CUDACXX=/usr/local/cuda-11.2/bin/nvcc
+    cmake -DGINKGO_BUILD_CUDA=ON -DGINKGO_BUILD_OMP=ON \
+    -DGINKGO_BUILD_TESTS=OFF -DGINKGO_BUILD_BENCHMARKS=OFF \
+    -DGINKGO_BUILD_REFERENCE=ON \
+    -DCMAKE_INSTALL_PREFIX=/usr/local/ginkgo ..
+    make -j3 && make install
+
+%labels
+    Author IgorBaratta

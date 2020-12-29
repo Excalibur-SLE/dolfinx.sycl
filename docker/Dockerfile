@@ -17,8 +17,8 @@ RUN apt update && export DEBIAN_FRONTEND=noninteractive &&\
     bash -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list' && \
     apt update && apt install -yq cuda-10-0 cuda-cublas-10-0
 
-ARG PATH=/usr/local/cuda-10.0/bin${PATH:+:${PATH}}
-ARG LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+ARG PATH=/usr/local/cuda-11.2/bin${PATH:+:${PATH}}
+ARG LD_LIBRARY_PATH=/usr/local/cuda-11.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
 RUN apt update && apt-get install -y libc++-dev && \
     apt-get install -y clang-format clang-tidy clang-tools clang clangd libc++-dev && \
