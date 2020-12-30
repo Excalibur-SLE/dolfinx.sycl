@@ -5,8 +5,10 @@ From: dolfinx/dev-env:latest
     export PETSC_ARCH=linux-gnu-real-32
     export GINKGO_DIR=/usr/local/ginkgo
     export CUDA_PATH=/usr/local/cuda-10.2
-    export PATH=/usr/local/cuda-10.2/bin${PATH:+:${PATH}}
-    export LD_LIBRARY_PATH=${GINKGO_DIR}/lib:/usr/local/cuda-10.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+    export DPCPP_HOME=/usr/local/sycl_workspace
+    export EIGEN3_INCLUDE_DIR=/usr/local/include/eigen3/Eigen
+    export PATH=${DPCPP_HOME}/llvm/build/bin:${CUDA_PATH}/bin${PATH:+:${PATH}}
+    export LD_LIBRARY_PATH=${DPCPP_HOME}/llvm/build/lib:${GINKGO_DIR}/lib:${CUDA_PATH}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
 %post
     export DEBIAN_FRONTEND=noninteractive
@@ -29,12 +31,27 @@ From: dolfinx/dev-env:latest
     apt-get install -y libc++1 libc++abi-dev libc++abi1 libclang-dev libclang1 liblldb-dev libllvm-ocaml-dev
     apt-get install -y libomp-dev libomp5 lld lldb llvm-dev llvm-runtime llvm python-clang
 
-    echo " === Installing hipSYCL..."
+    echo "=== Installing Eigen3 Development Version"
     mkdir -p /tmp/ && cd /tmp
+    apt-get -y purge libeigen3-dev
+    git clone https://gitlab.com/libeigen/eigen.git
+    cd eigen && mkdir build && cd build
+    cmake .. && make install
+
+    echo " === Installing hipSYCL..."
+    cd /tmp
     git clone --recurse-submodules https://github.com/illuhad/hipSYCL
     cd hipSYCL && mkdir build
     cd build && cmake ..
     make -j4 && make install
+
+    echo " === Installing INTEL SYCL..."
+    export DPCPP_HOME=/usr/local/sycl_workspace
+    mkdir -p $DPCPP_HOME
+    cd $DPCPP_HOME
+    git clone https://github.com/intel/llvm -b sycl
+    python3 $DPCPP_HOME/llvm/buildbot/configure.py --cuda
+    python3 $DPCPP_HOME/llvm/buildbot/compile.py
     
     apt-get install -y gcc-8 g++-8
     export CUDACXX=/usr/local/cuda-10.2/bin/nvcc
@@ -56,10 +73,12 @@ From: dolfinx/dev-env:latest
 
     cd /tmp/
     export PETSC_ARCH=linux-gnu-real-32
+    export EIGEN3_INCLUDE_DIR=/usr/local/include/eigen3/Eigen
     git clone https://github.com/FEniCS/dolfinx.git
     cd dolfinx && mkdir -p build && cd build
     cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ../cpp/
     ninja -j3 install
+
 
 %labels
     Author IgorBaratta
