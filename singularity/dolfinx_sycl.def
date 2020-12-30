@@ -4,9 +4,9 @@ From: dolfinx/dev-env:latest
 %environment
     export PETSC_ARCH=linux-gnu-real-32
     export GINKGO_DIR=/usr/local/ginkgo
-    export CUDA_PATH=/usr/local/cuda-11.2
-    export PATH=/usr/local/cuda-11.2/bin${PATH:+:${PATH}}
-    export LD_LIBRARY_PATH=${GINKGO_DIR}/lib:/usr/local/cuda-11.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+    export CUDA_PATH=/usr/local/cuda-10.2
+    export PATH=/usr/local/cuda-10.2/bin${PATH:+:${PATH}}
+    export LD_LIBRARY_PATH=${GINKGO_DIR}/lib:/usr/local/cuda-10.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
 %post
     export DEBIAN_FRONTEND=noninteractive
@@ -18,10 +18,10 @@ From: dolfinx/dev-env:latest
     echo " === Installing CUDA..."
     apt update
     add-apt-repository ppa:graphics-drivers
-    apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
-    bash -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
+    apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
+    bash -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
     apt update
-    apt install -yq cuda-11-2
+    apt install -yq cuda-10-2
 
     echo " === Installing clang..."
     apt update
@@ -36,15 +36,17 @@ From: dolfinx/dev-env:latest
     cd build && cmake ..
     make -j4 && make install
     
+    apt-get install -y gcc-8 g++-8
+    export CUDACXX=/usr/local/cuda-10.2/bin/nvcc
+    export CUDAHOSTCXX=/usr/bin/g++-8
+
     echo " === Installing ginkgo..."
     cd /tmp/
     git clone https://github.com/ginkgo-project/ginkgo.git
     cd ginkgo && mkdir build && cd build
-    export CUDACXX=/usr/local/cuda-11.2/bin/nvcc
     cmake -DGINKGO_BUILD_CUDA=ON -DGINKGO_BUILD_OMP=ON \
     -DGINKGO_BUILD_TESTS=OFF -DGINKGO_BUILD_BENCHMARKS=OFF \
-    -DGINKGO_BUILD_REFERENCE=ON \
-    -DCMAKE_INSTALL_PREFIX=/usr/local/ginkgo ..
+    -DGINKGO_BUILD_REFERENCE=ON -DCMAKE_INSTALL_PREFIX=/usr/local/ginkgo ..
     make -j3 && make install
 
     echo " === Installing dolfinx..."
