@@ -4,8 +4,9 @@ From: dolfinx/dev-env:latest
 %environment
     export PETSC_ARCH=linux-gnu-real-32
     export GINKGO_DIR=/usr/local/ginkgo
+    export CUDA_PATH=/usr/local/cuda-11.2
     export PATH=/usr/local/cuda-11.2/bin${PATH:+:${PATH}}
-    export LD_LIBRARY_PATH=${GINKGO_DIR}:/usr/local/cuda-11.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+    export LD_LIBRARY_PATH=${GINKGO_DIR}/lib:/usr/local/cuda-11.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
 %post
     export DEBIAN_FRONTEND=noninteractive

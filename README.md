@@ -37,7 +37,7 @@ export HIPSYCL_GPU_ARCH=sm_60
 
 mkdir build
 cd build
-cmake -DSYCL_IMPL=hipSYCL ..
+cmake -DSYCL_IMPL=hipSYCL -DCUDA_PATH=/path/to/cuda ..
 make -j8
 ```
 ** Runnning Dolfinx.sycl with hipsycl + CUDA requires eigen@master.
@@ -103,4 +103,12 @@ Too many to mention ...
 ## Docker
 ```bash
 docker run --gpus all -v $(pwd):/home/fenics/shared --name sycl igorbaratta/dolfinx_sycl:latest nvidia-smi
+```
+
+## Singularity
+
+```bash
+singularity pull library://igorbaratta/default/dolfinx_sycl
+singularity run --nv dolfinx_sycl_latest.sif
+
 ```
