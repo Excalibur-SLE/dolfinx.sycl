@@ -110,6 +110,7 @@ docker run --gpus all -v $(pwd):/home/fenics/shared --name sycl igorbaratta/dolf
 ```bash
 singularity pull library://igorbaratta/default/dolfinx_sycl:latest
 singularity run --nv dolfinx_sycl_latest.sif
-
-
+cd dolfinx.sycl/
+ffcx --sycl_defines=True poisson.ufl
+....
 ```

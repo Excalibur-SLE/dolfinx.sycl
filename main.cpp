@@ -100,12 +100,12 @@ int main(int argc, char* argv[])
   double norm = solve::ginkgo(mat.data, mat.indptr, mat.indices, mat.nrows, nnz,
                               b, x, executor);
 
-  // auto vec = f->vector();
-  // double ex_norm = 0;
-  // VecNorm(vec, NORM_2, &ex_norm);
+  auto vec = f->vector();
+  double ex_norm = 0;
+  VecNorm(vec, NORM_2, &ex_norm);
 
-  // std::cout << "\nComputed norm " << norm << "\n";
-  // std::cout << "Reference norm " << ex_norm / (12 * M_PI * M_PI + 1) << "\n";
+  std::cout << "\nComputed norm " << norm << "\n";
+  std::cout << "Reference norm " << ex_norm / (12 * M_PI * M_PI + 1) << "\n";
 
   return 0;
 }
