@@ -82,6 +82,7 @@ void print_function_space_info(
             << mesh->topology().index_map(tdim)->size_global() << std::endl;
   std::cout << "Number of dofs: " << V->dofmap()->index_map->size_global()
             << std::endl;
+  std::cout << V->element()->signature() << std::endl;
 }
 
 } // namespace dolfinx::experimental::sycl::utils
