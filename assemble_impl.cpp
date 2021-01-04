@@ -1,4 +1,3 @@
-
 #include "assemble_impl.hpp"
 #include <chrono>
 #include <iomanip>
@@ -7,6 +6,12 @@
 // Need to include C file in same translation unit as lambda
 #include "poisson.c"
 
+using atomic_double
+    = sycl::ONEAPI::atomic_ref<double, sycl::ONEAPI::memory_order::relaxed,
+                               sycl::ONEAPI::memory_scope::system,
+                               cl::sycl::access::address_space::global_space>;
+
+//--------------------------------------------------------------------------
 void assemble_vector_impl(cl::sycl::queue& queue, double* b, double* x,
                           int* x_coor, double* coeff, int ncells, int ndofs,
                           int nelem_dofs)
@@ -52,10 +57,10 @@ void assemble_vector_impl(cl::sycl::queue& queue, double* b, double* x,
               << e.what() << std::endl;
   }
 }
-
+//--------------------------------------------------------------------------
 // Second kernel to accumulate RHS for each dof
 void accumulate_impl(cl::sycl::queue& queue, double* x, double* x_ext,
-                            int* offsets, int* indices, int ndofs)
+                     int* offsets, int* indices, int ndofs)
 {
   cl::sycl::range<1> range{(std::size_t)ndofs};
   cl::sycl::event event = queue.submit([&](cl::sycl::handler& cgh) {
@@ -82,7 +87,7 @@ void accumulate_impl(cl::sycl::queue& queue, double* x, double* x_ext,
               << e.what() << std::endl;
   }
 }
-
+//--------------------------------------------------------------------------
 void assemble_matrix_impl(cl::sycl::queue& queue, double* A, double* x,
                           int* x_coor, double* coeff, int ncells, int ndofs,
                           int nelem_dofs)
@@ -130,3 +135,54 @@ void assemble_matrix_impl(cl::sycl::queue& queue, double* A, double* x,
               << e.what() << std::endl;
   }
 }
+//--------------------------------------------------------------------------
+void assemble_vector_search_impl(cl::sycl::queue& queue, double* b, double* x,
+                                 int* x_coor, double* coeff, int* dofs,
+                                 int ncells, int ndofs, int nelem_dofs)
+{
+  cl::sycl::event event = queue.submit([&](cl::sycl::handler& cgh) {
+    int gdim = 3;
+    cl::sycl::range<1> range{std::size_t(ncells)};
+
+    constexpr int ndofs_cell = L_num_dofs;
+
+    auto kernel = [=](cl::sycl::id<1> ID) {
+      const int i = ID.get(0);
+      double cell_geom[12];
+      double c[ndofs_cell] = {0};
+      double be[ndofs_cell] = {0};
+
+      // Pull out points for this cell
+      for (std::size_t j = 0; j < 4; ++j)
+      {
+        const std::size_t dmi = x_coor[i * 4 + j];
+        for (int k = 0; k < gdim; ++k)
+          cell_geom[j * gdim + k] = x[dmi * gdim + k];
+      }
+
+      // Get local values
+      const int offset = i * nelem_dofs;
+      tabulate_cell_L(be, &coeff[offset], c, cell_geom, nullptr, nullptr, 0);
+
+      for (int j = 0; j < ndofs_cell; j++)
+      {
+        int pos = dofs[offset + j];
+        atomic_double atomic_b(b[pos]);
+        atomic_b += be[j];
+      }
+    };
+
+    cgh.parallel_for<class AssemblyKernelUSMSEarch>(range, kernel);
+  });
+
+  try
+  {
+    queue.wait_and_throw();
+  }
+  catch (cl::sycl::exception const& e)
+  {
+    std::cout << "Caught synchronous SYCL exception:\n"
+              << e.what() << std::endl;
+  }
+}
+//--------------------------------------------------------------------------

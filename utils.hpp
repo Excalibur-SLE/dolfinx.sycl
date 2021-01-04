@@ -5,9 +5,13 @@
 
 #include <CL/sycl.hpp>
 
+#ifdef SYCL_DEVICE_ONLY
 #undef SYCL_DEVICE_ONLY
 #include <dolfinx.h>
 #define SYCL_DEVICE_ONLY
+#else
+#include <dolfinx.h>
+#endif
 
 #include <mpi.h>
 

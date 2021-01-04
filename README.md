@@ -61,8 +61,6 @@ If cmake does not identify the correct version of gcc libraries (eg: libstd++), 
 
 ## Using Intel SYCL
 ```bash
-export PATH=$DPCPP_HOME/llvm/build/bin:$PATH
-export LD_LIBRARY_PATH=$DPCPP_HOME/llvm/build/lib:$LD_LIBRARY_PATH
 export CXX=clang++
 export CC=gcc
 
@@ -75,14 +73,12 @@ make -j8
 Using Intel SYCL with CUDA:
 ```bash
 
-export PATH=$DPCPP_HOME/llvm/build/bin:$PATH
-export LD_LIBRARY_PATH=$DPCPP_HOME/llvm/build/lib:$LD_LIBRARY_PATH
 export CXX=clang++
 export CC=gcc
 
 mkdir build
 cd build
-cmake -DSYCL_IMPL=LLVM-CUDA -DCUDA_PATH=Release ..
+cmake -DSYCL_IMPL=LLVM-CUDA -DCUDA_PATH=${CUDA_PATH} ..
 make -j8
 ```
 
