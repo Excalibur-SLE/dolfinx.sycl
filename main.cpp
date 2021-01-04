@@ -36,8 +36,14 @@ int main(int argc, char* argv[])
   MPI_Comm_rank(mpi_comm, &mpi_rank);
 
   std::size_t nx = 20;
+  std::string platform = "cpu";
   if (argc == 2)
     nx = std::stoi(argv[1]);
+  else if (argc == 3)
+  {
+    nx = std::stoi(argv[1]);
+    platform = argv[2];
+  }
 
   auto cmap = fem::create_coordinate_map(create_coordinate_map_poisson);
   std::array<Eigen::Vector3d, 2> pts{Eigen::Vector3d(-1, -1, -1),
@@ -62,7 +68,7 @@ int main(int argc, char* argv[])
   auto a = dolfinx::fem::create_form<PetscScalar>(create_form_poisson_a, {V, V},
                                                   {}, {}, {});
 
-  auto queue = utils::select_queue(mpi_comm);
+  auto queue = utils::select_queue(mpi_comm, platform);
 
   int verb_mode = 2;
   if (verb_mode)
@@ -88,12 +94,11 @@ int main(int argc, char* argv[])
 
   auto device = queue.get_device();
   std::string executor = "omp";
-  
+
   if (device.is_gpu())
     executor = "cuda";
 
-
-  std::cout << "\nUsing " << executor << "executor.\n";
+  std::cout << "\nUsing " << executor << " executor.\n";
 
   std::int32_t nnz; // Todo: Store nnz
   queue.memcpy(&nnz, &mat.indptr[mat.nrows], sizeof(std::int32_t)).wait();
@@ -105,7 +110,7 @@ int main(int argc, char* argv[])
   VecNorm(vec, NORM_2, &ex_norm);
 
   std::cout << "\nComputed norm " << norm << "\n";
-  std::cout << "Reference norm " << ex_norm / (12 * M_PI * M_PI + 1) << "\n";
+  std::cout << "Reference norm " << ex_norm / (12. * M_PI * M_PI + 1.) << "\n\n";
 
   return 0;
 }

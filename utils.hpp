@@ -34,7 +34,7 @@ void exception_handler(cl::sycl::exception_list exceptions)
 
 //--------------------------------------------------------------------------
 /// heuristic to select device
-cl::sycl::queue select_queue(MPI_Comm comm)
+cl::sycl::queue select_queue(MPI_Comm comm, std::string platform)
 {
   int mpi_size, mpi_rank;
   MPI_Comm_size(comm, &mpi_size);
@@ -51,7 +51,7 @@ cl::sycl::queue select_queue(MPI_Comm comm)
   }
 
   int num_devices = gpus.size();
-  if (num_devices >= mpi_size)
+  if (num_devices >= mpi_size && platform == "gpu")
     return cl::sycl::queue(gpus[mpi_rank], exception_handler, {});
   else
     return cl::sycl::queue(cl::sycl::cpu_selector(), exception_handler, {});

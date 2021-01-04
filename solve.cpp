@@ -4,9 +4,9 @@
 #include "solve.hpp"
 #include "timing.hpp"
 
-#include <mpi.h>
 #include <ginkgo/ginkgo.hpp>
 #include <map>
+#include <mpi.h>
 
 double dolfinx::experimental::sycl::solve::ginkgo(
     double* A, std::int32_t* indptr, std::int32_t* indices, std::int32_t nrows,
@@ -72,15 +72,19 @@ double dolfinx::experimental::sycl::solve::ginkgo(
   solver->apply(gko::lend(in), gko::lend(out));
   auto timer_end = std::chrono::system_clock::now();
 
-  timings["0 - Solve Lienar System"] = (timer_end - timer_start);
+  timings["0 - Solve Linear System"] = (timer_end - timer_start);
 
-  auto res = gko::initialize<gko::matrix::Dense<double>>({0.0}, exec);
+  auto ref_exec = gko::ReferenceExecutor::create();
+  auto res = gko::initialize<gko::matrix::Dense<double>>({0.0}, ref_exec);
   out->compute_norm2(gko::lend(res));
 
   auto end = std::chrono::system_clock::now();
   timings["Total"] = (end - start);
 
-  dolfinx::experimental::sycl::timing::print_timing_info(MPI_COMM_WORLD, timings, step,
-                                                2);  
-  return 0;
+  dolfinx::experimental::sycl::timing::print_timing_info(MPI_COMM_WORLD,
+                                                         timings, step, 2);
+
+  double norm = res->get_values()[0];
+  
+  return norm;
 }

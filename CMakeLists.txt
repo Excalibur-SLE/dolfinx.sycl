@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 
 project(sycl_poisson)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "-O3 -DNDEBUG ${CMAKE_CXX_FLAGS} -Wall")
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 
 find_package(DOLFINX REQUIRED)
@@ -34,10 +37,6 @@ elseif(SYCL_IMPL STREQUAL "LLVM-CUDA")
     "${CMAKE_CXX_FLAGS} -fsycl -fsycl-targets=nvptx64-nvidia-cuda-sycldevice --cuda-path=${CUDA_PATH}")
 endif()
 
-set(CMAKE_CXX_STANDARD 17)
-
-set(CMAKE_CXX_FLAGS "-O3 -DNDEBUG ${CMAKE_CXX_FLAGS} -Wall")
-
 add_executable(sycl_poisson 
   main.cpp 
   poisson.c 
@@ -46,8 +45,8 @@ add_executable(sycl_poisson
   timing.cpp
   solve.cpp
   )
-target_link_libraries(sycl_poisson PRIVATE Ginkgo::ginkgo)
 
+target_link_libraries(sycl_poisson PRIVATE Ginkgo::ginkgo dolfinx)
 
 if(SYCL_IMPL STREQUAL "LLVM")
     target_link_libraries(sycl_poisson PRIVATE dolfinx)
