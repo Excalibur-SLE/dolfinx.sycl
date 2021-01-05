@@ -116,20 +116,46 @@ double* assemble_vector_atomic(MPI_Comm comm, cl::sycl::queue& queue,
   std::map<std::string, std::chrono::duration<double>> timings;
 
   auto timer_start = std::chrono::system_clock::now();
-  
+
   double* b = cl::sycl::malloc_shared<double>(data.ndofs, queue);
   queue.fill<double>(b, 0., data.ndofs).wait();
   assemble_vector_search_impl(queue, b, data.x, data.xdofs, data.coeffs_L,
                               data.dofs, data.ncells, data.ndofs,
                               data.ndofs_cell);
   auto timer_end = std::chrono::system_clock::now();
-  
-  
+
   timings["Assemble cells and accumulate"] = (timer_end - timer_start);
   timings["Total"] = (timer_end - timer_start);
   experimental::sycl::timing::print_timing_info(comm, timings, step,
                                                 verbose_mode);
   return b;
+}
+
+experimental::sycl::la::CsrMatrix
+assemble_matrix_atomic(MPI_Comm comm, cl::sycl::queue& queue,
+                       const memory::form_data_t& data, int verbose_mode = 1)
+{
+
+  std::string step{"Assemble matrix on device with atomics."};
+  std::map<std::string, std::chrono::duration<double>> timings;
+
+  // Compute Sparsity pattern
+  auto [mat, acc_map] = experimental::sycl::la::create_sparsity_pattern(
+      comm, queue, data, verbose_mode);
+
+  auto timer_start = std::chrono::system_clock::now();
+  assemble_matrix_search_impl(queue, mat.data, mat.indptr, mat.indices, data.x,
+                              data.xdofs, data.coeffs_a, data.dofs, data.ncells,
+                              data.ndofs, data.ndofs_cell);
+  auto timer_end = std::chrono::system_clock::now();
+
+  timings["Assemble cells and accumulate"] = (timer_end - timer_start);
+  timings["Total"] = (timer_end - timer_start);
+
+  experimental::sycl::timing::print_timing_info(comm, timings, step,
+                                                verbose_mode);
+
+  return mat;
 }
 
 } // namespace dolfinx::experimental::sycl::assemble

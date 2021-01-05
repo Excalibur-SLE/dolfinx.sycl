@@ -49,7 +49,7 @@ From: dolfinx/dev-env:latest
     export DPCPP_HOME=/usr/local/sycl_workspace
     mkdir -p $DPCPP_HOME
     cd $DPCPP_HOME
-    git clone https://github.com/intel/llvm -b sycl
+    git clone -b sycl --single-branch https://github.com/intel/llvm
     python3 $DPCPP_HOME/llvm/buildbot/configure.py --cuda
     python3 $DPCPP_HOME/llvm/buildbot/compile.py
     

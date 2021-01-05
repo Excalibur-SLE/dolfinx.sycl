@@ -1,4 +1,6 @@
+
 #include "assemble_impl.hpp"
+
 #include <chrono>
 #include <iomanip>
 #include <iostream>
@@ -6,10 +8,31 @@
 // Need to include C file in same translation unit as lambda
 #include "poisson.c"
 
-using atomic_double
+using atomic_ref
     = sycl::ONEAPI::atomic_ref<double, sycl::ONEAPI::memory_order::relaxed,
                                sycl::ONEAPI::memory_scope::system,
                                cl::sycl::access::address_space::global_space>;
+
+namespace
+{
+int binary_search(int* arr, int left, int right, int x)
+{
+  while (left <= right)
+  {
+    int middle = left + (right - left) / 2;
+
+    if (arr[middle] == x)
+      return middle;
+
+    if (arr[middle] < x)
+      left = middle + 1;
+    else
+      right = middle - 1;
+  }
+
+  return -1;
+}
+} // namespace
 
 //--------------------------------------------------------------------------
 void assemble_vector_impl(cl::sycl::queue& queue, double* b, double* x,
@@ -167,7 +190,7 @@ void assemble_vector_search_impl(cl::sycl::queue& queue, double* b, double* x,
       for (int j = 0; j < ndofs_cell; j++)
       {
         int pos = dofs[offset + j];
-        atomic_double atomic_b(b[pos]);
+        atomic_ref atomic_b(b[pos]);
         atomic_b += be[j];
       }
     };
@@ -186,3 +209,62 @@ void assemble_vector_search_impl(cl::sycl::queue& queue, double* b, double* x,
   }
 }
 //--------------------------------------------------------------------------
+void assemble_matrix_search_impl(cl::sycl::queue& queue, double* data,
+                                 std::int32_t* indptr, std::int32_t* indices,
+                                 double* x, int* x_dof, double* coeffs,
+                                 int* dofs, int ncells, int ndofs,
+                                 int nelem_dofs)
+{
+  cl::sycl::event event = queue.submit([&](cl::sycl::handler& cgh) {
+    int gdim = 3;
+    cl::sycl::range<1> range{std::size_t(ncells)};
+
+    constexpr int ndofs_cell = a_num_dofs;
+
+    auto kernel = [=](cl::sycl::id<1> ID) {
+      const int i = ID.get(0);
+      double cell_geom[12];
+
+      double c[ndofs_cell] = {0};
+      double Ae[ndofs_cell * ndofs_cell] = {0};
+
+      // Pull out points for this cell
+      for (std::size_t j = 0; j < 4; ++j)
+      {
+        const std::size_t dmi = x_dof[i * 4 + j];
+        for (int k = 0; k < gdim; ++k)
+          cell_geom[j * gdim + k] = x[dmi * gdim + k];
+      }
+
+      // Get local values
+      const int offset = i * nelem_dofs;
+      tabulate_cell_a(Ae, &coeffs[offset], c, cell_geom, nullptr, nullptr, 0);
+
+      for (int j = 0; j < nelem_dofs; j++)
+      {
+        int row = dofs[offset + j];
+        int first = indptr[row];
+        int last = indptr[row + 1];
+        for (int k = 0; k < nelem_dofs; k++)
+        {
+          int ind = dofs[offset + k];
+          int pos = binary_search(indices, first, last, ind);
+          atomic_ref atomic_A(data[pos]);
+          atomic_A += Ae[j * nelem_dofs + k];
+        }
+      }
+    };
+
+    cgh.parallel_for<class AssemblyKernelUSMSearch>(range, kernel);
+  });
+
+  try
+  {
+    queue.wait_and_throw();
+  }
+  catch (cl::sycl::exception const& e)
+  {
+    std::cout << "Caught synchronous SYCL exception:\n"
+              << e.what() << std::endl;
+  }
+}

@@ -90,18 +90,24 @@ int main(int argc, char* argv[])
 
   double norm = 0;
   for (int i = 0; i < form_data.ndofs; i++)
-  {
     norm = b[i] - bi[i];
-  }
 
   std::cout << "\n Norm difference " << norm << "\n";
 
   // for (int i = 0; i < form_data.ndofs, i++)
   //   std::cout << b[i] << " ";
 
-  // // Assemble matrix on device
-  // auto mat = assemble::assemble_matrix(mpi_comm, queue, form_data,
-  // verb_mode);
+  // Assemble matrix on device
+  auto mat = assemble::assemble_matrix(mpi_comm, queue, form_data, verb_mode);
+
+  auto mati
+      = assemble::assemble_matrix_atomic(mpi_comm, queue, form_data, verb_mode);
+
+  double norm_mat = 0;
+  for (int i = 0; i < 2 * form_data.ndofs; i++)
+    norm_mat = mat.data[i] - mati.data[i];
+
+  std::cout << "\n Norm difference " << norm_mat << "\n";
 
   // double* x = cl::sycl::malloc_device<double>(form_data.ndofs, queue);
 
