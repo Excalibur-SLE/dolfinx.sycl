@@ -6,7 +6,7 @@
 #include <iostream>
 
 // Need to include C file in same translation unit as lambda
-#include "poisson.c"
+#include "problem.c"
 
 using atomic_ref
     = sycl::ONEAPI::atomic_ref<double, sycl::ONEAPI::memory_order::relaxed,

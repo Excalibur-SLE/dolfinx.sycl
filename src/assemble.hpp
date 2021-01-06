@@ -10,7 +10,6 @@
 #include "assemble_impl.hpp"
 #include "la.hpp"
 #include "memory.hpp"
-#include "poisson.h"
 
 using namespace dolfinx::experimental::sycl;
 
