@@ -8,14 +8,16 @@
 // Need to include C file in same translation unit as lambda
 #include "problem.c"
 
+#ifdef __LLVM_SYCL__
 using atomic_ref
     = sycl::ONEAPI::atomic_ref<double, sycl::ONEAPI::memory_order::relaxed,
                                sycl::ONEAPI::memory_scope::system,
                                cl::sycl::access::address_space::global_space>;
+#endif
 
 namespace
 {
-int binary_search(int* arr, int left, int right, int x)
+[[maybe_unused]] int binary_search(int* arr, int left, int right, int x)
 {
   while (left <= right)
   {
@@ -163,6 +165,9 @@ void assemble_vector_search_impl(cl::sycl::queue& queue, double* b, double* x,
                                  int* x_coor, double* coeff, int* dofs,
                                  int ncells, int ndofs, int nelem_dofs)
 {
+#ifndef __LLVM_SYCL__
+  throw std::runtime_error("Double precision atomics not available!");
+#else
   cl::sycl::event event = queue.submit([&](cl::sycl::handler& cgh) {
     int gdim = 3;
     cl::sycl::range<1> range{std::size_t(ncells)};
@@ -207,6 +212,7 @@ void assemble_vector_search_impl(cl::sycl::queue& queue, double* b, double* x,
     std::cout << "Caught synchronous SYCL exception:\n"
               << e.what() << std::endl;
   }
+#endif
 }
 //--------------------------------------------------------------------------
 void assemble_matrix_search_impl(cl::sycl::queue& queue, double* data,
@@ -215,6 +221,10 @@ void assemble_matrix_search_impl(cl::sycl::queue& queue, double* data,
                                  int* dofs, int ncells, int ndofs,
                                  int nelem_dofs)
 {
+
+#ifndef __LLVM_SYCL__
+  throw std::runtime_error("Double precision atomics not available!");
+#else
   cl::sycl::event event = queue.submit([&](cl::sycl::handler& cgh) {
     int gdim = 3;
     cl::sycl::range<1> range{std::size_t(ncells)};
@@ -267,4 +277,5 @@ void assemble_matrix_search_impl(cl::sycl::queue& queue, double* data,
     std::cout << "Caught synchronous SYCL exception:\n"
               << e.what() << std::endl;
   }
+#endif
 }

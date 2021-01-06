@@ -85,58 +85,35 @@ int main(int argc, char* argv[])
   // Assemble vector on device
   double* b = assemble::assemble_vector(mpi_comm, queue, form_data, verb_mode);
 
-  double* bi
-      = assemble::assemble_vector_atomic(mpi_comm, queue, form_data, verb_mode);
-
-  double norm = 0;
-  for (int i = 0; i < form_data.ndofs; i++)
-    norm = b[i] - bi[i];
-
-  std::cout << "\n Norm difference " << norm << "\n";
-
-  // for (int i = 0; i < form_data.ndofs, i++)
-  //   std::cout << b[i] << " ";
-
   // Assemble matrix on device
   auto mat = assemble::assemble_matrix(mpi_comm, queue, form_data, verb_mode);
 
-  auto mati
-      = assemble::assemble_matrix_atomic(mpi_comm, queue, form_data, verb_mode);
+  double* x = cl::sycl::malloc_device<double>(form_data.ndofs, queue);
 
-  double norm_mat = 0;
-  for (int i = 0; i < 2 * form_data.ndofs; i++)
-    norm_mat = mat.data[i] - mati.data[i];
+  queue.submit(
+      [&](cl::sycl::handler& h) { h.fill<double>(x, 0., form_data.ndofs); });
+  queue.wait();
 
-  std::cout << "\n Norm difference " << norm_mat << "\n";
+  auto device = queue.get_device();
+  std::string executor = "omp";
 
-  // double* x = cl::sycl::malloc_device<double>(form_data.ndofs, queue);
+  if (device.is_gpu())
+    executor = "cuda";
 
-  // queue.submit(
-  //     [&](cl::sycl::handler& h) { h.fill<double>(x, 0., form_data.ndofs);
-  //     });
-  // queue.wait();
+  std::cout << "\nUsing " << executor << " executor.\n";
 
-  // auto device = queue.get_device();
-  // std::string executor = "omp";
+  std::int32_t nnz; // Todo: Store nnz
+  queue.memcpy(&nnz, &mat.indptr[mat.nrows], sizeof(std::int32_t)).wait();
+  double norm = solve::ginkgo(mat.data, mat.indptr, mat.indices, mat.nrows, nnz,
+                              b, x, executor);
 
-  // if (device.is_gpu())
-  //   executor = "cuda";
+  auto vec = f->vector();
+  double ex_norm = 0;
+  VecNorm(vec, NORM_2, &ex_norm);
 
-  // std::cout << "\nUsing " << executor << " executor.\n";
-
-  // std::int32_t nnz; // Todo: Store nnz
-  // queue.memcpy(&nnz, &mat.indptr[mat.nrows],
-  // sizeof(std::int32_t)).wait(); double norm = solve::ginkgo(mat.data,
-  // mat.indptr, mat.indices, mat.nrows, nnz,
-  //                             b, x, executor);
-
-  // auto vec = f->vector();
-  // double ex_norm = 0;
-  // VecNorm(vec, NORM_2, &ex_norm);
-
-  // std::cout << "\nComputed norm " << norm << "\n";
-  // std::cout << "Reference norm " << ex_norm / (12. * M_PI * M_PI + 1.) <<
-  // "\n\n";
+  std::cout << "\nComputed norm " << norm << "\n";
+  std::cout << "Reference norm " << ex_norm / (12. * M_PI * M_PI + 1.)
+            << "\n\n";
 
   return 0;
 }
