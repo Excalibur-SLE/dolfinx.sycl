@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 
-
 set(PROJECT_NAME dolfinx-sycl)
 project(${PROJECT_NAME})
 
@@ -12,20 +11,18 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 find_package(DOLFINX REQUIRED)
 find_package(Ginkgo REQUIRED)
 
+# add_custom_command(
+#   OUTPUT ${CMAKE_SOURCE_DIR}/src/problem.c
+#          ${CMAKE_SOURCE_DIR}/src/problem.h
+#   COMMAND ffcx --sycl_defines=TRUE ${CMAKE_SOURCE_DIR}/problem.ufl -o ${CMAKE_SOURCE_DIR}/src
+#   DEPENDS problem.ufl
+# )
 
-add_custom_command(
-  OUTPUT ${CMAKE_SOURCE_DIR}/src/problem.c
-         ${CMAKE_SOURCE_DIR}/src/problem.h
-  COMMAND ffcx --sycl_defines=TRUE ${CMAKE_SOURCE_DIR}/problem.ufl -o ${CMAKE_SOURCE_DIR}/src
-  DEPENDS problem.ufl
-)
-
-add_custom_target(ffcx
-  COMMAND touch ${CMAKE_SOURCE_DIR}/src/problem.c
-  COMMAND touch ${CMAKE_SOURCE_DIR}/src/problem.h
-  COMMENT "Generating kernel code"
-  )
-
+# add_custom_target(ffcx
+#   COMMAND touch ${CMAKE_SOURCE_DIR}/src/problem.c
+#   COMMAND touch ${CMAKE_SOURCE_DIR}/src/problem.h
+#   COMMENT "Generating kernel code"
+#   )
 set(supported_implementations
   ComputeCpp
   hipSYCL
@@ -43,7 +40,6 @@ if(SYCL_IMPL STREQUAL "ComputeCpp")
 elseif(SYCL_IMPL STREQUAL "hipSYCL")
   find_package(hipSYCL CONFIG REQUIRED)
   if($ENV{HIPSYCL_PLATFORM} STREQUAL cuda)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --cuda-path=${CUDA_PATH}")
     message(STATUS "Compiling for cuda devices!")
   endif()
 elseif(SYCL_IMPL STREQUAL "LLVM")
@@ -73,7 +69,6 @@ add_executable(${PROJECT_NAME}
   src/timing.cpp
   src/solve.cpp
   )
-
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Ginkgo::ginkgo dolfinx)
 target_link_libraries(${PROJECT_NAME}-atomic PRIVATE Ginkgo::ginkgo dolfinx)
