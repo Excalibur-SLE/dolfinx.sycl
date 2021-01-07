@@ -14,6 +14,11 @@ Supported (tested) SYCL implementation:
 
 ## Building
 
+Modify the `problem.ufl` file and then run the following command:
+```bash
+fcx --sycl_defines=TRUE problem.ufl -o src/
+```
+
 ### Using the hipSYCL implementation
 Building for CPUs:
 ```bash
@@ -40,7 +45,6 @@ make -j8
 ### Using Intel SYCL implementation
 ```bash
 export CXX=clang++
-export CC=gcc
 
 mkdir build
 cd build
