@@ -23,6 +23,8 @@ find_package(Ginkgo REQUIRED)
 #   COMMAND touch ${CMAKE_SOURCE_DIR}/src/problem.h
 #   COMMENT "Generating kernel code"
 #   )
+
+
 set(supported_implementations
   ComputeCpp
   hipSYCL
@@ -87,3 +89,5 @@ endif()
 
 
 add_subdirectory(src/benchmark)
+
+message(STATUS ${CMAKE_CXX_FLAGS})

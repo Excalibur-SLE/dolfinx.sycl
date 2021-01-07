@@ -16,7 +16,7 @@ Supported (tested) SYCL implementation:
 
 Modify the `problem.ufl` file and then run the following command:
 ```bash
-fcx --sycl_defines=TRUE problem.ufl -o src/
+ffcx --sycl_defines=TRUE problem.ufl -o src/
 ```
 
 ### Using the hipSYCL implementation
