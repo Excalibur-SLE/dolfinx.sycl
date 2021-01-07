@@ -80,12 +80,14 @@ target_link_libraries(${PROJECT_NAME}-atomic PRIVATE Ginkgo::ginkgo dolfinx)
 set_target_properties(${PROJECT_NAME}-atomic PROPERTIES COMPILE_FLAGS "-DUSE_ATOMICS")
 
 if(SYCL_IMPL STREQUAL "LLVM")
-    target_compile_definitions(sycl_poisson PRIVATE __LLVM_SYCL__)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE __LLVM_SYCL__)
+  target_compile_definitions(${PROJECT_NAME}-atomic PRIVATE __LLVM_SYCL__)
 elseif(SYCL_IMPL STREQUAL "LLVM-CUDA")
-    target_compile_definitions(${PROJECT_NAME} PRIVATE __LLVM_SYCL__)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE __LLVM_SYCL__)
+  target_compile_definitions(${PROJECT_NAME}-atomic PRIVATE __LLVM_SYCL__)
 elseif(SYCL_IMPL STREQUAL "hipSYCL")
-    add_sycl_to_target(TARGET ${PROJECT_NAME} SOURCES src/main.cpp src/main_atomic.cpp  src/assemble_impl.cpp src/la.cpp src/memory.cpp)
-    add_sycl_to_target(TARGET ${PROJECT_NAME}-atomic SOURCES src/main.cpp src/main_atomic.cpp  src/assemble_impl.cpp src/la.cpp src/memory.cpp)
+  add_sycl_to_target(TARGET ${PROJECT_NAME} SOURCES src/main.cpp src/main_atomic.cpp  src/assemble_impl.cpp src/la.cpp src/memory.cpp)
+  add_sycl_to_target(TARGET ${PROJECT_NAME}-atomic SOURCES src/main.cpp src/main_atomic.cpp  src/assemble_impl.cpp src/la.cpp src/memory.cpp)
 endif()
 
 
