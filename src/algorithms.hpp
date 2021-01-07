@@ -23,7 +23,7 @@ void swap(T* a, T* b)
 void exclusive_scan(cl::sycl::queue& queue, std::int32_t* input,
                     std::int32_t* output, std::int32_t size)
 {
-  //FIXME: do not copy data back to host!!!!!!!!!!!!!!
+  // FIXME: do not copy data back to host!!!!!!!!!!!!!!
   std::vector<std::int32_t> in(size, 0);
   std::vector<std::int32_t> out(size + 1, 0);
 
@@ -33,5 +33,23 @@ void exclusive_scan(cl::sycl::queue& queue, std::int32_t* input,
 
   queue.memcpy(output, out.data(), (size + 1) * sizeof(std::int32_t)).wait();
 }
+//--------------------------------------------------------------------------
+int binary_search(int* arr, int first, int last, int x)
+{
+  while (first <= last)
+  {
+    int middle = first + (last - first) / 2;
 
+    if (arr[middle] == x)
+      return middle;
+
+    if (arr[middle] < x)
+      first = middle + 1;
+    else
+      last = middle - 1;
+  }
+
+  return -1;
+}
+//--------------------------------------------------------------------------
 } // namespace dolfinx::experimental::sycl::algorithms

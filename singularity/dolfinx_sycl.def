@@ -9,6 +9,7 @@ From: dolfinx/dev-env:latest
     export EIGEN3_INCLUDE_DIR=/usr/local/include/eigen3/Eigen
     export PATH=${DPCPP_HOME}/llvm/build/bin:${CUDA_PATH}/bin${PATH:+:${PATH}}
     export LD_LIBRARY_PATH=${DPCPP_HOME}/llvm/build/lib:${GINKGO_DIR}/lib:${CUDA_PATH}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+    export OCL_ICD_FILENAMES='libintelocl_emu.so:libalteracl.so:/opt/intel/oneapi/compiler/2021.1.1/linux/lib/x64/libintelocl.so'
 
 %post
     export DEBIAN_FRONTEND=noninteractive
@@ -16,6 +17,19 @@ From: dolfinx/dev-env:latest
     apt-get -y update
     apt-get -y install software-properties-common
     apt-get -y install libboost-fiber-dev
+
+    mkdir -p /tmp/ && cd /tmp
+    wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+    apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+    rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+    echo "deb https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneAPI.list
+    add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
+    apt -y update
+    apt install -y intel-oneapi-common-licensing intel-oneapi-common-vars intel-oneapi-compiler-dpcpp-cpp intel-oneapi-dev-utilities \
+    intel-oneapi-dpcpp-debugger intel-oneapi-libdpstd-devel intel-oneapi-tbb-devel
+
+    apt-get update -y 
+    apt-get install -y --no-install-recommends -o=Dpkg::Use-Pty=0 intel-opencl-icd
 
     echo " === Installing CUDA..."
     apt update
@@ -49,7 +63,7 @@ From: dolfinx/dev-env:latest
     export DPCPP_HOME=/usr/local/sycl_workspace
     mkdir -p $DPCPP_HOME
     cd $DPCPP_HOME
-    git clone https://github.com/intel/llvm -b sycl
+    git clone -b sycl --single-branch https://github.com/intel/llvm
     python3 $DPCPP_HOME/llvm/buildbot/configure.py --cuda
     python3 $DPCPP_HOME/llvm/buildbot/compile.py
     

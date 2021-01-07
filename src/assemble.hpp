@@ -10,7 +10,6 @@
 #include "assemble_impl.hpp"
 #include "la.hpp"
 #include "memory.hpp"
-#include "poisson.h"
 
 using namespace dolfinx::experimental::sycl;
 
@@ -25,7 +24,6 @@ double* assemble_vector(MPI_Comm comm, cl::sycl::queue& queue,
   std::string step{"Assemble vector on device"};
   std::map<std::string, std::chrono::duration<double>> timings;
 
-
   auto timer_start = std::chrono::system_clock::now();
   experimental::sycl::la::AdjacencyList acc
       = experimental::sycl::la::compute_vector_acc_map(comm, queue, data);
@@ -35,7 +33,7 @@ double* assemble_vector(MPI_Comm comm, cl::sycl::queue& queue,
   auto start = std::chrono::system_clock::now();
 
   timer_start = std::chrono::system_clock::now();
-  
+
   // Allocated unassembled vector on device
   std::int32_t ndofs_ext = data.ndofs_cell * data.ncells;
   auto b_ext = cl::sycl::malloc_device<double>(ndofs_ext, queue);
@@ -47,7 +45,7 @@ double* assemble_vector(MPI_Comm comm, cl::sycl::queue& queue,
   timings["1 - Compute cell contributions"] = (timer_end - timer_start);
 
   timer_start = std::chrono::system_clock::now();
-  double* b = cl::sycl::malloc_device<double>(data.ndofs, queue);
+  double* b = cl::sycl::malloc_shared<double>(data.ndofs, queue);
   accumulate_impl(queue, b, b_ext, acc.indptr, acc.indices, acc.num_nodes);
   timer_end = std::chrono::system_clock::now();
   timings["2 - Accumulate cells contributions"] = (timer_end - timer_start);
@@ -103,6 +101,59 @@ assemble_matrix(MPI_Comm comm, cl::sycl::queue& queue,
 
   experimental::sycl::timing::print_timing_info(comm, timings, step,
                                                 verbose_mode);
+  return mat;
+}
+
+//--------------------------------------------------------------------------
+// Submit vector assembly kernels to queue
+double* assemble_vector_atomic(MPI_Comm comm, cl::sycl::queue& queue,
+                               const memory::form_data_t& data,
+                               int verbose_mode = 1)
+{
+
+  std::string step{"Assemble vector on device with atomics."};
+  std::map<std::string, std::chrono::duration<double>> timings;
+
+  auto timer_start = std::chrono::system_clock::now();
+
+  double* b = cl::sycl::malloc_shared<double>(data.ndofs, queue);
+  queue.fill<double>(b, 0., data.ndofs).wait();
+  assemble_vector_search_impl(queue, b, data.x, data.xdofs, data.coeffs_L,
+                              data.dofs, data.ncells, data.ndofs,
+                              data.ndofs_cell);
+  auto timer_end = std::chrono::system_clock::now();
+
+  timings["Assemble cells and accumulate"] = (timer_end - timer_start);
+  timings["Total"] = (timer_end - timer_start);
+  experimental::sycl::timing::print_timing_info(comm, timings, step,
+                                                verbose_mode);
+  return b;
+}
+
+experimental::sycl::la::CsrMatrix
+assemble_matrix_atomic(MPI_Comm comm, cl::sycl::queue& queue,
+                       const memory::form_data_t& data, int verbose_mode = 1)
+{
+
+  std::string step{"Assemble matrix on device with atomics."};
+  std::map<std::string, std::chrono::duration<double>> timings;
+
+  // Compute Sparsity pattern
+  auto [mat, acc_map] = experimental::sycl::la::create_sparsity_pattern(
+      comm, queue, data, verbose_mode);
+
+  auto timer_start = std::chrono::system_clock::now();
+  assemble_matrix_search_impl(queue, mat.data, mat.indptr, mat.indices, data.x,
+                              data.xdofs, data.coeffs_a, data.dofs, data.ncells,
+                              data.ndofs, data.ndofs_cell);
+  auto timer_end = std::chrono::system_clock::now();
+
+  timings["Assemble cells and accumulate"] = (timer_end - timer_start);
+  timings["Total"] = (timer_end - timer_start);
+
+  experimental::sycl::timing::print_timing_info(comm, timings, step,
+                                                verbose_mode);
+
   return mat;
 }
 

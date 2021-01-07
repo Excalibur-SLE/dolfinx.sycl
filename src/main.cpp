@@ -3,6 +3,8 @@
 
 #include <CL/sycl.hpp>
 
+#define HIPSYCL_EXT_ENABLE_ALL
+
 #ifdef SYCL_DEVICE_ONLY
 #undef SYCL_DEVICE_ONLY
 #include <Eigen/Core>
@@ -18,7 +20,7 @@
 #include <numeric>
 
 #include "dolfinx_sycl.hpp"
-#include "poisson.h"
+#include "problem.h"
 #include "solve.hpp"
 
 using namespace dolfinx;
@@ -45,7 +47,7 @@ int main(int argc, char* argv[])
     platform = argv[2];
   }
 
-  auto cmap = fem::create_coordinate_map(create_coordinate_map_poisson);
+  auto cmap = fem::create_coordinate_map(create_coordinate_map_problem);
   std::array<Eigen::Vector3d, 2> pts{Eigen::Vector3d(-1, -1, -1),
                                      Eigen::Vector3d(1.0, 1.0, 1.0)};
 
@@ -53,7 +55,7 @@ int main(int argc, char* argv[])
       mpi_comm, pts, {{nx, nx, nx}}, cmap, mesh::GhostMode::none));
 
   mesh->topology_mutable().create_entity_permutations();
-  auto V = fem::create_functionspace(create_functionspace_form_poisson_a, "u",
+  auto V = fem::create_functionspace(create_functionspace_form_problem_a, "u",
                                      mesh);
 
   auto f = std::make_shared<fem::Function<PetscScalar>>(V);
@@ -63,9 +65,9 @@ int main(int argc, char* argv[])
   });
 
   // Define variational forms
-  auto L = dolfinx::fem::create_form<PetscScalar>(create_form_poisson_L, {V},
+  auto L = dolfinx::fem::create_form<PetscScalar>(create_form_problem_L, {V},
                                                   {{"f", f}, {}}, {}, {});
-  auto a = dolfinx::fem::create_form<PetscScalar>(create_form_poisson_a, {V, V},
+  auto a = dolfinx::fem::create_form<PetscScalar>(create_form_problem_a, {V, V},
                                                   {}, {}, {});
 
   auto queue = utils::select_queue(mpi_comm, platform);
@@ -110,7 +112,8 @@ int main(int argc, char* argv[])
   VecNorm(vec, NORM_2, &ex_norm);
 
   std::cout << "\nComputed norm " << norm << "\n";
-  std::cout << "Reference norm " << ex_norm / (12. * M_PI * M_PI + 1.) << "\n\n";
+  std::cout << "Reference norm " << ex_norm / (12. * M_PI * M_PI + 1.)
+            << "\n\n";
 
   return 0;
 }

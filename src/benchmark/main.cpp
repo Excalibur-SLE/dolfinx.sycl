@@ -8,7 +8,7 @@
 #include <numeric>
 #include <string>
 
-#include "poisson.h"
+#include "problem.h"
 
 using namespace dolfinx;
 
