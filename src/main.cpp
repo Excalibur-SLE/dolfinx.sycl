@@ -84,8 +84,10 @@ int main(int argc, char* argv[])
 
 // Assemble vector on device
 #ifdef USE_ATOMICS
-  double* b = assemble::assemble_vector_atomic(mpi_comm, queue, form_data, verb_mode);
-  auto mat = assemble::assemble_matrix_atomic(mpi_comm, queue, form_data, verb_mode);
+  double* b
+      = assemble::assemble_vector_atomic(mpi_comm, queue, form_data, verb_mode);
+  auto mat
+      = assemble::assemble_matrix_atomic(mpi_comm, queue, form_data, verb_mode);
 #else
   double* b = assemble::assemble_vector(mpi_comm, queue, form_data, verb_mode);
   auto mat = assemble::assemble_matrix(mpi_comm, queue, form_data, verb_mode);
@@ -117,6 +119,12 @@ int main(int argc, char* argv[])
   std::cout << "\nComputed norm " << norm << "\n";
   std::cout << "Reference norm " << ex_norm / (12. * M_PI * M_PI + 1.)
             << "\n\n";
+
+  // Free device data
+  cl::sycl::free(b, queue);
+  cl::sycl::free(mat.data, queue);
+  cl::sycl::free(mat.indices, queue);
+  cl::sycl::free(mat.indptr, queue);
 
   return 0;
 }
