@@ -65,7 +65,8 @@ make -j8
 ```bash
 ./dolfinx_sycl {Ncells} {platform}
 ```
-{platform} - Platform to run on [cpu or gpu]
+{platform} - Platform to run on [cpu or gpu].
+
 {Ncells} - Number of cells in each direction ($`N_x`$, $`N_y`$, $`N_z`$), default is 50. 
 Totalizing 750000 cells ($`6 \times N_x \times N_y \times N_z`$).
 

@@ -1,14 +1,12 @@
-#undef SYCL_DEVICE_ONLY
 #include <dolfinx.h>
 #include <dolfinx/fem/petsc.h>
-#define SYCL_DEVICE_ONLY
 
 #include <iostream>
 #include <math.h>
 #include <numeric>
 #include <string>
 
-#include "problem.h"
+#include "../problem.h"
 
 using namespace dolfinx;
 
@@ -27,7 +25,7 @@ int main(int argc, char* argv[])
   if (argc >= 2)
     nx = std::stoi(argv[1]);
 
-  auto cmap = fem::create_coordinate_map(create_coordinate_map_poisson);
+  auto cmap = fem::create_coordinate_map(create_coordinate_map_problem);
   std::array<Eigen::Vector3d, 2> pts{Eigen::Vector3d(-1, -1, -1),
                                      Eigen::Vector3d(1.0, 1.0, 1.0)};
 
@@ -35,7 +33,7 @@ int main(int argc, char* argv[])
       mpi_comm, pts, {{nx, nx, nx}}, cmap, mesh::GhostMode::none));
 
   mesh->topology_mutable().create_entity_permutations();
-  auto V = fem::create_functionspace(create_functionspace_form_poisson_a, "u",
+  auto V = fem::create_functionspace(create_functionspace_form_problem_a, "u",
                                      mesh);
 
   auto f = std::make_shared<fem::Function<PetscScalar>>(V);
@@ -45,9 +43,9 @@ int main(int argc, char* argv[])
   });
 
   // Define variational forms
-  auto L = dolfinx::fem::create_form<PetscScalar>(create_form_poisson_L, {V},
+  auto L = dolfinx::fem::create_form<PetscScalar>(create_form_problem_L, {V},
                                                   {{"f", f}, {}}, {}, {});
-  auto a = dolfinx::fem::create_form<PetscScalar>(create_form_poisson_a, {V, V},
+  auto a = dolfinx::fem::create_form<PetscScalar>(create_form_problem_a, {V, V},
                                                   {}, {}, {});
 
   fem::Function<PetscScalar> u(V);
