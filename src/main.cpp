@@ -82,6 +82,10 @@ int main(int argc, char* argv[])
   // Send form data to device (Geometry, Dofmap, Coefficients)
   auto form_data = memory::send_form_data(mpi_comm, queue, *L, *a, verb_mode);
 
+  auto [csr_mat, acc_map, lookup]
+      = dolfinx::experimental::sycl::la::create_sparsity_pattern(
+          mpi_comm, queue, form_data, verb_mode);
+
 // Assemble vector on device
 #ifdef USE_ATOMICS
   double* b

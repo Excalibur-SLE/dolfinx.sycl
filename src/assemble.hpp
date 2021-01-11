@@ -71,7 +71,7 @@ assemble_matrix(MPI_Comm comm, cl::sycl::queue& queue,
 {
 
   // Compute Sparsity pattern
-  auto [mat, acc_map] = experimental::sycl::la::create_sparsity_pattern(
+  auto [mat, acc_map, lookup] = experimental::sycl::la::create_sparsity_pattern(
       comm, queue, data, verbose_mode);
 
   std::string step{"Assemble matrix on device"};
@@ -139,7 +139,7 @@ assemble_matrix_atomic(MPI_Comm comm, cl::sycl::queue& queue,
   std::map<std::string, std::chrono::duration<double>> timings;
 
   // Compute Sparsity pattern
-  auto [mat, acc_map] = experimental::sycl::la::create_sparsity_pattern(
+  auto [mat, acc_map, lookup] = experimental::sycl::la::create_sparsity_pattern(
       comm, queue, data, verbose_mode);
 
   auto timer_start = std::chrono::system_clock::now();

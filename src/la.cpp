@@ -289,12 +289,42 @@ void free_csr(cl::sycl::queue& queue, experimental::sycl::la::CsrMatrix& mat)
   cl::sycl::free(mat.indptr, queue);
 }
 
+int32_t*
+compute_lookup_table(cl::sycl::queue& queue,
+                     const experimental::sycl::la::CsrMatrix& mat,
+                     const experimental::sycl::memory::form_data_t& data)
+{
+  auto ext_nz = data.ndofs_cell * data.ndofs_cell * data.ncells;
+  auto lookup = cl::sycl::malloc_device<std::int32_t>(ext_nz, queue);
+  cl::sycl::range<1> range(data.ncells);
+  queue.parallel_for<class LookupTable>(range, [=](cl::sycl::id<1> Id) {
+    int i = Id.get(0);
+    int offset = data.ndofs_cell * i;
+    for (int j = 0; j < data.ndofs_cell; j++)
+    {
+      int row = data.dofs[offset + j];
+      int first = mat.indptr[row];
+      int last = mat.indptr[row + 1];
+      for (int k = 0; k < data.ndofs_cell; k++)
+      {
+        int ind = data.dofs[offset + k];
+        int pos = experimental::sycl::algorithms::binary_search(
+            mat.indices, first, last, ind);
+        lookup[offset + j * data.ndofs_cell + k] = pos;
+      }
+    }
+  });
+  queue.wait_and_throw();
+
+  return lookup;
+}
+
 } // namespace
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-std::pair<experimental::sycl::la::CsrMatrix,
-          experimental::sycl::la::AdjacencyList>
+std::tuple<experimental::sycl::la::CsrMatrix,
+           experimental::sycl::la::AdjacencyList, std::int32_t*>
 experimental::sycl::la::create_sparsity_pattern(
     MPI_Comm comm, cl::sycl::queue& queue,
     const experimental::sycl::memory::form_data_t& data, int verbose_mode)
@@ -321,7 +351,8 @@ experimental::sycl::la::create_sparsity_pattern(
   timings["2 - Remove duplicated entries"] = (timer_end - timer_start);
 
   std::int32_t nnz;
-  queue.memcpy(&nnz, &new_mat.indptr[new_mat.nrows], sizeof(std::int32_t)).wait();
+  queue.memcpy(&nnz, &new_mat.indptr[new_mat.nrows], sizeof(std::int32_t))
+      .wait();
   auto map = transpose_map(queue, acc_map, nnz);
 
   auto end = std::chrono::system_clock::now();
@@ -329,7 +360,9 @@ experimental::sycl::la::create_sparsity_pattern(
   experimental::sycl::timing::print_timing_info(comm, timings, step,
                                                 verbose_mode);
 
-  return {new_mat, map};
+  int32_t* lookup = compute_lookup_table(queue, new_mat, data);
+
+  return {new_mat, map, lookup};
 }
 //--------------------------------------------------------------------------
 experimental::sycl::la::AdjacencyList
