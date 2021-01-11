@@ -82,19 +82,17 @@ int main(int argc, char* argv[])
   // Send form data to device (Geometry, Dofmap, Coefficients)
   auto form_data = memory::send_form_data(mpi_comm, queue, *L, *a, verb_mode);
 
-  auto [csr_mat, acc_map, lookup]
+  auto [mat, acc_map, lookup]
       = dolfinx::experimental::sycl::la::create_sparsity_pattern(
           mpi_comm, queue, form_data, verb_mode);
 
 // Assemble vector on device
 #ifdef USE_ATOMICS
-  double* b
-      = assemble::assemble_vector_atomic(mpi_comm, queue, form_data, verb_mode);
-  auto mat
-      = assemble::assemble_matrix_atomic(mpi_comm, queue, form_data, verb_mode);
+  double* b = assemble::assemble_vector_atomic(mpi_comm, queue, form_data);
+  assemble::assemble_matrix_search(mpi_comm, queue, form_data, mat);
 #else
-  double* b = assemble::assemble_vector(mpi_comm, queue, form_data, verb_mode);
-  auto mat = assemble::assemble_matrix(mpi_comm, queue, form_data, verb_mode);
+  double* b = assemble::assemble_vector(mpi_comm, queue, form_data);
+  assemble::assemble_matrix(mpi_comm, queue, form_data, mat, acc_map);
 #endif
 
   double* x = cl::sycl::malloc_device<double>(form_data.ndofs, queue);

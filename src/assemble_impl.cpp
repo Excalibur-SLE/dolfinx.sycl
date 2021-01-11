@@ -279,3 +279,63 @@ void assemble_matrix_search_impl(cl::sycl::queue& queue, double* data,
   }
 #endif
 }
+//--------------------------------------------------------------------------
+void assemble_matrix_lookup_impl(cl::sycl::queue& queue, double* data,
+                                 std::int32_t* indptr, std::int32_t* indices,
+                                 std::int32_t* lookup, double* x, int* x_dof,
+                                 double* coeffs, int* dofs, int ncells,
+                                 int ndofs, int nelem_dofs)
+{
+
+#ifndef __LLVM_SYCL__
+  throw std::runtime_error("Double precision atomics not available!");
+#else
+  cl::sycl::event event = queue.submit([&](cl::sycl::handler& cgh) {
+    int gdim = 3;
+    cl::sycl::range<1> range{std::size_t(ncells)};
+
+    constexpr int ndofs_cell = a_num_dofs;
+
+    auto kernel = [=](cl::sycl::id<1> ID) {
+      const int i = ID.get(0);
+      double cell_geom[12];
+
+      double c[ndofs_cell] = {0};
+      double Ae[ndofs_cell * ndofs_cell] = {0};
+
+      // Pull out points for this cell
+      for (std::size_t j = 0; j < 4; ++j)
+      {
+        const std::size_t dmi = x_dof[i * 4 + j];
+        for (int k = 0; k < gdim; ++k)
+          cell_geom[j * gdim + k] = x[dmi * gdim + k];
+      }
+
+      // Get local values
+      const int offset = i * nelem_dofs;
+      tabulate_cell_a(Ae, &coeffs[offset], c, cell_geom, nullptr, nullptr, 0);
+
+      // Insert local matrix using lookup table
+      const int pos_A = i * nelem_dofs * nelem_dofs;
+      for (int j = 0; j < nelem_dofs * nelem_dofs; j++)
+      {
+        int pos = lookup[pos_A + j];
+        atomic_ref atomic_A(data[pos]);
+        atomic_A += Ae[j];
+      }
+    };
+
+    cgh.parallel_for<class AssemblyKernelUSMLookup>(range, kernel);
+  });
+
+  try
+  {
+    queue.wait_and_throw();
+  }
+  catch (cl::sycl::exception const& e)
+  {
+    std::cout << "Caught synchronous SYCL exception:\n"
+              << e.what() << std::endl;
+  }
+#endif
+}
