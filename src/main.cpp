@@ -87,7 +87,10 @@ int main(int argc, char* argv[])
           mpi_comm, queue, form_data, verb_mode);
 
 // Assemble vector on device
-#ifdef USE_ATOMICS
+#ifdef USE_ATOMICS_LOOKUP
+  double* b = assemble::assemble_vector_atomic(mpi_comm, queue, form_data);
+  assemble::assemble_matrix_lookup(mpi_comm, queue, form_data, mat, lookup);
+#elif USE_ATOMICS_SEARCH
   double* b = assemble::assemble_vector_atomic(mpi_comm, queue, form_data);
   assemble::assemble_matrix_search(mpi_comm, queue, form_data, mat);
 #else
