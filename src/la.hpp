@@ -49,7 +49,7 @@ struct AdjacencyList
   std::int32_t num_links;
 };
 
-std::pair<CsrMatrix, AdjacencyList>
+std::tuple<CsrMatrix, AdjacencyList, std::int32_t*>
 create_sparsity_pattern(MPI_Comm comm, cl::sycl::queue& queue,
                         const experimental::sycl::memory::form_data_t& data,
                         int verbose_mode = 1);

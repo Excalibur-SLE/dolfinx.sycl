@@ -65,14 +65,12 @@ double* assemble_vector(MPI_Comm comm, cl::sycl::queue& queue,
 
 //--------------------------------------------------------------------------
 // Submit vector assembly kernels to queue
-experimental::sycl::la::CsrMatrix
-assemble_matrix(MPI_Comm comm, cl::sycl::queue& queue,
-                const memory::form_data_t& data, int verbose_mode = 1)
+void assemble_matrix(MPI_Comm comm, cl::sycl::queue& queue,
+                     const memory::form_data_t& data,
+                     experimental::sycl::la::CsrMatrix mat,
+                     experimental::sycl::la::AdjacencyList acc_map,
+                     int verbose_mode = 1)
 {
-
-  // Compute Sparsity pattern
-  auto [mat, acc_map] = experimental::sycl::la::create_sparsity_pattern(
-      comm, queue, data, verbose_mode);
 
   std::string step{"Assemble matrix on device"};
   std::map<std::string, std::chrono::duration<double>> timings;
@@ -101,7 +99,6 @@ assemble_matrix(MPI_Comm comm, cl::sycl::queue& queue,
 
   experimental::sycl::timing::print_timing_info(comm, timings, step,
                                                 verbose_mode);
-  return mat;
 }
 
 //--------------------------------------------------------------------------
@@ -129,18 +126,15 @@ double* assemble_vector_atomic(MPI_Comm comm, cl::sycl::queue& queue,
                                                 verbose_mode);
   return b;
 }
-
-experimental::sycl::la::CsrMatrix
-assemble_matrix_atomic(MPI_Comm comm, cl::sycl::queue& queue,
-                       const memory::form_data_t& data, int verbose_mode = 1)
+//--------------------------------------------------------------------------
+void assemble_matrix_search(MPI_Comm comm, cl::sycl::queue& queue,
+                            const memory::form_data_t& data,
+                            experimental::sycl::la::CsrMatrix mat,
+                            int verbose_mode = 1)
 {
 
   std::string step{"Assemble matrix on device with atomics."};
   std::map<std::string, std::chrono::duration<double>> timings;
-
-  // Compute Sparsity pattern
-  auto [mat, acc_map] = experimental::sycl::la::create_sparsity_pattern(
-      comm, queue, data, verbose_mode);
 
   auto timer_start = std::chrono::system_clock::now();
   assemble_matrix_search_impl(queue, mat.data, mat.indptr, mat.indices, data.x,
@@ -153,8 +147,28 @@ assemble_matrix_atomic(MPI_Comm comm, cl::sycl::queue& queue,
 
   experimental::sycl::timing::print_timing_info(comm, timings, step,
                                                 verbose_mode);
+}
+//--------------------------------------------------------------------------
+void assemble_matrix_lookup(MPI_Comm comm, cl::sycl::queue& queue,
+                            const memory::form_data_t& data,
+                            experimental::sycl::la::CsrMatrix mat,
+                            std::int32_t* lookup_table, int verbose_mode = 1)
+{
+  std::string step{"Assemble matrix on device with atomics."};
+  std::map<std::string, std::chrono::duration<double>> timings;
 
-  return mat;
+  auto timer_start = std::chrono::system_clock::now();
+
+  assemble_matrix_lookup_impl(queue, mat.data, mat.indptr, mat.indices,
+                              lookup_table, data.x, data.xdofs, data.coeffs_a,
+                              data.dofs, data.ncells, data.ndofs,
+                              data.ndofs_cell);
+
+  auto timer_end = std::chrono::system_clock::now();
+  timings["Total"] = (timer_end - timer_start);
+
+  experimental::sycl::timing::print_timing_info(comm, timings, step,
+                                                verbose_mode);
 }
 
 } // namespace dolfinx::experimental::sycl::assemble

@@ -11,20 +11,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 find_package(DOLFINX REQUIRED)
 find_package(Ginkgo REQUIRED)
 
-# add_custom_command(
-#   OUTPUT ${CMAKE_SOURCE_DIR}/src/problem.c
-#          ${CMAKE_SOURCE_DIR}/src/problem.h
-#   COMMAND ffcx --sycl_defines=TRUE ${CMAKE_SOURCE_DIR}/problem.ufl -o ${CMAKE_SOURCE_DIR}/src
-#   DEPENDS problem.ufl
-# )
-
-# add_custom_target(ffcx
-#   COMMAND touch ${CMAKE_SOURCE_DIR}/src/problem.c
-#   COMMAND touch ${CMAKE_SOURCE_DIR}/src/problem.h
-#   COMMENT "Generating kernel code"
-#   )
-
-
 set(supported_implementations
   ComputeCpp
   hipSYCL
@@ -62,7 +48,17 @@ add_executable(${PROJECT_NAME}
   src/solve.cpp
   )
 
-  add_executable(${PROJECT_NAME}-atomic
+  add_executable(${PROJECT_NAME}-lookup
+  src/main.cpp 
+  src/problem.c 
+  src/assemble_impl.cpp 
+  src/la.cpp 
+  src/memory.cpp 
+  src/timing.cpp
+  src/solve.cpp
+  )
+
+  add_executable(${PROJECT_NAME}-search
   src/main.cpp 
   src/problem.c 
   src/assemble_impl.cpp 
@@ -73,18 +69,24 @@ add_executable(${PROJECT_NAME}
   )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Ginkgo::ginkgo dolfinx)
-target_link_libraries(${PROJECT_NAME}-atomic PRIVATE Ginkgo::ginkgo dolfinx)
-set_target_properties(${PROJECT_NAME}-atomic PROPERTIES COMPILE_FLAGS "-DUSE_ATOMICS")
+target_link_libraries(${PROJECT_NAME}-lookup PRIVATE Ginkgo::ginkgo dolfinx)
+set_target_properties(${PROJECT_NAME}-lookup PROPERTIES COMPILE_FLAGS "-DUSE_ATOMICS_LOOKUP")
+target_link_libraries(${PROJECT_NAME}-search PRIVATE Ginkgo::ginkgo dolfinx)
+set_target_properties(${PROJECT_NAME}-search PROPERTIES COMPILE_FLAGS "-DUSE_ATOMICS_SEARCH")
+
 
 if(SYCL_IMPL STREQUAL "LLVM")
   target_compile_definitions(${PROJECT_NAME} PRIVATE __LLVM_SYCL__)
-  target_compile_definitions(${PROJECT_NAME}-atomic PRIVATE __LLVM_SYCL__)
+  target_compile_definitions(${PROJECT_NAME}-lookup PRIVATE __LLVM_SYCL__)
+  target_compile_definitions(${PROJECT_NAME}-search PRIVATE __LLVM_SYCL__)
 elseif(SYCL_IMPL STREQUAL "LLVM-CUDA")
   target_compile_definitions(${PROJECT_NAME} PRIVATE __LLVM_SYCL__)
-  target_compile_definitions(${PROJECT_NAME}-atomic PRIVATE __LLVM_SYCL__)
+  target_compile_definitions(${PROJECT_NAME}-lookup PRIVATE __LLVM_SYCL__)
+  target_compile_definitions(${PROJECT_NAME}-search PRIVATE __LLVM_SYCL__)
 elseif(SYCL_IMPL STREQUAL "hipSYCL")
   add_sycl_to_target(TARGET ${PROJECT_NAME} SOURCES src/main.cpp src/main_atomic.cpp  src/assemble_impl.cpp src/la.cpp src/memory.cpp)
-  add_sycl_to_target(TARGET ${PROJECT_NAME}-atomic SOURCES src/main.cpp src/main_atomic.cpp  src/assemble_impl.cpp src/la.cpp src/memory.cpp)
+  add_sycl_to_target(TARGET ${PROJECT_NAME}-lookup SOURCES src/main.cpp src/main_atomic.cpp  src/assemble_impl.cpp src/la.cpp src/memory.cpp)
+  add_sycl_to_target(TARGET ${PROJECT_NAME}-search SOURCES src/main.cpp src/main_atomic.cpp  src/assemble_impl.cpp src/la.cpp src/memory.cpp)
 endif()
 
 
