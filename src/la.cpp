@@ -299,18 +299,19 @@ compute_lookup_table(cl::sycl::queue& queue,
   cl::sycl::range<1> range(data.ncells);
   queue.parallel_for<class LookupTable>(range, [=](cl::sycl::id<1> Id) {
     int i = Id.get(0);
-    int offset = data.ndofs_cell * i;
+    int dof_offset = data.ndofs_cell * i;
+    int mat_offset = data.ndofs_cell * data.ndofs_cell * i;
     for (int j = 0; j < data.ndofs_cell; j++)
     {
-      int row = data.dofs[offset + j];
+      int row = data.dofs[dof_offset + j];
       int first = mat.indptr[row];
       int last = mat.indptr[row + 1];
       for (int k = 0; k < data.ndofs_cell; k++)
       {
-        int ind = data.dofs[offset + k];
+        int ind = data.dofs[dof_offset + k];
         int pos = experimental::sycl::algorithms::binary_search(
             mat.indices, first, last, ind);
-        lookup[offset + j * data.ndofs_cell + k] = pos;
+        lookup[mat_offset + j * data.ndofs_cell + k] = pos;
       }
     }
   });

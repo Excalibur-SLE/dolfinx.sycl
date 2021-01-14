@@ -159,9 +159,10 @@ void assemble_matrix_lookup(MPI_Comm comm, cl::sycl::queue& queue,
 
   auto timer_start = std::chrono::system_clock::now();
 
-  assemble_matrix_search_impl(queue, mat.data, mat.indptr, mat.indices, data.x,
-                              data.xdofs, data.coeffs_a, data.dofs, data.ncells,
-                              data.ndofs, data.ndofs_cell);
+  assemble_matrix_lookup_impl(queue, mat.data, mat.indptr, mat.indices,
+                              lookup_table, data.x, data.xdofs, data.coeffs_a,
+                              data.dofs, data.ncells, data.ndofs,
+                              data.ndofs_cell);
 
   auto timer_end = std::chrono::system_clock::now();
   timings["Total"] = (timer_end - timer_start);
