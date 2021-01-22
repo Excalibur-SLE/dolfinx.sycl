@@ -28,266 +28,25 @@ typedef double ufc_scalar_t;
 
 #define restrict __restrict__ 
 
-#define space_dimension_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f 4
+#define space_dimension_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686 4
 
-// Code for element element_cfc8183014a13694f6df7ac81b3308da1bed2b3f
+// Code for element element_29953d5d1a0c11d7cf01f22e6ced6740eb369686
 
-int value_dimension_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f(int i)
+int value_dimension_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686(int i)
 {
   return 1;
 }
 
-int reference_value_dimension_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f(int i)
+int reference_value_dimension_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686(int i)
 {
   return 1;
 }
 
-int evaluate_reference_basis_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f(double* restrict reference_values,
-                                            int num_points,
-                                            const double* restrict X)
-{
-  static const double coefficients0[1][4] = { { 0.288675134594813, -0.18257418583505536, -0.10540925533894598, -0.07453559924999298 } };
-static const double coefficients1[1][4] = { { 0.28867513459481287, 0.18257418583505536, -0.10540925533894596, -0.07453559924999296 } };
-static const double coefficients2[1][4] = { { 0.2886751345948129, 0.0, 0.21081851067789195, -0.07453559924999299 } };
-static const double coefficients3[1][4] = { { 0.2886751345948129, 0.0, 0.0, 0.22360679774997896 } };
-for (int k = 0; k < num_points * 4; ++k)
-    reference_values[k] = 0.0;
-for (int ip = 0; ip < num_points; ++ip)
-{
-    // Compute basisvalues for each relevant embedded degree
-    double basisvalues1[4] = { 0 };
-    basisvalues1[0] = 1.0;
-    const double tmp1_1 = 0.5 * (((2.0 + 2.0 * (2 * X[ip * 3] - 1)) + (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1));
-    basisvalues1[1] = tmp1_1;
-    basisvalues1[2] = (0.5 * ((2.0 + 3.0 * (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1))) * basisvalues1[0];
-    basisvalues1[3] = (2.0 * (2 * X[ip * 3 + 2] - 1) + 1.0) * basisvalues1[0];
-    basisvalues1[0] *= sqrt(0.75);
-    basisvalues1[3] *= sqrt(1.25);
-    basisvalues1[2] *= sqrt(2.5);
-    basisvalues1[1] *= sqrt(7.5);
-    // Accumulate products of coefficients and basisvalues
-    for (int r = 0; r < 4; ++r)
-        reference_values[4 * ip] += coefficients0[0][r] * basisvalues1[r];
-    for (int r = 0; r < 4; ++r)
-        reference_values[4 * ip + 1] += coefficients1[0][r] * basisvalues1[r];
-    for (int r = 0; r < 4; ++r)
-        reference_values[4 * ip + 2] += coefficients2[0][r] * basisvalues1[r];
-    for (int r = 0; r < 4; ++r)
-        reference_values[4 * ip + 3] += coefficients3[0][r] * basisvalues1[r];
-}
-return 0;
-}
-
-int evaluate_reference_basis_derivatives_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f(double * restrict reference_values,
-                                          int order, int num_points,
-                                          const double * restrict X)
-{
-  if (order == 0)
-    return evaluate_reference_basis_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f(reference_values, num_points, X);
-const int num_derivatives = pow(3, order);
-for (int l0 = 0; l0 < (num_points * 4) * num_derivatives; ++l0)
-    reference_values[l0] = 0.0;
-if (order > 1)
-    return 0;
-// Tables of derivatives of the polynomial base (transpose).
-static const double dmats0[3][4][4] =
-    { { { 0.0, 0.0, 0.0, 0.0 },
-        { 6.324555320336758, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0 } },
-      { { 0.0, 0.0, 0.0, 0.0 },
-        { 3.162277660168379, 0.0, 0.0, 0.0 },
-        { 5.477225575051663, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0 } },
-      { { 0.0, 0.0, 0.0, 0.0 },
-        { 3.162277660168379, 0.0, 0.0, 0.0 },
-        { 1.8257418583505545, 0.0, 0.0, 0.0 },
-        { 5.163977794943224, 0.0, 0.0, 0.0 } } };
-static const double coefficients0[1][4] = { { 0.288675134594813, -0.18257418583505536, -0.10540925533894598, -0.07453559924999298 } };
-static const double coefficients1[1][4] = { { 0.28867513459481287, 0.18257418583505536, -0.10540925533894596, -0.07453559924999296 } };
-static const double coefficients2[1][4] = { { 0.2886751345948129, 0.0, 0.21081851067789195, -0.07453559924999299 } };
-static const double coefficients3[1][4] = { { 0.2886751345948129, 0.0, 0.0, 0.22360679774997896 } };
-const int reference_offset[4] = { 0 };
-const int num_components[4] = { 1, 1, 1, 1 };
-// Precomputed combinations
-const int combinations[1][3][1] =
-    { { { 0 },
-        { 1 },
-        { 2 } } };
-for (int ip = 0; ip < num_points; ++ip)
-{
-    // Compute basisvalues for each relevant embedded degree
-    double basisvalues1[4] = { 0 };
-    basisvalues1[0] = 1.0;
-    const double tmp1_1 = 0.5 * (((2.0 + 2.0 * (2 * X[ip * 3] - 1)) + (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1));
-    basisvalues1[1] = tmp1_1;
-    basisvalues1[2] = (0.5 * ((2.0 + 3.0 * (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1))) * basisvalues1[0];
-    basisvalues1[3] = (2.0 * (2 * X[ip * 3 + 2] - 1) + 1.0) * basisvalues1[0];
-    basisvalues1[0] *= sqrt(0.75);
-    basisvalues1[3] *= sqrt(1.25);
-    basisvalues1[2] *= sqrt(2.5);
-    basisvalues1[1] *= sqrt(7.5);
-    // Loop over all dofs
-    for (int i = 0; i < 4; ++i)
-    {
-        double derivatives[3] = { 0 };
-        switch (i)
-        {
-        case 0:
-            // Compute reference derivatives for dof 0.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[4] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[4][4] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 16*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[4][4];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 16*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 4; ++l0)
-                        for (int l1 = 0; l1 < 4; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 4; ++t)
-                        for (int u = 0; u < 4; ++u)
-                            for (int tu = 0; tu < 4; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 4; ++s)
-                    for (int t = 0; t < 4; ++t)
-                        aux[s] += dmats[s][t] * basisvalues1[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 4; ++s)
-                    derivatives[r] += coefficients0[0][s] * aux[s];
-            }
-            break;
-        case 1:
-            // Compute reference derivatives for dof 1.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[4] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[4][4] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 16*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[4][4];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 16*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 4; ++l0)
-                        for (int l1 = 0; l1 < 4; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 4; ++t)
-                        for (int u = 0; u < 4; ++u)
-                            for (int tu = 0; tu < 4; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 4; ++s)
-                    for (int t = 0; t < 4; ++t)
-                        aux[s] += dmats[s][t] * basisvalues1[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 4; ++s)
-                    derivatives[r] += coefficients1[0][s] * aux[s];
-            }
-            break;
-        case 2:
-            // Compute reference derivatives for dof 2.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[4] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[4][4] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 16*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[4][4];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 16*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 4; ++l0)
-                        for (int l1 = 0; l1 < 4; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 4; ++t)
-                        for (int u = 0; u < 4; ++u)
-                            for (int tu = 0; tu < 4; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 4; ++s)
-                    for (int t = 0; t < 4; ++t)
-                        aux[s] += dmats[s][t] * basisvalues1[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 4; ++s)
-                    derivatives[r] += coefficients2[0][s] * aux[s];
-            }
-            break;
-        case 3:
-            // Compute reference derivatives for dof 3.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[4] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[4][4] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 16*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[4][4];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 16*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 4; ++l0)
-                        for (int l1 = 0; l1 < 4; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 4; ++t)
-                        for (int u = 0; u < 4; ++u)
-                            for (int tu = 0; tu < 4; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 4; ++s)
-                    for (int t = 0; t < 4; ++t)
-                        aux[s] += dmats[s][t] * basisvalues1[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 4; ++s)
-                    derivatives[r] += coefficients3[0][s] * aux[s];
-            }
-            break;
-        }
-        for (int r = 0; r < num_derivatives; ++r)
-            for (int c = 0; c < num_components[i]; ++c)
-                reference_values[(((4 * num_derivatives) * ip + num_derivatives * i) + r) + (reference_offset[i] + c)] = derivatives[num_derivatives * c + r];
-    }
-}
-return 0;
-}
-
-int transform_reference_basis_derivatives_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f(
+int transform_reference_basis_derivatives_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686(
     double * restrict values, int order, int num_points,
     const double * restrict reference_values,
     const double * restrict X, const double * restrict J,
-    const double * restrict detJ, const double * restrict K,
-    const uint32_t cell_permutation)
+    const double * restrict detJ, const double * restrict K)
 {
   const int num_derivatives = pow(3, order);
 // Precomputed combinations
@@ -297,8 +56,6 @@ const int combinations[1][3][1] =
         { 2 } } };
 for (int l = 0; l < (num_points * 4) * num_derivatives; ++l)
     values[l] = 0.0;
-const int reference_offsets[4] = { 0 };
-const int physical_offsets[4] = { 0 };
 for (int ip = 0; ip < num_points; ++ip)
 {
     double transform[3][3];
@@ -316,10 +73,10 @@ for (int ip = 0; ip < num_points; ++ip)
             for (int i = 0; i < 1; ++i)
             {
                 // Using affine transform to map values back to the physical element.
-                const double mapped_value = reference_values[(((4 * num_derivatives) * ip + num_derivatives * d) + s) + reference_offsets[d]];
+                const double mapped_value = reference_values[((4 * num_derivatives) * ip + num_derivatives * d) + s];
                 // Mapping derivatives back to the physical element
                 for (int r = 0; r < num_derivatives; ++r)
-                    values[(((4 * num_derivatives) * ip + num_derivatives * d) + r) + (physical_offsets[d] + i)] += transform[r][s] * mapped_value;
+                    values[(((4 * num_derivatives) * ip + num_derivatives * d) + r) + i] += transform[r][s] * mapped_value;
             }
         }
     }
@@ -328,33 +85,26 @@ for (int ip = 0; ip < num_points; ++ip)
 return 0;
 }
 
-int transform_values_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f(
-     ufc_scalar_t* restrict reference_values,
-     const ufc_scalar_t* restrict physical_values,
-     const double* restrict coordinate_dofs,
-     const ufc_coordinate_mapping* restrict cm)
+
+int apply_dof_transformation_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686(
+     double* restrict data, uint32_t cell_permutation, int dim)
 {
-  reference_values[0] = physical_values[0];
-reference_values[1] = physical_values[1];
-reference_values[2] = physical_values[2];
-reference_values[3] = physical_values[3];
-return 0;
+  return 0;
 }
 
-int tabulate_reference_dof_coordinates_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f(double* restrict reference_dof_coordinates)
+int apply_dof_transformation_to_scalar_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686(
+     ufc_scalar_t* restrict data, uint32_t cell_permutation, int dim)
 {
-  static const double dof_X[12] = { 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
-memcpy(reference_dof_coordinates, dof_X, 12*sizeof(double));
-return 0;
+  return 0;
 }
 
 
-ufc_finite_element* create_sub_element_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f(int i)
+ufc_finite_element* create_sub_element_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686(int i)
 {
   return NULL;
 }
 
-ufc_finite_element* create_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f(void)
+ufc_finite_element* create_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686(void)
 {
   ufc_finite_element* element = (ufc_finite_element*)malloc(sizeof(*element));
 
@@ -364,33 +114,35 @@ ufc_finite_element* create_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f(void
   element->geometric_dimension = 3;
   element->space_dimension = 4;
   element->value_rank = 0;
-  element->value_dimension = value_dimension_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
+  element->value_dimension = value_dimension_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686;
   element->value_size = 1;
   element->reference_value_rank = 0;
-  element->reference_value_dimension = reference_value_dimension_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
+  element->reference_value_dimension = reference_value_dimension_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686;
   element->reference_value_size = 1;
   element->degree = 1;
   element->family = "Lagrange";
   element->block_size = 1;
-  element->evaluate_reference_basis = evaluate_reference_basis_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
-  element->evaluate_reference_basis_derivatives = evaluate_reference_basis_derivatives_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
-  element->transform_reference_basis_derivatives = transform_reference_basis_derivatives_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
-  element->transform_values = transform_values_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
-  element->tabulate_reference_dof_coordinates = tabulate_reference_dof_coordinates_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
+
+  element->needs_permutation_data = 0;
+  element->interpolation_is_identity = 1;
+
+  element->transform_reference_basis_derivatives = transform_reference_basis_derivatives_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686;
+  element->apply_dof_transformation = apply_dof_transformation_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686;
+  element->apply_dof_transformation_to_scalar = apply_dof_transformation_to_scalar_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686;
   element->num_sub_elements = 0;
-  element->create_sub_element = create_sub_element_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
-  element->create = create_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
+  element->create_sub_element = create_sub_element_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686;
+  element->create = create_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686;
 
   return element;
 }
 
-// End of code for element element_cfc8183014a13694f6df7ac81b3308da1bed2b3f
+// End of code for element element_29953d5d1a0c11d7cf01f22e6ced6740eb369686
 
-#define space_dimension_element_894eecfafddbd52dd198bd28585609e03ee06c40 12
+#define space_dimension_element_445ef1924184cca3ac2920e3df00b14f41104dec 12
 
-// Code for element element_894eecfafddbd52dd198bd28585609e03ee06c40
+// Code for element element_445ef1924184cca3ac2920e3df00b14f41104dec
 
-int value_dimension_element_894eecfafddbd52dd198bd28585609e03ee06c40(int i)
+int value_dimension_element_445ef1924184cca3ac2920e3df00b14f41104dec(int i)
 {
   static const int return_values[1] = { 3 };
 if (i >= 1)
@@ -398,7 +150,7 @@ if (i >= 1)
 return return_values[i];
 }
 
-int reference_value_dimension_element_894eecfafddbd52dd198bd28585609e03ee06c40(int i)
+int reference_value_dimension_element_445ef1924184cca3ac2920e3df00b14f41104dec(int i)
 {
   static const int return_values[1] = { 3 };
 if (i >= 1)
@@ -406,252 +158,11 @@ if (i >= 1)
 return return_values[i];
 }
 
-int evaluate_reference_basis_element_894eecfafddbd52dd198bd28585609e03ee06c40(double* restrict reference_values,
-                                            int num_points,
-                                            const double* restrict X)
-{
-  static const double coefficients0[1][4] = { { 0.288675134594813, -0.18257418583505536, -0.10540925533894598, -0.07453559924999298 } };
-static const double coefficients1[1][4] = { { 0.28867513459481287, 0.18257418583505536, -0.10540925533894596, -0.07453559924999296 } };
-static const double coefficients2[1][4] = { { 0.2886751345948129, 0.0, 0.21081851067789195, -0.07453559924999299 } };
-static const double coefficients3[1][4] = { { 0.2886751345948129, 0.0, 0.0, 0.22360679774997896 } };
-for (int k = 0; k < num_points * 4; ++k)
-    reference_values[k] = 0.0;
-for (int ip = 0; ip < num_points; ++ip)
-{
-    // Compute basisvalues for each relevant embedded degree
-    double basisvalues1[4] = { 0 };
-    basisvalues1[0] = 1.0;
-    const double tmp1_1 = 0.5 * (((2.0 + 2.0 * (2 * X[ip * 3] - 1)) + (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1));
-    basisvalues1[1] = tmp1_1;
-    basisvalues1[2] = (0.5 * ((2.0 + 3.0 * (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1))) * basisvalues1[0];
-    basisvalues1[3] = (2.0 * (2 * X[ip * 3 + 2] - 1) + 1.0) * basisvalues1[0];
-    basisvalues1[0] *= sqrt(0.75);
-    basisvalues1[3] *= sqrt(1.25);
-    basisvalues1[2] *= sqrt(2.5);
-    basisvalues1[1] *= sqrt(7.5);
-    // Accumulate products of coefficients and basisvalues
-    for (int r = 0; r < 4; ++r)
-        reference_values[4 * ip] += coefficients0[0][r] * basisvalues1[r];
-    for (int r = 0; r < 4; ++r)
-        reference_values[4 * ip + 1] += coefficients1[0][r] * basisvalues1[r];
-    for (int r = 0; r < 4; ++r)
-        reference_values[4 * ip + 2] += coefficients2[0][r] * basisvalues1[r];
-    for (int r = 0; r < 4; ++r)
-        reference_values[4 * ip + 3] += coefficients3[0][r] * basisvalues1[r];
-}
-return 0;
-}
-
-int evaluate_reference_basis_derivatives_element_894eecfafddbd52dd198bd28585609e03ee06c40(double * restrict reference_values,
-                                          int order, int num_points,
-                                          const double * restrict X)
-{
-  if (order == 0)
-    return evaluate_reference_basis_element_894eecfafddbd52dd198bd28585609e03ee06c40(reference_values, num_points, X);
-const int num_derivatives = pow(3, order);
-for (int l0 = 0; l0 < (num_points * 4) * num_derivatives; ++l0)
-    reference_values[l0] = 0.0;
-if (order > 1)
-    return 0;
-// Tables of derivatives of the polynomial base (transpose).
-static const double dmats0[3][4][4] =
-    { { { 0.0, 0.0, 0.0, 0.0 },
-        { 6.324555320336758, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0 } },
-      { { 0.0, 0.0, 0.0, 0.0 },
-        { 3.162277660168379, 0.0, 0.0, 0.0 },
-        { 5.477225575051663, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0 } },
-      { { 0.0, 0.0, 0.0, 0.0 },
-        { 3.162277660168379, 0.0, 0.0, 0.0 },
-        { 1.8257418583505545, 0.0, 0.0, 0.0 },
-        { 5.163977794943224, 0.0, 0.0, 0.0 } } };
-static const double coefficients0[1][4] = { { 0.288675134594813, -0.18257418583505536, -0.10540925533894598, -0.07453559924999298 } };
-static const double coefficients1[1][4] = { { 0.28867513459481287, 0.18257418583505536, -0.10540925533894596, -0.07453559924999296 } };
-static const double coefficients2[1][4] = { { 0.2886751345948129, 0.0, 0.21081851067789195, -0.07453559924999299 } };
-static const double coefficients3[1][4] = { { 0.2886751345948129, 0.0, 0.0, 0.22360679774997896 } };
-const int reference_offset[4] = { 0 };
-const int num_components[4] = { 1, 1, 1, 1 };
-// Precomputed combinations
-const int combinations[1][3][1] =
-    { { { 0 },
-        { 1 },
-        { 2 } } };
-for (int ip = 0; ip < num_points; ++ip)
-{
-    // Compute basisvalues for each relevant embedded degree
-    double basisvalues1[4] = { 0 };
-    basisvalues1[0] = 1.0;
-    const double tmp1_1 = 0.5 * (((2.0 + 2.0 * (2 * X[ip * 3] - 1)) + (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1));
-    basisvalues1[1] = tmp1_1;
-    basisvalues1[2] = (0.5 * ((2.0 + 3.0 * (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1))) * basisvalues1[0];
-    basisvalues1[3] = (2.0 * (2 * X[ip * 3 + 2] - 1) + 1.0) * basisvalues1[0];
-    basisvalues1[0] *= sqrt(0.75);
-    basisvalues1[3] *= sqrt(1.25);
-    basisvalues1[2] *= sqrt(2.5);
-    basisvalues1[1] *= sqrt(7.5);
-    // Loop over all dofs
-    for (int i = 0; i < 4; ++i)
-    {
-        double derivatives[3] = { 0 };
-        switch (i)
-        {
-        case 0:
-            // Compute reference derivatives for dof 0.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[4] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[4][4] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 16*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[4][4];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 16*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 4; ++l0)
-                        for (int l1 = 0; l1 < 4; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 4; ++t)
-                        for (int u = 0; u < 4; ++u)
-                            for (int tu = 0; tu < 4; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 4; ++s)
-                    for (int t = 0; t < 4; ++t)
-                        aux[s] += dmats[s][t] * basisvalues1[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 4; ++s)
-                    derivatives[r] += coefficients0[0][s] * aux[s];
-            }
-            break;
-        case 1:
-            // Compute reference derivatives for dof 1.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[4] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[4][4] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 16*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[4][4];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 16*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 4; ++l0)
-                        for (int l1 = 0; l1 < 4; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 4; ++t)
-                        for (int u = 0; u < 4; ++u)
-                            for (int tu = 0; tu < 4; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 4; ++s)
-                    for (int t = 0; t < 4; ++t)
-                        aux[s] += dmats[s][t] * basisvalues1[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 4; ++s)
-                    derivatives[r] += coefficients1[0][s] * aux[s];
-            }
-            break;
-        case 2:
-            // Compute reference derivatives for dof 2.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[4] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[4][4] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 16*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[4][4];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 16*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 4; ++l0)
-                        for (int l1 = 0; l1 < 4; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 4; ++t)
-                        for (int u = 0; u < 4; ++u)
-                            for (int tu = 0; tu < 4; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 4; ++s)
-                    for (int t = 0; t < 4; ++t)
-                        aux[s] += dmats[s][t] * basisvalues1[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 4; ++s)
-                    derivatives[r] += coefficients2[0][s] * aux[s];
-            }
-            break;
-        case 3:
-            // Compute reference derivatives for dof 3.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[4] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[4][4] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 16*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[4][4];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 16*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 4; ++l0)
-                        for (int l1 = 0; l1 < 4; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 4; ++t)
-                        for (int u = 0; u < 4; ++u)
-                            for (int tu = 0; tu < 4; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 4; ++s)
-                    for (int t = 0; t < 4; ++t)
-                        aux[s] += dmats[s][t] * basisvalues1[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 4; ++s)
-                    derivatives[r] += coefficients3[0][s] * aux[s];
-            }
-            break;
-        }
-        for (int r = 0; r < num_derivatives; ++r)
-            for (int c = 0; c < num_components[i]; ++c)
-                reference_values[(((4 * num_derivatives) * ip + num_derivatives * i) + r) + (reference_offset[i] + c)] = derivatives[num_derivatives * c + r];
-    }
-}
-return 0;
-}
-
-int transform_reference_basis_derivatives_element_894eecfafddbd52dd198bd28585609e03ee06c40(
+int transform_reference_basis_derivatives_element_445ef1924184cca3ac2920e3df00b14f41104dec(
     double * restrict values, int order, int num_points,
     const double * restrict reference_values,
     const double * restrict X, const double * restrict J,
-    const double * restrict detJ, const double * restrict K,
-    const uint32_t cell_permutation)
+    const double * restrict detJ, const double * restrict K)
 {
   const int num_derivatives = pow(3, order);
 // Precomputed combinations
@@ -661,8 +172,6 @@ const int combinations[1][3][1] =
         { 2 } } };
 for (int l = 0; l < (num_points * 4) * num_derivatives; ++l)
     values[l] = 0.0;
-const int reference_offsets[4] = { 0 };
-const int physical_offsets[4] = { 0 };
 for (int ip = 0; ip < num_points; ++ip)
 {
     double transform[3][3];
@@ -680,10 +189,10 @@ for (int ip = 0; ip < num_points; ++ip)
             for (int i = 0; i < 1; ++i)
             {
                 // Using affine transform to map values back to the physical element.
-                const double mapped_value = reference_values[(((4 * num_derivatives) * ip + num_derivatives * d) + s) + reference_offsets[d]];
+                const double mapped_value = reference_values[((4 * num_derivatives) * ip + num_derivatives * d) + s];
                 // Mapping derivatives back to the physical element
                 for (int r = 0; r < num_derivatives; ++r)
-                    values[(((4 * num_derivatives) * ip + num_derivatives * d) + r) + (physical_offsets[d] + i)] += transform[r][s] * mapped_value;
+                    values[(((4 * num_derivatives) * ip + num_derivatives * d) + r) + i] += transform[r][s] * mapped_value;
             }
         }
     }
@@ -692,52 +201,37 @@ for (int ip = 0; ip < num_points; ++ip)
 return 0;
 }
 
-int transform_values_element_894eecfafddbd52dd198bd28585609e03ee06c40(
-     ufc_scalar_t* restrict reference_values,
-     const ufc_scalar_t* restrict physical_values,
-     const double* restrict coordinate_dofs,
-     const ufc_coordinate_mapping* restrict cm)
+
+int apply_dof_transformation_element_445ef1924184cca3ac2920e3df00b14f41104dec(
+     double* restrict data, uint32_t cell_permutation, int dim)
 {
-  reference_values[0] = physical_values[0];
-reference_values[1] = physical_values[3];
-reference_values[2] = physical_values[6];
-reference_values[3] = physical_values[9];
-reference_values[4] = physical_values[13];
-reference_values[5] = physical_values[16];
-reference_values[6] = physical_values[19];
-reference_values[7] = physical_values[22];
-reference_values[8] = physical_values[26];
-reference_values[9] = physical_values[29];
-reference_values[10] = physical_values[32];
-reference_values[11] = physical_values[35];
-return 0;
+  return 0;
 }
 
-int tabulate_reference_dof_coordinates_element_894eecfafddbd52dd198bd28585609e03ee06c40(double* restrict reference_dof_coordinates)
+int apply_dof_transformation_to_scalar_element_445ef1924184cca3ac2920e3df00b14f41104dec(
+     ufc_scalar_t* restrict data, uint32_t cell_permutation, int dim)
 {
-  static const double dof_X[12] = { 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
-memcpy(reference_dof_coordinates, dof_X, 12*sizeof(double));
-return 0;
+  return 0;
 }
 
-ufc_finite_element* create_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f(void);
+ufc_finite_element* create_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686(void);
 
-ufc_finite_element* create_sub_element_element_894eecfafddbd52dd198bd28585609e03ee06c40(int i)
+ufc_finite_element* create_sub_element_element_445ef1924184cca3ac2920e3df00b14f41104dec(int i)
 {
   switch (i)
 {
 case 0:
-    return create_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f();
+    return create_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686();
 case 1:
-    return create_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f();
+    return create_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686();
 case 2:
-    return create_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f();
+    return create_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686();
 default:
     return NULL;
 }
 }
 
-ufc_finite_element* create_element_894eecfafddbd52dd198bd28585609e03ee06c40(void)
+ufc_finite_element* create_element_445ef1924184cca3ac2920e3df00b14f41104dec(void)
 {
   ufc_finite_element* element = (ufc_finite_element*)malloc(sizeof(*element));
 
@@ -747,1110 +241,49 @@ ufc_finite_element* create_element_894eecfafddbd52dd198bd28585609e03ee06c40(void
   element->geometric_dimension = 3;
   element->space_dimension = 12;
   element->value_rank = 1;
-  element->value_dimension = value_dimension_element_894eecfafddbd52dd198bd28585609e03ee06c40;
+  element->value_dimension = value_dimension_element_445ef1924184cca3ac2920e3df00b14f41104dec;
   element->value_size = 3;
   element->reference_value_rank = 1;
-  element->reference_value_dimension = reference_value_dimension_element_894eecfafddbd52dd198bd28585609e03ee06c40;
+  element->reference_value_dimension = reference_value_dimension_element_445ef1924184cca3ac2920e3df00b14f41104dec;
   element->reference_value_size = 3;
   element->degree = 1;
   element->family = "Lagrange";
   element->block_size = 3;
-  element->evaluate_reference_basis = evaluate_reference_basis_element_894eecfafddbd52dd198bd28585609e03ee06c40;
-  element->evaluate_reference_basis_derivatives = evaluate_reference_basis_derivatives_element_894eecfafddbd52dd198bd28585609e03ee06c40;
-  element->transform_reference_basis_derivatives = transform_reference_basis_derivatives_element_894eecfafddbd52dd198bd28585609e03ee06c40;
-  element->transform_values = transform_values_element_894eecfafddbd52dd198bd28585609e03ee06c40;
-  element->tabulate_reference_dof_coordinates = tabulate_reference_dof_coordinates_element_894eecfafddbd52dd198bd28585609e03ee06c40;
+
+  element->needs_permutation_data = 0;
+  element->interpolation_is_identity = 1;
+
+  element->transform_reference_basis_derivatives = transform_reference_basis_derivatives_element_445ef1924184cca3ac2920e3df00b14f41104dec;
+  element->apply_dof_transformation = apply_dof_transformation_element_445ef1924184cca3ac2920e3df00b14f41104dec;
+  element->apply_dof_transformation_to_scalar = apply_dof_transformation_to_scalar_element_445ef1924184cca3ac2920e3df00b14f41104dec;
   element->num_sub_elements = 3;
-  element->create_sub_element = create_sub_element_element_894eecfafddbd52dd198bd28585609e03ee06c40;
-  element->create = create_element_894eecfafddbd52dd198bd28585609e03ee06c40;
+  element->create_sub_element = create_sub_element_element_445ef1924184cca3ac2920e3df00b14f41104dec;
+  element->create = create_element_445ef1924184cca3ac2920e3df00b14f41104dec;
 
   return element;
 }
 
-// End of code for element element_894eecfafddbd52dd198bd28585609e03ee06c40
+// End of code for element element_445ef1924184cca3ac2920e3df00b14f41104dec
 
-#define space_dimension_element_546828c8d3d3a706cfb29da4de8c7144551ec821 20
+#define space_dimension_element_428b642cdbd29d9b27503f3b645dc2918edc7850 20
 
-// Code for element element_546828c8d3d3a706cfb29da4de8c7144551ec821
+// Code for element element_428b642cdbd29d9b27503f3b645dc2918edc7850
 
-int value_dimension_element_546828c8d3d3a706cfb29da4de8c7144551ec821(int i)
+int value_dimension_element_428b642cdbd29d9b27503f3b645dc2918edc7850(int i)
 {
   return 1;
 }
 
-int reference_value_dimension_element_546828c8d3d3a706cfb29da4de8c7144551ec821(int i)
+int reference_value_dimension_element_428b642cdbd29d9b27503f3b645dc2918edc7850(int i)
 {
   return 1;
 }
 
-int evaluate_reference_basis_element_546828c8d3d3a706cfb29da4de8c7144551ec821(double* restrict reference_values,
-                                            int num_points,
-                                            const double* restrict X)
-{
-  static const double coefficients0[1][20] = { { 0.028867513459481395, 0.01304101327393252, 0.007529232524210424, 0.005323971374999505, 0.01829812636778498, 0.014173667737846025, 0.011572751247156883, 0.0081831708838497, 0.006681531047810613, 0.004724555912615332, -0.028347335475692043, -0.023957871187497756, -0.020748125068968316, -0.018557687223952252, -0.016071428571428577, -0.013122266479195604, -0.010714285714285694, -0.009278843611976118, -0.007576144084141582, -0.005357142857142854 } };
-static const double coefficients1[1][20] = { { 0.028867513459481325, -0.01304101327393252, 0.007529232524210435, 0.005323971374999493, 0.018298126367784984, -0.014173667737846004, -0.011572751247156903, 0.008183170883849717, 0.0066815310478106045, 0.004724555912615341, 0.028347335475692036, -0.02395787118749775, -0.020748125068968302, 0.018557687223952263, 0.016071428571428577, 0.013122266479195593, -0.010714285714285727, -0.00927884361197613, -0.007576144084141582, -0.0053571428571428555 } };
-static const double coefficients2[1][20] = { { 0.028867513459481357, 0.0, -0.015058465048420847, 0.005323971374999518, 0.0, 0.0, 0.0, 0.02454951265154914, -0.013363062095621228, 0.004724555912615358, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.04285714285714286, -0.02783653083592838, 0.015152288168283172, -0.005357142857142867 } };
-static const double coefficients3[1][20] = { { 0.028867513459481346, 0.0, 0.0, -0.01597191412499849, 0.0, 0.0, 0.0, 0.0, 0.0, 0.028347335475692025, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.05357142857142858 } };
-static const double coefficients4[1][20] = { { 0.0, 0.0, 0.11293848786315636, -0.06388765649999399, 0.0, 0.0, 0.0, 0.07364853795464742, 0.026726124191242408, -0.023622779563076714, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.06495190528383288, -0.06060915267313264, 0.026785714285714295 } };
-static const double coefficients5[1][20] = { { 0.0, 0.0, -0.022587697572631318, 0.127775312999988, 0.0, 0.0, 0.0, 0.0, 0.0668153104781061, 0.04724555912615342, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.07576144084141583, -0.05357142857142859 } };
-static const double coefficients6[1][20] = { { 0.0, 0.09780759955449386, -0.05646924393157822, -0.06388765649999405, 0.054894379103355, -0.04252100321353804, 0.02314550249431371, 0.02454951265154915, -0.013363062095621221, -0.023622779563076735, 0.0, 0.0, 0.04841229182759272, 0.0, -0.03749999999999999, -0.052489065916782374, 0.0, 0.021650635094610973, 0.030304576336566337, 0.026785714285714315 } };
-static const double coefficients7[1][20] = { { 0.0, -0.019561519910898797, 0.011293848786315657, 0.1277753129999881, 0.0, 0.0, 0.05786375623578449, 0.0, -0.03340765523905306, 0.047245559126153434, 0.0, 0.0, 0.0, 0.0, 0.0, 0.06561133239597798, 0.0, 0.0, -0.03788072042070792, -0.05357142857142861 } };
-static const double coefficients8[1][20] = { { 0.0, 0.09780759955449397, -0.0790569415042095, -0.031943828249996996, 0.054894379103354984, 0.014173667737845992, -0.04629100498862756, -0.02454951265154917, 0.01336306209562125, 0.023622779563076696, 0.0, 0.04791574237499548, -0.006916041689656098, -0.061858957413174216, -0.01607142857142855, 0.008748177652797052, 0.042857142857142885, 0.015464739353293533, 0.0, -0.005357142857142853 } };
-static const double coefficients9[1][20] = { { 0.0, -0.01956151991089882, 0.12423233664947207, -0.03194382824999699, 0.0, 0.0566946709513841, -0.0115727512471569, 0.02454951265154916, -0.04677071733467428, 0.023622779563076693, 0.0, 0.0, 0.0, 0.061858957413174216, -0.021428571428571443, 0.004374088826398529, -0.06428571428571431, 0.00927884361197613, 0.007576144084141585, -0.005357142857142857 } };
-static const double coefficients10[1][20] = { { 0.0, -0.09780759955449397, -0.05646924393157825, -0.063887656499994, 0.054894379103355005, 0.04252100321353805, -0.023145502494313793, 0.024549512651549178, -0.013363062095621242, -0.023622779563076693, 0.0, 0.0, 0.04841229182759272, 0.0, 0.037499999999999985, 0.05248906591678239, 0.0, 0.021650635094610984, 0.030304576336566337, 0.026785714285714295 } };
-static const double coefficients11[1][20] = { { 0.0, 0.019561519910898804, 0.011293848786315626, 0.12777531299998804, 0.0, 0.0, -0.05786375623578449, 0.0, -0.033407655239053057, 0.04724555912615341, 0.0, 0.0, 0.0, 0.0, 0.0, -0.065611332395978, 0.0, 0.0, -0.037880720420707906, -0.053571428571428596 } };
-static const double coefficients12[1][20] = { { 0.0, -0.09780759955449395, -0.07905694150420954, -0.031943828249996996, 0.054894379103355005, -0.014173667737846018, 0.04629100498862756, -0.02454951265154915, 0.013363062095621228, 0.02362277956307673, 0.0, 0.04791574237499549, -0.006916041689656096, 0.06185895741317418, 0.016071428571428563, -0.008748177652797059, 0.04285714285714287, 0.015464739353293537, 0.0, -0.005357142857142868 } };
-static const double coefficients13[1][20] = { { 0.0, 0.019561519910898804, 0.1242323366494721, -0.031943828249996996, 0.0, -0.056694670951384064, 0.011572751247156891, 0.024549512651549178, -0.046770717334674285, 0.023622779563076693, 0.0, 0.0, 0.0, -0.06185895741317419, 0.021428571428571436, -0.00437408882639853, -0.06428571428571431, 0.009278843611976145, 0.0075761440841415765, -0.005357142857142854 } };
-static const double coefficients14[1][20] = { { 0.0, -0.11736911946539276, -0.04517539514526251, -0.031943828249997024, -0.01829812636778497, 0.042521003213538064, 0.03471825374147069, 0.040915854419248575, 0.03340765523905305, 0.023622779563076728, 0.08504200642707613, 0.023957871187497745, 0.02074812506896832, -0.006185895741317408, -0.0053571428571428615, -0.004374088826398521, -0.010714285714285723, -0.009278843611976126, -0.007576144084141593, -0.005357142857142862 } };
-static const double coefficients15[1][20] = { { 0.0, 0.11736911946539276, -0.04517539514526254, -0.03194382824999699, -0.018298126367784988, -0.04252100321353806, -0.03471825374147069, 0.04091585441924859, 0.033407655239053057, 0.0236227795630767, -0.08504200642707613, 0.02395787118749776, 0.02074812506896831, 0.006185895741317415, 0.005357142857142853, 0.004374088826398524, -0.010714285714285723, -0.00927884361197613, -0.007576144084141589, -0.005357142857142858 } };
-static const double coefficients16[1][20] = { { 0.25980762113533173, 0.11736911946539268, 0.06776309271789385, 0.0479157423749955, 0.0, 0.0850420064270761, 0.06943650748294133, -0.07364853795464742, 0.04008918628686368, -0.09921567416492216, 0.0, 0.0, 0.0, 0.0, 0.075, -0.026244532958391176, 0.0, -0.06495190528383289, -0.01515228816828317, 0.02678571428571429 } };
-static const double coefficients17[1][20] = { { 0.2598076211353315, -0.1173691194653927, 0.0677630927178939, 0.04791574237499545, 0.0, -0.08504200642707616, -0.06943650748294135, -0.0736485379546474, 0.04008918628686368, -0.09921567416492216, 0.0, 0.0, 0.0, 0.0, -0.07500000000000002, 0.026244532958391194, 0.0, -0.06495190528383286, -0.015152288168283172, 0.026785714285714305 } };
-static const double coefficients18[1][20] = { { 0.2598076211353317, 0.0, -0.13552618543578765, 0.04791574237499548, -0.10978875820671, 0.0, 0.0, 0.024549512651549123, -0.0801783725737273, -0.09921567416492216, 0.0, 0.0, -0.09682458365518544, 0.0, 0.0, 0.0, 0.0, 0.021650635094610956, 0.03030457633656632, 0.026785714285714288 } };
-static const double coefficients19[1][20] = { { 0.25980762113533157, 0.0, 0.0, -0.14374722712498647, -0.10978875820671001, 0.0, 0.0, -0.12274756325774572, 0.0, 0.042521003213538064, 0.0, -0.095831484749991, 0.013832083379312196, 0.0, 0.0, 0.0, 0.04285714285714288, 0.015464739353293547, 0.0, -0.005357142857142852 } };
-for (int k = 0; k < num_points * 20; ++k)
-    reference_values[k] = 0.0;
-for (int ip = 0; ip < num_points; ++ip)
-{
-    // Compute basisvalues for each relevant embedded degree
-    double basisvalues3[20] = { 0 };
-    basisvalues3[0] = 1.0;
-    const double tmp1_3 = 0.5 * (((2.0 + 2.0 * (2 * X[ip * 3] - 1)) + (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1));
-    basisvalues3[1] = tmp1_3;
-    const double tmp2_3 = (0.25 * ((2 * X[ip * 3 + 1] - 1) + (2 * X[ip * 3 + 2] - 1))) * ((2 * X[ip * 3 + 1] - 1) + (2 * X[ip * 3 + 2] - 1));
-    basisvalues3[4] = (1.5 * tmp1_3) * basisvalues3[1] - (0.5 * tmp2_3) * basisvalues3[0];
-    basisvalues3[10] = (1.6666666666666667 * tmp1_3) * basisvalues3[4] - (0.6666666666666666 * tmp2_3) * basisvalues3[1];
-    basisvalues3[2] = (0.5 * ((2.0 + 3.0 * (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1))) * basisvalues3[0];
-    basisvalues3[5] = (0.5 * ((2.0 + 3.0 * (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1)) + (1.0 + (2 * X[ip * 3 + 1] - 1))) * basisvalues3[1];
-    basisvalues3[11] = (0.5 * ((2.0 + 3.0 * (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1)) + 2.0 * (1.0 + (2 * X[ip * 3 + 1] - 1))) * basisvalues3[4];
-    const double tmp3_3 = 0.5 * ((1.0 + 2.0 * (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1));
-    const double tmp4_3 = 0.5 * (1.0 - (2 * X[ip * 3 + 2] - 1));
-    const double tmp5_3 = tmp4_3 * tmp4_3;
-    basisvalues3[7] = (1.6666666666666667 * tmp3_3 + 0.1111111111111111 * tmp4_3) * basisvalues3[2] - (0.5555555555555556 * tmp5_3) * basisvalues3[0];
-    basisvalues3[16] = (1.75 * tmp3_3 + 0.05 * tmp4_3) * basisvalues3[7] - (0.7 * tmp5_3) * basisvalues3[2];
-    basisvalues3[13] = (2.1 * tmp3_3 + 0.54 * tmp4_3) * basisvalues3[5] - (0.56 * tmp5_3) * basisvalues3[1];
-    basisvalues3[3] = (2.0 * (2 * X[ip * 3 + 2] - 1) + 1.0) * basisvalues3[0];
-    basisvalues3[8] = (3.0 * (2 * X[ip * 3 + 2] - 1) + 2.0) * basisvalues3[2];
-    basisvalues3[17] = (4.0 * (2 * X[ip * 3 + 2] - 1) + 3.0) * basisvalues3[7];
-    basisvalues3[6] = (3.0 * (2 * X[ip * 3 + 2] - 1) + 2.0) * basisvalues3[1];
-    basisvalues3[14] = (4.0 * (2 * X[ip * 3 + 2] - 1) + 3.0) * basisvalues3[5];
-    basisvalues3[12] = (4.0 * (2 * X[ip * 3 + 2] - 1) + 3.0) * basisvalues3[4];
-    basisvalues3[9] = (0.3125 + 1.875 * (2 * X[ip * 3 + 2] - 1)) * basisvalues3[3] - 0.5625 * basisvalues3[0];
-    basisvalues3[19] = (0.15555555555555556 + 1.8666666666666667 * (2 * X[ip * 3 + 2] - 1)) * basisvalues3[9] - 0.7111111111111111 * basisvalues3[3];
-    basisvalues3[18] = (0.7777777777777778 + 2.3333333333333335 * (2 * X[ip * 3 + 2] - 1)) * basisvalues3[8] - 0.5555555555555556 * basisvalues3[2];
-    basisvalues3[15] = (0.7777777777777778 + 2.3333333333333335 * (2 * X[ip * 3 + 2] - 1)) * basisvalues3[6] - 0.5555555555555556 * basisvalues3[1];
-    basisvalues3[0] *= sqrt(0.75);
-    basisvalues3[3] *= sqrt(1.25);
-    basisvalues3[9] *= sqrt(1.75);
-    basisvalues3[19] *= sqrt(2.25);
-    basisvalues3[2] *= sqrt(2.5);
-    basisvalues3[8] *= sqrt(3.5);
-    basisvalues3[18] *= sqrt(4.5);
-    basisvalues3[7] *= sqrt(5.25);
-    basisvalues3[17] *= sqrt(6.75);
-    basisvalues3[16] *= sqrt(9.0);
-    basisvalues3[1] *= sqrt(7.5);
-    basisvalues3[6] *= sqrt(10.5);
-    basisvalues3[15] *= sqrt(13.5);
-    basisvalues3[5] *= sqrt(15.75);
-    basisvalues3[14] *= sqrt(20.25);
-    basisvalues3[13] *= sqrt(27.0);
-    basisvalues3[4] *= sqrt(26.25);
-    basisvalues3[12] *= sqrt(33.75);
-    basisvalues3[11] *= sqrt(45.0);
-    basisvalues3[10] *= sqrt(63.0);
-    // Accumulate products of coefficients and basisvalues
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip] += coefficients0[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 1] += coefficients1[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 2] += coefficients2[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 3] += coefficients3[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 4] += coefficients4[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 5] += coefficients5[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 6] += coefficients6[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 7] += coefficients7[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 8] += coefficients8[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 9] += coefficients9[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 10] += coefficients10[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 11] += coefficients11[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 12] += coefficients12[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 13] += coefficients13[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 14] += coefficients14[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 15] += coefficients15[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 16] += coefficients16[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 17] += coefficients17[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 18] += coefficients18[0][r] * basisvalues3[r];
-    for (int r = 0; r < 20; ++r)
-        reference_values[20 * ip + 19] += coefficients19[0][r] * basisvalues3[r];
-}
-return 0;
-}
-
-int evaluate_reference_basis_derivatives_element_546828c8d3d3a706cfb29da4de8c7144551ec821(double * restrict reference_values,
-                                          int order, int num_points,
-                                          const double * restrict X)
-{
-  if (order == 0)
-    return evaluate_reference_basis_element_546828c8d3d3a706cfb29da4de8c7144551ec821(reference_values, num_points, X);
-const int num_derivatives = pow(3, order);
-for (int l0 = 0; l0 < (num_points * 20) * num_derivatives; ++l0)
-    reference_values[l0] = 0.0;
-if (order > 3)
-    return 0;
-// Tables of derivatives of the polynomial base (transpose).
-static const double dmats0[3][20][20] =
-    { { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 6.3245553203367635, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 11.22497216032183, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 4.582575694955857, 0.0, 8.366600265340768, -1.1832159566199312, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 3.7416573867739524, 0.0, 0.0, 8.694826047713663, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 5.4990908339470135, 0.0, -3.3466401061363076, -2.3664319132398504, 15.491933384829666, 0.0, 0.0, 0.692820323027554, 0.5656854249492376, 0.3999999999999993, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 4.89897948556635, 0.0, 0.0, 0.0, 14.19859147943907, -0.8280786712108249, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 4.242640687119279, 0.0, 0.0, 0.0, 0.0, 14.342743312012725, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 3.6000000000000107, 0.0, 8.763560920082677, -1.5491933384829761, 0.0, 0.0, 0.0, 9.524704719832535, -1.4813121596360848, 0.2618614682831917, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 3.117691453623981, 0.0, 3.162277660168377, 4.919349550499534, 0.0, 0.0, 0.0, 0.0, 10.69044967649698, -2.4189726272590577, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 2.545584412271559, 0.0, 0.0, 7.668115805072278, 0.0, 0.0, 0.0, 0.0, 0.0, 10.369185117452583, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } },
-      { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 3.1622776601683817, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 5.477225575051667, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 2.958039891549808, 5.612486080160917, -1.0801234497346452, -0.7637626158259765, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 2.291287847477953, 7.245688373094728, 4.183300132670382, -0.5916079783099762, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 1.8708286933869762, 0.0, 0.0, 4.347413023856832, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { -2.6457513110646325, 0.0, 9.66091783079296, 0.6831300510639837, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 3.24037034920394, 0.0, 0.0, 7.52994023880668, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 2.749545416973476, 5.796550698475764, -1.6733200530681351, -1.1832159566199125, 7.7459666924148385, -1.1999999999999997, -0.9797958971132702, 0.34641016151377413, 0.28284271247461756, 0.1999999999999983, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 2.3237900077244555, 2.4494897427831805, 2.8284271247462054, -1.0, 9.165151389911685, 7.0992957397195315, -0.4140393356054134, -2.0493901531919265, -0.4780914437337611, 0.16903085094570489, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 2.0124611797498098, 2.1213203435596406, -0.40824829046386246, 3.1754264805429355, 0.0, 0.0, 7.171371656006361, 0.0, -1.3801311186847072, -1.5614401167176555, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 1.80000000000001, -5.692099788303113, 4.381780460041346, -0.7745966692414917, 0.0, 10.998181667893984, 0.9621404708847339, 4.762352359916273, -0.7406560798180449, 0.13093073414159653, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 1.55884572681199, 2.73861278752583, 1.581138830084191, 2.4596747752497667, 0.0, 0.0, 9.258200997725515, 0.0, 5.345224838248492, -1.2094863136295262, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 1.2727922061357742, 0.0, 0.0, 3.8340579025361397, 0.0, 0.0, 0.0, 0.0, 0.0, 5.184592558726291, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 5.196152422706657, 0.0, -3.1622776601684106, -2.236067977499801, 0.0, 0.0, 0.0, 13.747727084867517, 0.5345224838248522, 0.3779644730092289, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { -1.7999999999999916, 0.0, 3.651483716701069, -2.840187787218769, 0.0, 0.0, 0.0, 0.0, 12.344267996967345, 1.396594497510348, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 2.2045407685048555, 0.0, 0.0, 6.640783086353614, 0.0, 0.0, 0.0, 0.0, 0.0, 8.979977728257495, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } },
-      { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 3.1622776601683817, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 1.8257418583505554, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 5.163977794943229, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 2.958039891549808, 5.612486080160917, -1.0801234497346452, -0.7637626158259765, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 2.2912878474779164, 1.449137674618943, 4.183300132670376, -0.5916079783099626, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 1.8708286933870055, 7.099295739719542, 0.0, 4.34741302385683, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 1.3228756555323067, 0.0, 3.864367132317193, -0.3415650255319918, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 1.0801234497346277, 0.0, 7.099295739719544, 2.509980079602211, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { -3.818813079129919, 0.0, 0.0, 8.874119674649434, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 2.749545416973476, 5.796550698475764, -1.6733200530681351, -1.1832159566199125, 7.7459666924148385, -1.1999999999999997, -0.9797958971132702, 0.34641016151377413, 0.28284271247461756, 0.1999999999999983, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 2.32379000772446, 2.449489742783174, 2.828427124746206, -1.0, 1.3093073414159542, 7.099295739719533, -0.4140393356054121, -2.049390153191927, -0.4780914437337612, 0.16903085094570422, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 2.012461179749809, 2.1213203435596473, -0.4082482904638658, 3.175426480542933, 9.071147352221455, 0.0, 7.17137165600636, 0.0, -1.3801311186847072, -1.5614401167176546, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 1.8000000000000067, 0.6324555320336751, 4.381780460041343, -0.7745966692414886, 0.0, 3.142337619398289, -0.10690449676496944, 4.76235235991627, -0.7406560798180429, 0.1309307341415961, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 1.5588457268119862, 0.5477225575051662, 1.5811388300841955, 2.4596747752497654, 0.0, 9.071147352221452, 1.8516401995451037, 0.0, 5.34522483824849, -1.209486313629528, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 1.272792206135782, -6.260990336999447, 0.0, 3.8340579025361405, 0.0, 0.0, 10.58300524425831, 0.0, 0.0, 5.184592558726294, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 1.0392304845413278, 0.0, 3.162277660168364, -0.4472135954999614, 0.0, 0.0, 0.0, 5.891883036371792, -0.5345224838248454, 0.07559289460184619, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.8999999999999895, 0.0, 1.460593486680357, 1.4200938936093817, 0.0, 0.0, 0.0, 9.071147352221436, 4.93770719878695, -0.6982972487551767, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 0.7348469228349541, 0.0, -6.260990336999397, 2.2135943621178726, 0.0, 0.0, 0.0, 0.0, 10.583005244258365, 2.9933259094191658, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-        { 5.715767664977287, 0.0, 0.0, -4.695742752749565, 0.0, 0.0, 0.0, 0.0, 0.0, 12.699606293110026, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } } };
-static const double coefficients0[1][20] = { { 0.028867513459481395, 0.01304101327393252, 0.007529232524210424, 0.005323971374999505, 0.01829812636778498, 0.014173667737846025, 0.011572751247156883, 0.0081831708838497, 0.006681531047810613, 0.004724555912615332, -0.028347335475692043, -0.023957871187497756, -0.020748125068968316, -0.018557687223952252, -0.016071428571428577, -0.013122266479195604, -0.010714285714285694, -0.009278843611976118, -0.007576144084141582, -0.005357142857142854 } };
-static const double coefficients1[1][20] = { { 0.028867513459481325, -0.01304101327393252, 0.007529232524210435, 0.005323971374999493, 0.018298126367784984, -0.014173667737846004, -0.011572751247156903, 0.008183170883849717, 0.0066815310478106045, 0.004724555912615341, 0.028347335475692036, -0.02395787118749775, -0.020748125068968302, 0.018557687223952263, 0.016071428571428577, 0.013122266479195593, -0.010714285714285727, -0.00927884361197613, -0.007576144084141582, -0.0053571428571428555 } };
-static const double coefficients2[1][20] = { { 0.028867513459481357, 0.0, -0.015058465048420847, 0.005323971374999518, 0.0, 0.0, 0.0, 0.02454951265154914, -0.013363062095621228, 0.004724555912615358, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.04285714285714286, -0.02783653083592838, 0.015152288168283172, -0.005357142857142867 } };
-static const double coefficients3[1][20] = { { 0.028867513459481346, 0.0, 0.0, -0.01597191412499849, 0.0, 0.0, 0.0, 0.0, 0.0, 0.028347335475692025, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.05357142857142858 } };
-static const double coefficients4[1][20] = { { 0.0, 0.0, 0.11293848786315636, -0.06388765649999399, 0.0, 0.0, 0.0, 0.07364853795464742, 0.026726124191242408, -0.023622779563076714, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.06495190528383288, -0.06060915267313264, 0.026785714285714295 } };
-static const double coefficients5[1][20] = { { 0.0, 0.0, -0.022587697572631318, 0.127775312999988, 0.0, 0.0, 0.0, 0.0, 0.0668153104781061, 0.04724555912615342, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.07576144084141583, -0.05357142857142859 } };
-static const double coefficients6[1][20] = { { 0.0, 0.09780759955449386, -0.05646924393157822, -0.06388765649999405, 0.054894379103355, -0.04252100321353804, 0.02314550249431371, 0.02454951265154915, -0.013363062095621221, -0.023622779563076735, 0.0, 0.0, 0.04841229182759272, 0.0, -0.03749999999999999, -0.052489065916782374, 0.0, 0.021650635094610973, 0.030304576336566337, 0.026785714285714315 } };
-static const double coefficients7[1][20] = { { 0.0, -0.019561519910898797, 0.011293848786315657, 0.1277753129999881, 0.0, 0.0, 0.05786375623578449, 0.0, -0.03340765523905306, 0.047245559126153434, 0.0, 0.0, 0.0, 0.0, 0.0, 0.06561133239597798, 0.0, 0.0, -0.03788072042070792, -0.05357142857142861 } };
-static const double coefficients8[1][20] = { { 0.0, 0.09780759955449397, -0.0790569415042095, -0.031943828249996996, 0.054894379103354984, 0.014173667737845992, -0.04629100498862756, -0.02454951265154917, 0.01336306209562125, 0.023622779563076696, 0.0, 0.04791574237499548, -0.006916041689656098, -0.061858957413174216, -0.01607142857142855, 0.008748177652797052, 0.042857142857142885, 0.015464739353293533, 0.0, -0.005357142857142853 } };
-static const double coefficients9[1][20] = { { 0.0, -0.01956151991089882, 0.12423233664947207, -0.03194382824999699, 0.0, 0.0566946709513841, -0.0115727512471569, 0.02454951265154916, -0.04677071733467428, 0.023622779563076693, 0.0, 0.0, 0.0, 0.061858957413174216, -0.021428571428571443, 0.004374088826398529, -0.06428571428571431, 0.00927884361197613, 0.007576144084141585, -0.005357142857142857 } };
-static const double coefficients10[1][20] = { { 0.0, -0.09780759955449397, -0.05646924393157825, -0.063887656499994, 0.054894379103355005, 0.04252100321353805, -0.023145502494313793, 0.024549512651549178, -0.013363062095621242, -0.023622779563076693, 0.0, 0.0, 0.04841229182759272, 0.0, 0.037499999999999985, 0.05248906591678239, 0.0, 0.021650635094610984, 0.030304576336566337, 0.026785714285714295 } };
-static const double coefficients11[1][20] = { { 0.0, 0.019561519910898804, 0.011293848786315626, 0.12777531299998804, 0.0, 0.0, -0.05786375623578449, 0.0, -0.033407655239053057, 0.04724555912615341, 0.0, 0.0, 0.0, 0.0, 0.0, -0.065611332395978, 0.0, 0.0, -0.037880720420707906, -0.053571428571428596 } };
-static const double coefficients12[1][20] = { { 0.0, -0.09780759955449395, -0.07905694150420954, -0.031943828249996996, 0.054894379103355005, -0.014173667737846018, 0.04629100498862756, -0.02454951265154915, 0.013363062095621228, 0.02362277956307673, 0.0, 0.04791574237499549, -0.006916041689656096, 0.06185895741317418, 0.016071428571428563, -0.008748177652797059, 0.04285714285714287, 0.015464739353293537, 0.0, -0.005357142857142868 } };
-static const double coefficients13[1][20] = { { 0.0, 0.019561519910898804, 0.1242323366494721, -0.031943828249996996, 0.0, -0.056694670951384064, 0.011572751247156891, 0.024549512651549178, -0.046770717334674285, 0.023622779563076693, 0.0, 0.0, 0.0, -0.06185895741317419, 0.021428571428571436, -0.00437408882639853, -0.06428571428571431, 0.009278843611976145, 0.0075761440841415765, -0.005357142857142854 } };
-static const double coefficients14[1][20] = { { 0.0, -0.11736911946539276, -0.04517539514526251, -0.031943828249997024, -0.01829812636778497, 0.042521003213538064, 0.03471825374147069, 0.040915854419248575, 0.03340765523905305, 0.023622779563076728, 0.08504200642707613, 0.023957871187497745, 0.02074812506896832, -0.006185895741317408, -0.0053571428571428615, -0.004374088826398521, -0.010714285714285723, -0.009278843611976126, -0.007576144084141593, -0.005357142857142862 } };
-static const double coefficients15[1][20] = { { 0.0, 0.11736911946539276, -0.04517539514526254, -0.03194382824999699, -0.018298126367784988, -0.04252100321353806, -0.03471825374147069, 0.04091585441924859, 0.033407655239053057, 0.0236227795630767, -0.08504200642707613, 0.02395787118749776, 0.02074812506896831, 0.006185895741317415, 0.005357142857142853, 0.004374088826398524, -0.010714285714285723, -0.00927884361197613, -0.007576144084141589, -0.005357142857142858 } };
-static const double coefficients16[1][20] = { { 0.25980762113533173, 0.11736911946539268, 0.06776309271789385, 0.0479157423749955, 0.0, 0.0850420064270761, 0.06943650748294133, -0.07364853795464742, 0.04008918628686368, -0.09921567416492216, 0.0, 0.0, 0.0, 0.0, 0.075, -0.026244532958391176, 0.0, -0.06495190528383289, -0.01515228816828317, 0.02678571428571429 } };
-static const double coefficients17[1][20] = { { 0.2598076211353315, -0.1173691194653927, 0.0677630927178939, 0.04791574237499545, 0.0, -0.08504200642707616, -0.06943650748294135, -0.0736485379546474, 0.04008918628686368, -0.09921567416492216, 0.0, 0.0, 0.0, 0.0, -0.07500000000000002, 0.026244532958391194, 0.0, -0.06495190528383286, -0.015152288168283172, 0.026785714285714305 } };
-static const double coefficients18[1][20] = { { 0.2598076211353317, 0.0, -0.13552618543578765, 0.04791574237499548, -0.10978875820671, 0.0, 0.0, 0.024549512651549123, -0.0801783725737273, -0.09921567416492216, 0.0, 0.0, -0.09682458365518544, 0.0, 0.0, 0.0, 0.0, 0.021650635094610956, 0.03030457633656632, 0.026785714285714288 } };
-static const double coefficients19[1][20] = { { 0.25980762113533157, 0.0, 0.0, -0.14374722712498647, -0.10978875820671001, 0.0, 0.0, -0.12274756325774572, 0.0, 0.042521003213538064, 0.0, -0.095831484749991, 0.013832083379312196, 0.0, 0.0, 0.0, 0.04285714285714288, 0.015464739353293547, 0.0, -0.005357142857142852 } };
-const int reference_offset[20] = { 0 };
-const int num_components[20] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-// Precomputed combinations
-const int combinations[3][27][3] =
-    { { { 0, 0, 0 },
-        { 1, 0, 0 },
-        { 2, 0, 0 },
-        { 0, 0, 0 },
-        { 1, 0, 0 },
-        { 2, 0, 0 },
-        { 0, 0, 0 },
-        { 1, 0, 0 },
-        { 2, 0, 0 },
-        { 0, 0, 0 },
-        { 1, 0, 0 },
-        { 2, 0, 0 },
-        { 0, 0, 0 },
-        { 1, 0, 0 },
-        { 2, 0, 0 },
-        { 0, 0, 0 },
-        { 1, 0, 0 },
-        { 2, 0, 0 },
-        { 0, 0, 0 },
-        { 1, 0, 0 },
-        { 2, 0, 0 },
-        { 0, 0, 0 },
-        { 1, 0, 0 },
-        { 2, 0, 0 },
-        { 0, 0, 0 },
-        { 1, 0, 0 },
-        { 2, 0, 0 } },
-      { { 0, 0, 0 },
-        { 0, 1, 0 },
-        { 0, 2, 0 },
-        { 1, 0, 0 },
-        { 1, 1, 0 },
-        { 1, 2, 0 },
-        { 2, 0, 0 },
-        { 2, 1, 0 },
-        { 2, 2, 0 },
-        { 0, 0, 0 },
-        { 0, 1, 0 },
-        { 0, 2, 0 },
-        { 1, 0, 0 },
-        { 1, 1, 0 },
-        { 1, 2, 0 },
-        { 2, 0, 0 },
-        { 2, 1, 0 },
-        { 2, 2, 0 },
-        { 0, 0, 0 },
-        { 0, 1, 0 },
-        { 0, 2, 0 },
-        { 1, 0, 0 },
-        { 1, 1, 0 },
-        { 1, 2, 0 },
-        { 2, 0, 0 },
-        { 2, 1, 0 },
-        { 2, 2, 0 } },
-      { { 0, 0, 0 },
-        { 0, 0, 1 },
-        { 0, 0, 2 },
-        { 0, 1, 0 },
-        { 0, 1, 1 },
-        { 0, 1, 2 },
-        { 0, 2, 0 },
-        { 0, 2, 1 },
-        { 0, 2, 2 },
-        { 1, 0, 0 },
-        { 1, 0, 1 },
-        { 1, 0, 2 },
-        { 1, 1, 0 },
-        { 1, 1, 1 },
-        { 1, 1, 2 },
-        { 1, 2, 0 },
-        { 1, 2, 1 },
-        { 1, 2, 2 },
-        { 2, 0, 0 },
-        { 2, 0, 1 },
-        { 2, 0, 2 },
-        { 2, 1, 0 },
-        { 2, 1, 1 },
-        { 2, 1, 2 },
-        { 2, 2, 0 },
-        { 2, 2, 1 },
-        { 2, 2, 2 } } };
-for (int ip = 0; ip < num_points; ++ip)
-{
-    // Compute basisvalues for each relevant embedded degree
-    double basisvalues3[20] = { 0 };
-    basisvalues3[0] = 1.0;
-    const double tmp1_3 = 0.5 * (((2.0 + 2.0 * (2 * X[ip * 3] - 1)) + (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1));
-    basisvalues3[1] = tmp1_3;
-    const double tmp2_3 = (0.25 * ((2 * X[ip * 3 + 1] - 1) + (2 * X[ip * 3 + 2] - 1))) * ((2 * X[ip * 3 + 1] - 1) + (2 * X[ip * 3 + 2] - 1));
-    basisvalues3[4] = (1.5 * tmp1_3) * basisvalues3[1] - (0.5 * tmp2_3) * basisvalues3[0];
-    basisvalues3[10] = (1.6666666666666667 * tmp1_3) * basisvalues3[4] - (0.6666666666666666 * tmp2_3) * basisvalues3[1];
-    basisvalues3[2] = (0.5 * ((2.0 + 3.0 * (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1))) * basisvalues3[0];
-    basisvalues3[5] = (0.5 * ((2.0 + 3.0 * (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1)) + (1.0 + (2 * X[ip * 3 + 1] - 1))) * basisvalues3[1];
-    basisvalues3[11] = (0.5 * ((2.0 + 3.0 * (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1)) + 2.0 * (1.0 + (2 * X[ip * 3 + 1] - 1))) * basisvalues3[4];
-    const double tmp3_3 = 0.5 * ((1.0 + 2.0 * (2 * X[ip * 3 + 1] - 1)) + (2 * X[ip * 3 + 2] - 1));
-    const double tmp4_3 = 0.5 * (1.0 - (2 * X[ip * 3 + 2] - 1));
-    const double tmp5_3 = tmp4_3 * tmp4_3;
-    basisvalues3[7] = (1.6666666666666667 * tmp3_3 + 0.1111111111111111 * tmp4_3) * basisvalues3[2] - (0.5555555555555556 * tmp5_3) * basisvalues3[0];
-    basisvalues3[16] = (1.75 * tmp3_3 + 0.05 * tmp4_3) * basisvalues3[7] - (0.7 * tmp5_3) * basisvalues3[2];
-    basisvalues3[13] = (2.1 * tmp3_3 + 0.54 * tmp4_3) * basisvalues3[5] - (0.56 * tmp5_3) * basisvalues3[1];
-    basisvalues3[3] = (2.0 * (2 * X[ip * 3 + 2] - 1) + 1.0) * basisvalues3[0];
-    basisvalues3[8] = (3.0 * (2 * X[ip * 3 + 2] - 1) + 2.0) * basisvalues3[2];
-    basisvalues3[17] = (4.0 * (2 * X[ip * 3 + 2] - 1) + 3.0) * basisvalues3[7];
-    basisvalues3[6] = (3.0 * (2 * X[ip * 3 + 2] - 1) + 2.0) * basisvalues3[1];
-    basisvalues3[14] = (4.0 * (2 * X[ip * 3 + 2] - 1) + 3.0) * basisvalues3[5];
-    basisvalues3[12] = (4.0 * (2 * X[ip * 3 + 2] - 1) + 3.0) * basisvalues3[4];
-    basisvalues3[9] = (0.3125 + 1.875 * (2 * X[ip * 3 + 2] - 1)) * basisvalues3[3] - 0.5625 * basisvalues3[0];
-    basisvalues3[19] = (0.15555555555555556 + 1.8666666666666667 * (2 * X[ip * 3 + 2] - 1)) * basisvalues3[9] - 0.7111111111111111 * basisvalues3[3];
-    basisvalues3[18] = (0.7777777777777778 + 2.3333333333333335 * (2 * X[ip * 3 + 2] - 1)) * basisvalues3[8] - 0.5555555555555556 * basisvalues3[2];
-    basisvalues3[15] = (0.7777777777777778 + 2.3333333333333335 * (2 * X[ip * 3 + 2] - 1)) * basisvalues3[6] - 0.5555555555555556 * basisvalues3[1];
-    basisvalues3[0] *= sqrt(0.75);
-    basisvalues3[3] *= sqrt(1.25);
-    basisvalues3[9] *= sqrt(1.75);
-    basisvalues3[19] *= sqrt(2.25);
-    basisvalues3[2] *= sqrt(2.5);
-    basisvalues3[8] *= sqrt(3.5);
-    basisvalues3[18] *= sqrt(4.5);
-    basisvalues3[7] *= sqrt(5.25);
-    basisvalues3[17] *= sqrt(6.75);
-    basisvalues3[16] *= sqrt(9.0);
-    basisvalues3[1] *= sqrt(7.5);
-    basisvalues3[6] *= sqrt(10.5);
-    basisvalues3[15] *= sqrt(13.5);
-    basisvalues3[5] *= sqrt(15.75);
-    basisvalues3[14] *= sqrt(20.25);
-    basisvalues3[13] *= sqrt(27.0);
-    basisvalues3[4] *= sqrt(26.25);
-    basisvalues3[12] *= sqrt(33.75);
-    basisvalues3[11] *= sqrt(45.0);
-    basisvalues3[10] *= sqrt(63.0);
-    // Loop over all dofs
-    for (int i = 0; i < 20; ++i)
-    {
-        double derivatives[27] = { 0 };
-        switch (i)
-        {
-        case 0:
-            // Compute reference derivatives for dof 0.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients0[0][s] * aux[s];
-            }
-            break;
-        case 1:
-            // Compute reference derivatives for dof 1.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients1[0][s] * aux[s];
-            }
-            break;
-        case 2:
-            // Compute reference derivatives for dof 2.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients2[0][s] * aux[s];
-            }
-            break;
-        case 3:
-            // Compute reference derivatives for dof 3.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients3[0][s] * aux[s];
-            }
-            break;
-        case 4:
-            // Compute reference derivatives for dof 4.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients4[0][s] * aux[s];
-            }
-            break;
-        case 5:
-            // Compute reference derivatives for dof 5.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients5[0][s] * aux[s];
-            }
-            break;
-        case 6:
-            // Compute reference derivatives for dof 6.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients6[0][s] * aux[s];
-            }
-            break;
-        case 7:
-            // Compute reference derivatives for dof 7.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients7[0][s] * aux[s];
-            }
-            break;
-        case 8:
-            // Compute reference derivatives for dof 8.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients8[0][s] * aux[s];
-            }
-            break;
-        case 9:
-            // Compute reference derivatives for dof 9.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients9[0][s] * aux[s];
-            }
-            break;
-        case 10:
-            // Compute reference derivatives for dof 10.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients10[0][s] * aux[s];
-            }
-            break;
-        case 11:
-            // Compute reference derivatives for dof 11.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients11[0][s] * aux[s];
-            }
-            break;
-        case 12:
-            // Compute reference derivatives for dof 12.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients12[0][s] * aux[s];
-            }
-            break;
-        case 13:
-            // Compute reference derivatives for dof 13.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients13[0][s] * aux[s];
-            }
-            break;
-        case 14:
-            // Compute reference derivatives for dof 14.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients14[0][s] * aux[s];
-            }
-            break;
-        case 15:
-            // Compute reference derivatives for dof 15.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients15[0][s] * aux[s];
-            }
-            break;
-        case 16:
-            // Compute reference derivatives for dof 16.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients16[0][s] * aux[s];
-            }
-            break;
-        case 17:
-            // Compute reference derivatives for dof 17.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients17[0][s] * aux[s];
-            }
-            break;
-        case 18:
-            // Compute reference derivatives for dof 18.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients18[0][s] * aux[s];
-            }
-            break;
-        case 19:
-            // Compute reference derivatives for dof 19.
-            for (int r = 0; r < num_derivatives; ++r)
-            {
-                double aux[20] = { 0 };
-                // Declare derivative matrix (of polynomial basis).
-                double dmats[20][20] = {{ 0 }};
-                // Initialize dmats.
-                int comb = combinations[order - 1][r][0];
-                memcpy(&dmats[0][0], &dmats0[comb][0][0], 400*sizeof(double));
-                // Looping derivative order to generate dmats.
-                for (int s = 1; s < order; ++s)
-                {
-                    // Store previous dmats matrix.
-                    double dmats_old[20][20];
-                    memcpy(&dmats_old[0][0], &dmats[0][0], 400*sizeof(double));
-                    // Resetting dmats.
-                    for (int l0 = 0; l0 < 20; ++l0)
-                        for (int l1 = 0; l1 < 20; ++l1)
-                            dmats[l0][l1] = 0.0;
-                    // Update dmats using an inner product.
-                    comb = combinations[order - 1][r][s];
-                    for (int t = 0; t < 20; ++t)
-                        for (int u = 0; u < 20; ++u)
-                            for (int tu = 0; tu < 20; ++tu)
-                                dmats[t][u] += dmats0[comb][t][tu] * dmats_old[tu][u];
-                }
-                for (int s = 0; s < 20; ++s)
-                    for (int t = 0; t < 20; ++t)
-                        aux[s] += dmats[s][t] * basisvalues3[t];
-                derivatives[r] = 0.0;
-                for (int s = 0; s < 20; ++s)
-                    derivatives[r] += coefficients19[0][s] * aux[s];
-            }
-            break;
-        }
-        for (int r = 0; r < num_derivatives; ++r)
-            for (int c = 0; c < num_components[i]; ++c)
-                reference_values[(((20 * num_derivatives) * ip + num_derivatives * i) + r) + (reference_offset[i] + c)] = derivatives[num_derivatives * c + r];
-    }
-}
-return 0;
-}
-
-int transform_reference_basis_derivatives_element_546828c8d3d3a706cfb29da4de8c7144551ec821(
+int transform_reference_basis_derivatives_element_428b642cdbd29d9b27503f3b645dc2918edc7850(
     double * restrict values, int order, int num_points,
     const double * restrict reference_values,
     const double * restrict X, const double * restrict J,
-    const double * restrict detJ, const double * restrict K,
-    const uint32_t cell_permutation)
+    const double * restrict detJ, const double * restrict K)
 {
   const int num_derivatives = pow(3, order);
 // Precomputed combinations
@@ -1938,8 +371,6 @@ const int combinations[3][27][3] =
         { 2, 2, 2 } } };
 for (int l = 0; l < (num_points * 20) * num_derivatives; ++l)
     values[l] = 0.0;
-const int reference_offsets[20] = { 0 };
-const int physical_offsets[20] = { 0 };
 for (int ip = 0; ip < num_points; ++ip)
 {
     double transform[27][27];
@@ -1957,10 +388,10 @@ for (int ip = 0; ip < num_points; ++ip)
             for (int i = 0; i < 1; ++i)
             {
                 // Using affine transform to map values back to the physical element.
-                const double mapped_value = reference_values[(((20 * num_derivatives) * ip + num_derivatives * d) + s) + reference_offsets[d]];
+                const double mapped_value = reference_values[((20 * num_derivatives) * ip + num_derivatives * d) + s];
                 // Mapping derivatives back to the physical element
                 for (int r = 0; r < num_derivatives; ++r)
-                    values[(((20 * num_derivatives) * ip + num_derivatives * d) + r) + (physical_offsets[d] + i)] += transform[r][s] * mapped_value;
+                    values[(((20 * num_derivatives) * ip + num_derivatives * d) + r) + i] += transform[r][s] * mapped_value;
             }
         }
     }
@@ -1969,49 +400,150 @@ for (int ip = 0; ip < num_points; ++ip)
 return 0;
 }
 
-int transform_values_element_546828c8d3d3a706cfb29da4de8c7144551ec821(
-     ufc_scalar_t* restrict reference_values,
-     const ufc_scalar_t* restrict physical_values,
-     const double* restrict coordinate_dofs,
-     const ufc_coordinate_mapping* restrict cm)
+
+int apply_dof_transformation_element_428b642cdbd29d9b27503f3b645dc2918edc7850(
+     double* restrict data, uint32_t cell_permutation, int dim)
 {
-  reference_values[0] = physical_values[0];
-reference_values[1] = physical_values[1];
-reference_values[2] = physical_values[2];
-reference_values[3] = physical_values[3];
-reference_values[4] = physical_values[4];
-reference_values[5] = physical_values[5];
-reference_values[6] = physical_values[6];
-reference_values[7] = physical_values[7];
-reference_values[8] = physical_values[8];
-reference_values[9] = physical_values[9];
-reference_values[10] = physical_values[10];
-reference_values[11] = physical_values[11];
-reference_values[12] = physical_values[12];
-reference_values[13] = physical_values[13];
-reference_values[14] = physical_values[14];
-reference_values[15] = physical_values[15];
-reference_values[16] = physical_values[16];
-reference_values[17] = physical_values[17];
-reference_values[18] = physical_values[18];
-reference_values[19] = physical_values[19];
+  double t0 = 0;
+double t1 = 0;
+if ((cell_permutation & 1 << 12) != 0)
+{
+    for (int block = 0; block < dim; ++block)
+    {
+        t0 = data[5 * dim + block];
+        t1 = data[4 * dim + block];
+        data[4 * dim + block] = t0;
+        data[5 * dim + block] = t1;
+    }
+}
+if ((cell_permutation & 1 << 13) != 0)
+{
+    for (int block = 0; block < dim; ++block)
+    {
+        t0 = data[7 * dim + block];
+        t1 = data[6 * dim + block];
+        data[6 * dim + block] = t0;
+        data[7 * dim + block] = t1;
+    }
+}
+if ((cell_permutation & 1 << 14) != 0)
+{
+    for (int block = 0; block < dim; ++block)
+    {
+        t0 = data[9 * dim + block];
+        t1 = data[8 * dim + block];
+        data[8 * dim + block] = t0;
+        data[9 * dim + block] = t1;
+    }
+}
+if ((cell_permutation & 1 << 15) != 0)
+{
+    for (int block = 0; block < dim; ++block)
+    {
+        t0 = data[11 * dim + block];
+        t1 = data[10 * dim + block];
+        data[10 * dim + block] = t0;
+        data[11 * dim + block] = t1;
+    }
+}
+if ((cell_permutation & 1 << 16) != 0)
+{
+    for (int block = 0; block < dim; ++block)
+    {
+        t0 = data[13 * dim + block];
+        t1 = data[12 * dim + block];
+        data[12 * dim + block] = t0;
+        data[13 * dim + block] = t1;
+    }
+}
+if ((cell_permutation & 1 << 17) != 0)
+{
+    for (int block = 0; block < dim; ++block)
+    {
+        t0 = data[15 * dim + block];
+        t1 = data[14 * dim + block];
+        data[14 * dim + block] = t0;
+        data[15 * dim + block] = t1;
+    }
+}
 return 0;
 }
 
-int tabulate_reference_dof_coordinates_element_546828c8d3d3a706cfb29da4de8c7144551ec821(double* restrict reference_dof_coordinates)
+int apply_dof_transformation_to_scalar_element_428b642cdbd29d9b27503f3b645dc2918edc7850(
+     ufc_scalar_t* restrict data, uint32_t cell_permutation, int dim)
 {
-  static const double dof_X[60] = { 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.6666666666666667, 0.3333333333333333, 0.0, 0.33333333333333337, 0.6666666666666666, 0.6666666666666667, 0.0, 0.3333333333333333, 0.33333333333333337, 0.0, 0.6666666666666666, 0.6666666666666667, 0.3333333333333333, 0.0, 0.33333333333333337, 0.6666666666666666, 0.0, 0.0, 0.0, 0.3333333333333333, 0.0, 0.0, 0.6666666666666666, 0.0, 0.3333333333333333, 0.0, 0.0, 0.6666666666666666, 0.0, 0.3333333333333333, 0.0, 0.0, 0.6666666666666666, 0.0, 0.0, 0.33333333333333337, 0.3333333333333333, 0.3333333333333333, 0.0, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 0.0, 0.3333333333333333, 0.3333333333333333, 0.3333333333333333, 0.0 };
-memcpy(reference_dof_coordinates, dof_X, 60*sizeof(double));
+  ufc_scalar_t t0 = 0;
+ufc_scalar_t t1 = 0;
+if ((cell_permutation & 1 << 12) != 0)
+{
+    for (int block = 0; block < dim; ++block)
+    {
+        t0 = data[5 * dim + block];
+        t1 = data[4 * dim + block];
+        data[4 * dim + block] = t0;
+        data[5 * dim + block] = t1;
+    }
+}
+if ((cell_permutation & 1 << 13) != 0)
+{
+    for (int block = 0; block < dim; ++block)
+    {
+        t0 = data[7 * dim + block];
+        t1 = data[6 * dim + block];
+        data[6 * dim + block] = t0;
+        data[7 * dim + block] = t1;
+    }
+}
+if ((cell_permutation & 1 << 14) != 0)
+{
+    for (int block = 0; block < dim; ++block)
+    {
+        t0 = data[9 * dim + block];
+        t1 = data[8 * dim + block];
+        data[8 * dim + block] = t0;
+        data[9 * dim + block] = t1;
+    }
+}
+if ((cell_permutation & 1 << 15) != 0)
+{
+    for (int block = 0; block < dim; ++block)
+    {
+        t0 = data[11 * dim + block];
+        t1 = data[10 * dim + block];
+        data[10 * dim + block] = t0;
+        data[11 * dim + block] = t1;
+    }
+}
+if ((cell_permutation & 1 << 16) != 0)
+{
+    for (int block = 0; block < dim; ++block)
+    {
+        t0 = data[13 * dim + block];
+        t1 = data[12 * dim + block];
+        data[12 * dim + block] = t0;
+        data[13 * dim + block] = t1;
+    }
+}
+if ((cell_permutation & 1 << 17) != 0)
+{
+    for (int block = 0; block < dim; ++block)
+    {
+        t0 = data[15 * dim + block];
+        t1 = data[14 * dim + block];
+        data[14 * dim + block] = t0;
+        data[15 * dim + block] = t1;
+    }
+}
 return 0;
 }
 
 
-ufc_finite_element* create_sub_element_element_546828c8d3d3a706cfb29da4de8c7144551ec821(int i)
+ufc_finite_element* create_sub_element_element_428b642cdbd29d9b27503f3b645dc2918edc7850(int i)
 {
   return NULL;
 }
 
-ufc_finite_element* create_element_546828c8d3d3a706cfb29da4de8c7144551ec821(void)
+ufc_finite_element* create_element_428b642cdbd29d9b27503f3b645dc2918edc7850(void)
 {
   ufc_finite_element* element = (ufc_finite_element*)malloc(sizeof(*element));
 
@@ -2021,31 +553,33 @@ ufc_finite_element* create_element_546828c8d3d3a706cfb29da4de8c7144551ec821(void
   element->geometric_dimension = 3;
   element->space_dimension = 20;
   element->value_rank = 0;
-  element->value_dimension = value_dimension_element_546828c8d3d3a706cfb29da4de8c7144551ec821;
+  element->value_dimension = value_dimension_element_428b642cdbd29d9b27503f3b645dc2918edc7850;
   element->value_size = 1;
   element->reference_value_rank = 0;
-  element->reference_value_dimension = reference_value_dimension_element_546828c8d3d3a706cfb29da4de8c7144551ec821;
+  element->reference_value_dimension = reference_value_dimension_element_428b642cdbd29d9b27503f3b645dc2918edc7850;
   element->reference_value_size = 1;
   element->degree = 3;
   element->family = "Lagrange";
   element->block_size = 1;
-  element->evaluate_reference_basis = evaluate_reference_basis_element_546828c8d3d3a706cfb29da4de8c7144551ec821;
-  element->evaluate_reference_basis_derivatives = evaluate_reference_basis_derivatives_element_546828c8d3d3a706cfb29da4de8c7144551ec821;
-  element->transform_reference_basis_derivatives = transform_reference_basis_derivatives_element_546828c8d3d3a706cfb29da4de8c7144551ec821;
-  element->transform_values = transform_values_element_546828c8d3d3a706cfb29da4de8c7144551ec821;
-  element->tabulate_reference_dof_coordinates = tabulate_reference_dof_coordinates_element_546828c8d3d3a706cfb29da4de8c7144551ec821;
+
+  element->needs_permutation_data = 1;
+  element->interpolation_is_identity = 1;
+
+  element->transform_reference_basis_derivatives = transform_reference_basis_derivatives_element_428b642cdbd29d9b27503f3b645dc2918edc7850;
+  element->apply_dof_transformation = apply_dof_transformation_element_428b642cdbd29d9b27503f3b645dc2918edc7850;
+  element->apply_dof_transformation_to_scalar = apply_dof_transformation_to_scalar_element_428b642cdbd29d9b27503f3b645dc2918edc7850;
   element->num_sub_elements = 0;
-  element->create_sub_element = create_sub_element_element_546828c8d3d3a706cfb29da4de8c7144551ec821;
-  element->create = create_element_546828c8d3d3a706cfb29da4de8c7144551ec821;
+  element->create_sub_element = create_sub_element_element_428b642cdbd29d9b27503f3b645dc2918edc7850;
+  element->create = create_element_428b642cdbd29d9b27503f3b645dc2918edc7850;
 
   return element;
 }
 
-// End of code for element element_546828c8d3d3a706cfb29da4de8c7144551ec821
+// End of code for element element_428b642cdbd29d9b27503f3b645dc2918edc7850
 
-// Code for dofmap dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f
+// Code for dofmap dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686
 
-void tabulate_entity_dofs_dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f(int* restrict dofs, int d, int i)
+void tabulate_entity_dofs_dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686(int* restrict dofs, int d, int i)
 {
 switch (d)
 {
@@ -2070,12 +604,12 @@ case 0:
 }
 
 
-ufc_dofmap* create_sub_dofmap_dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f(int i)
+ufc_dofmap* create_sub_dofmap_dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686(int i)
 {
 return NULL;
 }
 
-ufc_dofmap* create_dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f(void)
+ufc_dofmap* create_dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686(void)
 {
   ufc_dofmap* dofmap = (ufc_dofmap*)malloc(sizeof(*dofmap));
   dofmap->signature = "FFCX dofmap for FiniteElement('Lagrange', tetrahedron, 1)";
@@ -2086,24 +620,19 @@ ufc_dofmap* create_dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f(void)
   dofmap->num_entity_dofs[1] = 0;
   dofmap->num_entity_dofs[2] = 0;
   dofmap->num_entity_dofs[3] = 0;
-  dofmap->tabulate_entity_dofs = tabulate_entity_dofs_dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
+  dofmap->tabulate_entity_dofs = tabulate_entity_dofs_dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686;
   dofmap->num_sub_dofmaps = 0;
-  dofmap->create_sub_dofmap = create_sub_dofmap_dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
-  dofmap->create = create_dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
-
-  dofmap->size_base_permutations = 56;
-  static const int bp[56] = {0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3};
-  dofmap->base_permutations = bp;
-
+  dofmap->create_sub_dofmap = create_sub_dofmap_dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686;
+  dofmap->create = create_dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686;
 
   return dofmap;
 }
 
-// End of code for dofmap dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f
+// End of code for dofmap dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686
 
-// Code for dofmap dofmap_894eecfafddbd52dd198bd28585609e03ee06c40
+// Code for dofmap dofmap_445ef1924184cca3ac2920e3df00b14f41104dec
 
-void tabulate_entity_dofs_dofmap_894eecfafddbd52dd198bd28585609e03ee06c40(int* restrict dofs, int d, int i)
+void tabulate_entity_dofs_dofmap_445ef1924184cca3ac2920e3df00b14f41104dec(int* restrict dofs, int d, int i)
 {
 switch (d)
 {
@@ -2127,24 +656,24 @@ case 0:
 }
 }
 
-ufc_dofmap* create_dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f(void);
+ufc_dofmap* create_dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686(void);
 
-ufc_dofmap* create_sub_dofmap_dofmap_894eecfafddbd52dd198bd28585609e03ee06c40(int i)
+ufc_dofmap* create_sub_dofmap_dofmap_445ef1924184cca3ac2920e3df00b14f41104dec(int i)
 {
 switch (i)
 {
 case 0:
-    return create_dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f();
+    return create_dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686();
 case 1:
-    return create_dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f();
+    return create_dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686();
 case 2:
-    return create_dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f();
+    return create_dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686();
 default:
     return NULL;
 }
 }
 
-ufc_dofmap* create_dofmap_894eecfafddbd52dd198bd28585609e03ee06c40(void)
+ufc_dofmap* create_dofmap_445ef1924184cca3ac2920e3df00b14f41104dec(void)
 {
   ufc_dofmap* dofmap = (ufc_dofmap*)malloc(sizeof(*dofmap));
   dofmap->signature = "FFCX dofmap for VectorElement(FiniteElement('Lagrange', tetrahedron, 1), dim=3)";
@@ -2155,24 +684,19 @@ ufc_dofmap* create_dofmap_894eecfafddbd52dd198bd28585609e03ee06c40(void)
   dofmap->num_entity_dofs[1] = 0;
   dofmap->num_entity_dofs[2] = 0;
   dofmap->num_entity_dofs[3] = 0;
-  dofmap->tabulate_entity_dofs = tabulate_entity_dofs_dofmap_894eecfafddbd52dd198bd28585609e03ee06c40;
+  dofmap->tabulate_entity_dofs = tabulate_entity_dofs_dofmap_445ef1924184cca3ac2920e3df00b14f41104dec;
   dofmap->num_sub_dofmaps = 3;
-  dofmap->create_sub_dofmap = create_sub_dofmap_dofmap_894eecfafddbd52dd198bd28585609e03ee06c40;
-  dofmap->create = create_dofmap_894eecfafddbd52dd198bd28585609e03ee06c40;
-
-  dofmap->size_base_permutations = 56;
-  static const int bp[56] = {0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3};
-  dofmap->base_permutations = bp;
-
+  dofmap->create_sub_dofmap = create_sub_dofmap_dofmap_445ef1924184cca3ac2920e3df00b14f41104dec;
+  dofmap->create = create_dofmap_445ef1924184cca3ac2920e3df00b14f41104dec;
 
   return dofmap;
 }
 
-// End of code for dofmap dofmap_894eecfafddbd52dd198bd28585609e03ee06c40
+// End of code for dofmap dofmap_445ef1924184cca3ac2920e3df00b14f41104dec
 
-// Code for dofmap dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821
+// Code for dofmap dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850
 
-void tabulate_entity_dofs_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821(int* restrict dofs, int d, int i)
+void tabulate_entity_dofs_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850(int* restrict dofs, int d, int i)
 {
 switch (d)
 {
@@ -2243,12 +767,12 @@ case 2:
 }
 
 
-ufc_dofmap* create_sub_dofmap_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821(int i)
+ufc_dofmap* create_sub_dofmap_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850(int i)
 {
 return NULL;
 }
 
-ufc_dofmap* create_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821(void)
+ufc_dofmap* create_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850(void)
 {
   ufc_dofmap* dofmap = (ufc_dofmap*)malloc(sizeof(*dofmap));
   dofmap->signature = "FFCX dofmap for FiniteElement('Lagrange', tetrahedron, 3)";
@@ -2259,50 +783,58 @@ ufc_dofmap* create_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821(void)
   dofmap->num_entity_dofs[1] = 2;
   dofmap->num_entity_dofs[2] = 1;
   dofmap->num_entity_dofs[3] = 0;
-  dofmap->tabulate_entity_dofs = tabulate_entity_dofs_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821;
+  dofmap->tabulate_entity_dofs = tabulate_entity_dofs_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850;
   dofmap->num_sub_dofmaps = 0;
-  dofmap->create_sub_dofmap = create_sub_dofmap_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821;
-  dofmap->create = create_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821;
-
-  dofmap->size_base_permutations = 280;
-  static const int bp[280] = {0,1,2,3,5,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,0,1,2,3,4,5,7,6,8,9,10,11,12,13,14,15,16,17,18,19,0,1,2,3,4,5,6,7,9,8,10,11,12,13,14,15,16,17,18,19,0,1,2,3,4,5,6,7,8,9,11,10,12,13,14,15,16,17,18,19,0,1,2,3,4,5,6,7,8,9,10,11,13,12,14,15,16,17,18,19,0,1,2,3,4,5,6,7,8,9,10,11,12,13,15,14,16,17,18,19,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19};
-  dofmap->base_permutations = bp;
-
+  dofmap->create_sub_dofmap = create_sub_dofmap_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850;
+  dofmap->create = create_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850;
 
   return dofmap;
 }
 
-// End of code for dofmap dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821
+// End of code for dofmap dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850
 
-// Code for coordinate mapping coordinate_mapping_ca6860ef5739dc6bf7913612e9e04487ca134710
+// Code for coordinate mapping coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd
 
-ufc_coordinate_mapping* create_coordinate_mapping_ca6860ef5739dc6bf7913612e9e04487ca134710(void)
+int permute_dofs_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd(int* dof_list, const uint32_t cell_permutation)
+{
+  return 0;
+}
+
+int unpermute_dofs_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd(int* dof_list, const uint32_t cell_permutation)
+{
+  return 0;
+}
+
+ufc_coordinate_mapping* create_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd(void)
 {
   ufc_coordinate_mapping* cmap = (ufc_coordinate_mapping*)malloc(sizeof(*cmap));
   cmap->signature = "FFCX coordinate_mapping from VectorElement(FiniteElement('Lagrange', tetrahedron, 1), dim=3)";
-  cmap->create = create_coordinate_mapping_ca6860ef5739dc6bf7913612e9e04487ca134710;
+  cmap->element_family = "Lagrange";
+  cmap->element_degree = 1;
+  cmap->create = create_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd;
   cmap->geometric_dimension = 3;
   cmap->topological_dimension = 3;
   cmap->is_affine = 1;
+  cmap->needs_permutation_data = 0;
+  cmap->permute_dofs = permute_dofs_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd;
+  cmap->unpermute_dofs = unpermute_dofs_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd;
   cmap->cell_shape = tetrahedron;
-  cmap->create_scalar_dofmap = create_dofmap_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
-  cmap->evaluate_basis_derivatives = evaluate_reference_basis_derivatives_element_cfc8183014a13694f6df7ac81b3308da1bed2b3f;
+  cmap->create_scalar_dofmap = create_dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686;
   return cmap;
 }
 
 ufc_coordinate_mapping* create_coordinate_map_problem(void)
 {
-  return create_coordinate_mapping_ca6860ef5739dc6bf7913612e9e04487ca134710();
+  return create_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd();
 }
 
+// End of code for coordinate mapping coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd
+#define tabulate_cell_a tabulate_tensor_integral_cell_otherwise_726e602d497be77b561b62144fa710a5219a470c
 
-// End of code for coordinate mapping coordinate_mapping_ca6860ef5739dc6bf7913612e9e04487ca134710
-#define tabulate_cell_a tabulate_tensor_integral_cell_otherwise_32dfa35028340e7d6c012f81fa6d228b6edd4b97
-
-// Code for integral integral_cell_otherwise_32dfa35028340e7d6c012f81fa6d228b6edd4b97
+// Code for integral integral_cell_otherwise_726e602d497be77b561b62144fa710a5219a470c
 
 
-void tabulate_tensor_integral_cell_otherwise_32dfa35028340e7d6c012f81fa6d228b6edd4b97(ufc_scalar_t* restrict A,
+void tabulate_tensor_integral_cell_otherwise_726e602d497be77b561b62144fa710a5219a470c(ufc_scalar_t* restrict A,
                                     const ufc_scalar_t* restrict w,
                                     const ufc_scalar_t* restrict c,
                                     const double* restrict coordinate_dofs,
@@ -2311,263 +843,679 @@ void tabulate_tensor_integral_cell_otherwise_32dfa35028340e7d6c012f81fa6d228b6ed
                                     const uint32_t cell_permutation)
 {
     // Quadrature rules
-    static const double weights_818[24] = { 0.006653791709694649, 0.006653791709694649, 0.006653791709694649, 0.006653791709694649, 0.001679535175886783, 0.001679535175886783, 0.001679535175886783, 0.001679535175886783, 0.009226196923942399, 0.009226196923942399, 0.009226196923942399, 0.009226196923942399, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283 };
+    static const double weights_738[64] = { 0.002613459007507403, 0.003381089578564919, 0.001617588723434511, 0.000243985421620605, 0.00392412678076308, 0.005076729393991831, 0.002428820659384972, 0.0003663457985554325, 0.002504309443009022, 0.003239880378814601, 0.001550031090353912, 0.0002337955152791077, 0.0006013729287201761, 0.0007780094259316945, 0.0003722170752562635, 5.614254026695101e-5, 0.004899614459888756, 0.00633873932658916, 0.003032594380369393, 0.0004574146739399296, 0.007356805009082981, 0.009517660952894894, 0.004553461442867281, 0.0006868112975047708, 0.004694984969634424, 0.006074005640321838, 0.002905939875758181, 0.000438311021534327, 0.001127431304213666, 0.001458582752694613, 0.0006978185458062608, 0.0001052539187783915, 0.004899614459888754, 0.006338739326589158, 0.003032594380369392, 0.0004574146739399295, 0.007356805009082978, 0.00951766095289489, 0.004553461442867279, 0.0006868112975047704, 0.004694984969634422, 0.006074005640321836, 0.00290593987575818, 0.0004383110215343269, 0.001127431304213666, 0.001458582752694613, 0.0006978185458062604, 0.0001052539187783915, 0.002613459007507403, 0.003381089578564919, 0.001617588723434511, 0.000243985421620605, 0.00392412678076308, 0.005076729393991831, 0.002428820659384972, 0.0003663457985554325, 0.002504309443009022, 0.003239880378814601, 0.001550031090353912, 0.0002337955152791077, 0.0006013729287201761, 0.0007780094259316945, 0.0003722170752562635, 5.614254026695101e-5 };
     // Precomputed values of basis functions and precomputations
     // FE* dimensions: [permutation][entities][points][dofs]
-    static const double FE17_C0_D001_Q818[1][1][24][20] =
-        { { { { 0.309691544571294, 0.0, 0.0, -0.3096915445712943, -0.3439786239051073, 0.2777556728559593, 0.1099148608569157, 0.4610105054292084, 0.0, 0.0, -0.6217342967610751, 0.6217342967610725, -0.2777556728559623, 0.3439786239051111, -0.4610105054292121, -0.1099148608569124, 2.063871743430666, 0.0, 0.0, -2.063871743430664 },
-              { 0.4929463771445393, 0.0, 0.0, -0.3096915445712942, -0.3439786239051073, 0.2777556728559591, -0.3439786239051095, 0.2777556728559651, 0.0, 0.0, -0.9882439619075645, 0.8049891293343159, -1.098158822764479, 0.3439786239051107, -1.098158822764481, 0.3439786239051111, 1.243468593522149, 0.820403149908517, 0.8204031499085216, -1.243468593522149 },
-              { 0.3096915445712934, 0.0, 0.0, -0.4929463771445408, -0.3439786239051094, 1.098158822764475, -0.3439786239051083, 1.098158822764479, 0.0, 0.0, -0.804989129334321, 0.9882439619075648, -0.2777556728559621, 0.3439786239051111, -0.277755672855964, 0.3439786239051099, 1.24346859352215, -0.8204031499085156, -0.8204031499085103, -1.24346859352215 },
-              { 0.3096915445712934, 0.0, 0.0, -0.3096915445712944, 0.1099148608569123, 0.4610105054292066, -0.3439786239051086, 0.277755672855963, 0.0, 0.0, -0.6217342967610744, 0.6217342967610702, -0.4610105054292091, -0.1099148608569129, -0.2777556728559631, 0.343978623905111, 2.063871743430668, 0.0, 0.0, -2.063871743430668 },
-              { -0.6562683803773123, 0.0, 0.0, 0.6562683803773127, -0.1606988062169264, -0.1383647990281202, 6.455513863613087, -2.986708722481131, 0.0, 0.0, -0.02233400718880577, 0.02233400718880688, 0.1383647990281233, 0.1606988062169324, 2.986708722481129, -6.455513863613078, 0.9641928373016129, 0.0, 0.0, -0.9641928373016141 },
-              { -3.504612303830336, 0.0, 0.0, 0.6562683803773146, -0.1606988062169258, -0.1383647990281208, -0.1606988062169267, -0.1383647990281229, 0.0, 0.0, 5.674353839717227, -2.826009916264206, -0.7811600238958545, 0.1606988062169324, -0.7811600238958564, 0.1606988062169304, 0.04466801437763482, 0.9195248229239681, 0.9195248229239809, -0.04466801437762851 },
-              { -0.6562683803773107, 0.0, 0.0, 3.50461230383033, -0.1606988062169478, 0.7811600238958628, -0.1606988062169342, 0.7811600238958533, 0.0, 0.0, 2.826009916264195, -5.674353839717222, 0.1383647990281152, 0.1606988062169403, 0.1383647990281167, 0.1606988062169308, 0.04466801437762998, -0.9195248229239745, -0.9195248229239604, -0.04466801437762809 },
-              { -0.6562683803773123, 0.0, 0.0, 0.6562683803773133, 6.455513863613058, -2.986708722481139, -0.160698806216943, -0.138364799028117, 0.0, 0.0, -0.02233400718882073, 0.02233400718880904, 2.986708722481136, -6.45551386361308, 0.1383647990281262, 0.1606988062169399, 0.964192837301641, 0.0, 0.0, -0.964192837301627 },
-              { 0.4983678530919345, 0.0, 0.0, -0.4983678530919368, -0.04784734745169562, 1.35482581073685, -0.1337491609066969, 0.1386456016308944, 0.0, 0.0, -1.402673158188544, 1.40267315818854, -1.35482581073685, 0.04784734745169407, -0.1386456016308887, 0.1337491609066943, 0.2870840847101742, 0.0, 0.0, -0.287084084710176 },
-              { -0.7178123560140273, 0.0, 0.0, -0.4983678530919367, -0.04784734745169605, 1.35482581073685, -0.04784734745168971, 1.354825810736848, 0.0, 0.0, 1.029687260023374, 0.1864929490825852, 1.163436420930074, 0.04784734745169592, 1.163436420930074, 0.04784734745169415, 2.8053463163771, -2.518262231666925, -2.518262231666921, -2.805346316377098 },
-              { 0.4983678530919347, 0.0, 0.0, 0.7178123560140252, -0.04784734745169063, -1.163436420930074, -0.04784734745169153, -1.163436420930072, 0.0, 0.0, -0.1864929490825817, -1.029687260023382, -1.354825810736849, 0.04784734745169338, -1.354825810736854, 0.04784734745169592, 2.805346316377098, 2.518262231666925, 2.518262231666928, -2.805346316377098 },
-              { 0.4983678530919367, 0.0, 0.0, -0.4983678530919367, -0.1337491609066887, 0.1386456016308835, -0.04784734745169184, 1.354825810736853, 0.0, 0.0, -1.402673158188546, 1.402673158188546, -0.138645601630889, 0.1337491609066946, -1.354825810736857, 0.04784734745169451, 0.2870840847101694, 0.0, 0.0, -0.2870840847101681 },
-              { -0.4817627457812098, 0.0, 0.0, 0.4817627457812096, -0.2317627457812027, -0.1770509831248449, -0.2317627457812062, -0.7499999999999994, 0.0, 0.0, 1.445288237343635, -1.445288237343636, -0.7499999999999994, 0.2317627457812095, -3.177050983124849, 0.2317627457812111, 0.4635254915624213, 0.9270509831248407, 3.927050983124849, -0.4635254915624213 },
-              { -0.4817627457812111, 0.0, 0.0, 0.4817627457812098, -0.2317627457812052, -0.7500000000000042, -0.2317627457812089, -0.1770509831248419, 0.0, 0.0, 1.445288237343633, -1.445288237343637, -3.177050983124842, 0.2317627457812092, -0.7500000000000022, 0.2317627457812116, 0.463525491562425, 3.927050983124846, 0.9270509831248503, -0.4635254915624251 },
-              { -0.4817627457812112, 0.0, 0.0, -0.4452882373436328, -0.2317627457812058, 0.1770509831248368, -0.231762745781214, 0.1770509831248515, 0.0, 0.0, -0.9817627457812066, 1.908813728906046, -0.7500000000000014, 0.2317627457812106, -0.7500000000000046, 0.231762745781209, 0.1094235253127357, 0.5729490168751601, 0.5729490168751658, -0.1094235253127358 },
-              { 0.4452882373436342, 0.0, 0.0, 0.4817627457812091, -0.2317627457812028, -0.1770509831248451, 2.195288237343634, -1.67705098312484, 0.0, 0.0, -0.4088137289060504, -0.5182372542187937, -0.1770509831248424, 0.2317627457812101, -1.677050983124854, -2.195288237343628, 1.03647450843758, 0.3541019662496839, 3.354101966249693, -1.036474508437579 },
-              { 0.4452882373436322, 0.0, 0.0, 0.4817627457812091, 2.195288237343625, -1.677050983124843, -0.2317627457812086, -0.1770509831248428, 0.0, 0.0, -0.4088137289060541, -0.518237254218796, -1.677050983124844, -2.195288237343633, -0.1770509831248407, 0.2317627457812124, 1.036474508437595, 3.354101966249698, 0.3541019662496889, -1.036474508437595 },
-              { 0.4452882373436311, 0.0, 0.0, 0.4817627457812086, -0.2317627457812115, 0.7499999999999962, -0.2317627457812135, 0.7500000000000049, 0.0, 0.0, -1.90881372890605, 0.9817627457812049, -0.1770509831248428, 0.2317627457812119, -0.1770509831248444, 0.2317627457812073, 0.1094235253127325, -0.5729490168751546, -0.5729490168751471, -0.1094235253127341 },
-              { -0.4817627457812093, 0.0, 0.0, 0.4817627457812075, -0.2317627457812158, 3.177050983124845, -0.2317627457812092, 0.7500000000000014, 0.0, 0.0, 1.445288237343628, -1.445288237343632, 0.7500000000000007, 0.2317627457812126, 0.1770509831248419, 0.2317627457812077, 0.4635254915624284, -3.927050983124844, -0.9270509831248364, -0.4635254915624245 },
-              { -0.48176274578121, 0.0, 0.0, 0.4817627457812089, 2.195288237343624, -1.677050983124842, -0.2317627457812118, -0.7500000000000002, 0.0, 0.0, -0.05471176265636952, 0.05471176265636148, 1.677050983124839, -2.195288237343631, 0.7499999999999992, 0.2317627457812156, 4.390576474687275, 0.0, 0.0, -4.390576474687274 },
-              { -0.4817627457812073, 0.0, 0.0, -0.4452882373436336, -0.2317627457812047, 0.1770509831248372, 2.195288237343638, 1.677050983124837, 0.0, 0.0, 0.518237254218783, 0.408813728906059, 0.1770509831248441, 0.2317627457812112, 1.677050983124837, -2.195288237343631, 1.036474508437584, -0.3541019662496886, -3.354101966249678, -1.036474508437579 },
-              { -0.4817627457812086, 0.0, 0.0, -0.4452882373436333, 2.19528823734362, 1.677050983124844, -0.2317627457812118, 0.1770509831248424, 0.0, 0.0, 0.5182372542187852, 0.4088137289060508, 1.67705098312484, -2.195288237343632, 0.1770509831248441, 0.231762745781212, 1.036474508437594, -3.354101966249675, -0.3541019662496832, -1.036474508437587 },
-              { -0.4817627457812089, 0.0, 0.0, 0.4817627457812069, -0.231762745781212, 0.7499999999999993, -0.2317627457812023, 3.177050983124837, 0.0, 0.0, 1.445288237343623, -1.445288237343622, 0.1770509831248417, 0.2317627457812128, 0.7499999999999977, 0.2317627457812086, 0.4635254915624271, -0.9270509831248455, -3.927050983124837, -0.4635254915624236 },
-              { -0.4817627457812097, 0.0, 0.0, 0.4817627457812083, -0.231762745781206, -0.7500000000000018, 2.195288237343632, -1.677050983124839, 0.0, 0.0, -0.05471176265636688, 0.05471176265636363, 0.7499999999999999, 0.23176274578121, 1.677050983124837, -2.195288237343628, 4.390576474687266, 0.0, 0.0, -4.390576474687268 } } } };
-    static const double FE17_C0_D010_Q818[1][1][24][20] =
-        { { { { 0.3096915445712942, 0.0, -0.3096915445712937, 0.0, 0.2777556728559633, -0.3439786239051122, 0.0, 0.0, 0.1099148608569167, 0.4610105054292066, -0.2777556728559648, 0.3439786239051116, -0.6217342967610724, 0.6217342967610699, -0.4610105054292115, -0.1099148608569133, 2.063871743430666, 0.0, -2.063871743430662, 0.0 },
-              { 0.4929463771445395, 0.0, -0.3096915445712939, 0.0, 0.2777556728559631, -0.3439786239051122, 0.0, 0.0, -0.3439786239051084, 0.2777556728559625, -1.09815882276448, 0.3439786239051116, -0.9882439619075623, 0.8049891293343142, -1.098158822764481, 0.3439786239051102, 1.24346859352215, 0.8204031499085159, -1.243468593522147, 0.8204031499085209 },
-              { 0.3096915445712935, 0.0, -0.3096915445712938, 0.0, 0.4610105054292086, 0.1099148608569118, 0.0, 0.0, -0.3439786239051086, 0.2777556728559623, -0.461010505429212, -0.1099148608569115, -0.6217342967610715, 0.6217342967610703, -0.2777556728559635, 0.3439786239051097, 2.063871743430666, 0.0, -2.063871743430663, 0.0 },
-              { 0.3096915445712935, 0.0, -0.4929463771445401, 0.0, 1.098158822764477, -0.3439786239051122, 0.0, 0.0, -0.3439786239051089, 1.098158822764479, -0.2777556728559645, 0.3439786239051112, -0.8049891293343182, 0.9882439619075627, -0.2777556728559626, 0.3439786239051099, 1.243468593522152, -0.8204031499085146, -1.243468593522148, -0.8204031499085136 },
-              { -0.6562683803773114, 0.0, 0.6562683803773163, 0.0, -0.1383647990281207, -0.1606988062169312, 0.0, 0.0, 6.455513863613089, -2.986708722481137, 0.1383647990281263, 0.1606988062169315, -0.0223340071888088, 0.02233400718880452, 2.986708722481132, -6.45551386361308, 0.9641928373016213, 0.0, -0.9641928373016189, 0.0 },
-              { -3.504612303830336, 0.0, 0.6562683803773158, 0.0, -0.1383647990281192, -0.1606988062169331, 0.0, 0.0, -0.1606988062169299, -0.1383647990281244, -0.7811600238958547, 0.1606988062169328, 5.674353839717228, -2.826009916264212, -0.7811600238958576, 0.1606988062169302, 0.04466801437763318, 0.919524822923972, -0.04466801437762942, 0.9195248229239856 },
-              { -0.6562683803773122, 0.0, 0.6562683803773158, 0.0, -2.986708722481148, 6.455513863613097, 0.0, 0.0, -0.1606988062169367, -0.1383647990281194, 2.986708722481134, -6.455513863613085, -0.02233400718881993, 0.02233400718882259, 0.1383647990281156, 0.1606988062169334, 0.9641928373015977, 0.0, -0.9641928373015903, 0.0 },
-              { -0.6562683803773147, 0.0, 3.504612303830329, 0.0, 0.7811600238958476, -0.1606988062169323, 0.0, 0.0, -0.1606988062169466, 0.781160023895876, 0.1383647990281185, 0.1606988062169315, 2.826009916264205, -5.674353839717227, 0.1383647990281236, 0.1606988062169334, 0.04466801437764824, -0.9195248229239723, -0.04466801437763463, -0.9195248229239799 },
-              { 0.4983678530919345, 0.0, -0.4983678530919362, 0.0, 1.354825810736852, -0.04784734745169654, 0.0, 0.0, -0.1337491609066964, 0.1386456016308931, -1.354825810736853, 0.04784734745169628, -1.402673158188542, 1.402673158188541, -0.1386456016308885, 0.133749160906694, 0.2870840847101757, 0.0, -0.2870840847101712, 0.0 },
-              { -0.7178123560140273, 0.0, -0.4983678530919358, 0.0, 1.35482581073685, -0.04784734745169584, 0.0, 0.0, -0.04784734745169118, 1.354825810736849, 1.16343642093007, 0.04784734745169521, 1.029687260023378, 0.1864929490825831, 1.163436420930074, 0.04784734745169392, 2.805346316377101, -2.518262231666924, -2.805346316377095, -2.518262231666923 },
-              { 0.4983678530919346, 0.0, -0.4983678530919343, 0.0, 0.1386456016308854, -0.1337491609066924, 0.0, 0.0, -0.04784734745169092, 1.354825810736852, -0.1386456016308866, 0.1337491609066917, -1.402673158188541, 1.402673158188539, -1.354825810736853, 0.04784734745169329, 0.2870840847101764, 0.0, -0.2870840847101714, 0.0 },
-              { 0.4983678530919367, 0.0, 0.7178123560140256, 0.0, -1.163436420930068, -0.04784734745169678, 0.0, 0.0, -0.04784734745169013, -1.163436420930076, -1.354825810736853, 0.04784734745169764, -0.1864929490825815, -1.029687260023382, -1.354825810736856, 0.04784734745169424, 2.805346316377094, 2.518262231666921, -2.805346316377094, 2.518262231666932 },
-              { -0.4817627457812091, 0.0, 0.481762745781211, 0.0, -0.1770509831248428, -0.2317627457812103, 0.0, 0.0, -0.231762745781206, -0.7500000000000031, -0.749999999999999, 0.2317627457812099, 1.445288237343635, -1.445288237343639, -3.177050983124849, 0.23176274578121, 0.4635254915624244, 0.9270509831248405, -0.4635254915624218, 3.927050983124853 },
-              { -0.4817627457812129, 0.0, -0.4452882373436312, 0.0, 0.1770509831248401, -0.2317627457812102, 0.0, 0.0, -0.2317627457812123, 0.1770509831248451, -0.7500000000000001, 0.2317627457812096, -0.9817627457812034, 1.908813728906044, -0.7500000000000031, 0.2317627457812108, 0.1094235253127409, 0.5729490168751588, -0.1094235253127367, 0.5729490168751644 },
-              { -0.4817627457812099, 0.0, 0.4817627457812095, 0.0, -0.7499999999999972, -0.2317627457812131, 0.0, 0.0, -0.2317627457812092, -0.1770509831248446, -3.177050983124846, 0.2317627457812131, 1.445288237343634, -1.445288237343637, -0.750000000000004, 0.2317627457812085, 0.4635254915624236, 3.927050983124844, -0.4635254915624227, 0.9270509831248538 },
-              { 0.4452882373436348, 0.0, 0.4817627457812117, 0.0, -0.1770509831248433, -0.2317627457812097, 0.0, 0.0, 2.195288237343637, -1.677050983124846, -0.177050983124842, 0.2317627457812099, -0.4088137289060506, -0.5182372542187971, -1.677050983124853, -2.195288237343629, 1.036474508437585, 0.3541019662496834, -1.036474508437581, 3.354101966249697 },
-              { 0.4452882373436295, 0.0, 0.4817627457812099, 0.0, 0.749999999999995, -0.2317627457812108, 0.0, 0.0, -0.2317627457812137, 0.750000000000009, -0.1770509831248427, 0.2317627457812098, -1.908813728906046, 0.9817627457812029, -0.1770509831248424, 0.2317627457812092, 0.1094235253127498, -0.5729490168751543, -0.1094235253127433, -0.5729490168751578 },
-              { 0.4452882373436319, 0.0, 0.4817627457812108, 0.0, -1.677050983124845, 2.195288237343636, 0.0, 0.0, -0.2317627457812091, -0.1770509831248432, -1.677050983124845, -2.195288237343631, -0.4088137289060506, -0.5182372542187931, -0.1770509831248429, 0.2317627457812078, 1.036474508437576, 3.354101966249684, -1.036474508437572, 0.3541019662496896 },
-              { -0.4817627457812098, 0.0, -0.4452882373436309, 0.0, 1.677050983124836, 2.195288237343636, 0.0, 0.0, -0.2317627457812126, 0.1770509831248425, 1.677050983124839, -2.195288237343633, 0.5182372542187902, 0.4088137289060521, 0.1770509831248415, 0.2317627457812082, 1.036474508437587, -3.354101966249684, -1.03647450843758, -0.35410196624968 },
-              { -0.4817627457812093, 0.0, 0.4817627457812081, 0.0, 0.7499999999999949, -0.2317627457812102, 0.0, 0.0, -0.23176274578121, 3.177050983124844, 0.1770509831248414, 0.2317627457812089, 1.445288237343628, -1.445288237343629, 0.7499999999999997, 0.2317627457812113, 0.4635254915624298, -0.9270509831248389, -0.4635254915624228, -3.927050983124841 },
-              { -0.4817627457812083, 0.0, 0.4817627457812093, 0.0, -0.7499999999999957, -0.2317627457812132, 0.0, 0.0, 2.195288237343637, -1.677050983124844, 0.7499999999999977, 0.2317627457812136, -0.05471176265636631, 0.05471176265636385, 1.677050983124837, -2.195288237343631, 4.390576474687266, 0.0, -4.390576474687264, 0.0 },
-              { -0.481762745781209, 0.0, 0.4817627457812088, 0.0, 3.177050983124839, -0.2317627457812124, 0.0, 0.0, -0.2317627457812141, 0.7500000000000047, 0.7499999999999979, 0.2317627457812111, 1.445288237343631, -1.445288237343634, 0.1770509831248449, 0.2317627457812098, 0.4635254915624334, -3.92705098312484, -0.4635254915624263, -0.9270509831248411 },
-              { -0.4817627457812103, 0.0, 0.4817627457812107, 0.0, -1.677050983124844, 2.195288237343636, 0.0, 0.0, -0.2317627457812091, -0.7500000000000018, 1.677050983124839, -2.195288237343632, -0.05471176265636853, 0.05471176265636891, 0.7499999999999974, 0.2317627457812104, 4.390576474687268, 0.0, -4.390576474687266, 0.0 },
-              { -0.4817627457812083, 0.0, -0.4452882373436319, 0.0, 0.1770509831248405, -0.2317627457812096, 0.0, 0.0, 2.195288237343639, 1.677050983124837, 0.1770509831248433, 0.2317627457812088, 0.5182372542187871, 0.4088137289060531, 1.677050983124838, -2.195288237343631, 1.036474508437587, -0.3541019662496852, -1.036474508437582, -3.354101966249679 } } } };
-    static const double FE17_C0_D100_Q818[1][1][24][20] =
-        { { { { 0.3096915445712937, -0.4929463771445397, 0.0, 0.0, 0.0, 0.0, 1.098158822764477, -0.3439786239051106, 1.098158822764478, -0.3439786239051105, -0.2777556728559637, 0.3439786239051105, -0.2777556728559635, 0.3439786239051104, -0.8049891293343195, 0.9882439619075655, 1.243468593522146, -1.243468593522146, -0.8204031499085145, -0.8204031499085144 },
-              { 0.492946377144539, -0.3096915445712928, 0.0, 0.0, 0.0, 0.0, 0.2777556728559622, -0.3439786239051104, 0.2777556728559626, -0.3439786239051107, -1.098158822764479, 0.3439786239051106, -1.09815882276448, 0.3439786239051104, -0.9882439619075634, 0.8049891293343171, 1.243468593522147, -1.243468593522147, 0.8204031499085164, 0.8204031499085176 },
-              { 0.3096915445712937, -0.3096915445712933, 0.0, 0.0, 0.0, 0.0, 0.4610105054292089, 0.1099148608569117, 0.277755672855962, -0.3439786239051104, -0.4610105054292119, -0.1099148608569116, -0.2777556728559633, 0.3439786239051102, -0.6217342967610719, 0.6217342967610714, 2.063871743430663, -2.063871743430664, 0.0, 0.0 },
-              { 0.3096915445712934, -0.3096915445712926, 0.0, 0.0, 0.0, 0.0, 0.2777556728559618, -0.3439786239051103, 0.4610105054292077, 0.1099148608569143, -0.2777556728559634, 0.3439786239051104, -0.4610105054292092, -0.1099148608569142, -0.6217342967610717, 0.6217342967610711, 2.063871743430663, -2.063871743430663, 0.0, 0.0 },
-              { -0.6562683803773097, 3.504612303830332, 0.0, 0.0, 0.0, 0.0, 0.781160023895861, -0.1606988062169297, 0.7811600238958635, -0.1606988062169331, 0.1383647990281269, 0.1606988062169299, 0.1383647990281243, 0.1606988062169333, 2.826009916264192, -5.674353839717215, 0.04466801437763575, -0.04466801437763523, -0.9195248229239886, -0.9195248229239879 },
-              { -3.504612303830341, 0.6562683803773175, 0.0, 0.0, 0.0, 0.0, -0.138364799028124, -0.1606988062169309, -0.1383647990281196, -0.1606988062169329, -0.7811600238958546, 0.1606988062169312, -0.7811600238958553, 0.160698806216933, 5.674353839717238, -2.826009916264214, 0.04466801437763174, -0.04466801437763143, 0.919524822923978, 0.9195248229239752 },
-              { -0.6562683803773123, 0.6562683803773093, 0.0, 0.0, 0.0, 0.0, -2.986708722481129, 6.455513863613072, -0.1383647990281208, -0.160698806216939, 2.986708722481131, -6.455513863613072, 0.1383647990281153, 0.1606988062169386, -0.02233400718881541, 0.02233400718881734, 0.9641928373016064, -0.9641928373016055, 0.0, 0.0 },
-              { -0.6562683803773182, 0.6562683803773106, 0.0, 0.0, 0.0, 0.0, -0.1383647990281272, -0.1606988062169298, -2.98670872248114, 6.455513863613089, 0.1383647990281174, 0.1606988062169299, 2.986708722481142, -6.455513863613086, -0.02233400718880797, 0.02233400718881777, 0.9641928373016102, -0.964192837301613, 0.0, 0.0 },
-              { 0.4983678530919356, 0.7178123560140269, 0.0, 0.0, 0.0, 0.0, -1.163436420930072, -0.04784734745169546, -1.163436420930073, -0.04784734745169316, -1.354825810736852, 0.04784734745169608, -1.35482581073685, 0.04784734745169324, -0.1864929490825822, -1.029687260023381, 2.805346316377097, -2.805346316377098, 2.518262231666923, 2.518262231666924 },
-              { -0.7178123560140275, -0.4983678530919352, 0.0, 0.0, 0.0, 0.0, 1.354825810736852, -0.04784734745169533, 1.354825810736849, -0.0478473474516939, 1.163436420930071, 0.04784734745169503, 1.163436420930072, 0.04784734745169398, 1.02968726002338, 0.1864929490825825, 2.805346316377094, -2.805346316377096, -2.518262231666924, -2.518262231666922 },
-              { 0.4983678530919343, -0.498367853091934, 0.0, 0.0, 0.0, 0.0, 0.1386456016308857, -0.133749160906691, 1.354825810736851, -0.04784734745169309, -0.138645601630887, 0.1337491609066909, -1.35482581073685, 0.04784734745169303, -1.402673158188544, 1.402673158188544, 0.2870840847101696, -0.2870840847101699, 0.0, 0.0 },
-              { 0.4983678530919361, -0.4983678530919351, 0.0, 0.0, 0.0, 0.0, 1.354825810736854, -0.04784734745169645, 0.1386456016308876, -0.1337491609066944, -1.354825810736852, 0.04784734745169653, -0.1386456016308897, 0.1337491609066942, -1.402673158188546, 1.402673158188545, 0.2870840847101697, -0.2870840847101698, 0.0, 0.0 },
-              { -0.4817627457812121, -0.4452882373436289, 0.0, 0.0, 0.0, 0.0, 0.1770509831248402, -0.2317627457812083, 0.1770509831248427, -0.2317627457812103, -0.7499999999999986, 0.2317627457812084, -0.7499999999999999, 0.23176274578121, -0.9817627457812068, 1.908813728906048, 0.1094235253127373, -0.1094235253127373, 0.5729490168751581, 0.5729490168751579 },
-              { -0.4817627457812117, 0.4817627457812123, 0.0, 0.0, 0.0, 0.0, -0.1770509831248455, -0.2317627457812081, -0.7500000000000021, -0.2317627457812094, -0.7499999999999983, 0.2317627457812085, -3.177050983124845, 0.2317627457812092, 1.445288237343636, -1.445288237343636, 0.4635254915624221, -0.4635254915624218, 0.9270509831248434, 3.927050983124848 },
-              { -0.4817627457812119, 0.4817627457812116, 0.0, 0.0, 0.0, 0.0, -0.7500000000000003, -0.2317627457812111, -0.1770509831248434, -0.2317627457812115, -3.177050983124845, 0.2317627457812119, -0.7500000000000013, 0.2317627457812114, 1.445288237343637, -1.445288237343638, 0.4635254915624218, -0.4635254915624219, 3.927050983124844, 0.9270509831248452 },
-              { 0.445288237343633, 0.4817627457812101, 0.0, 0.0, 0.0, 0.0, 0.7499999999999972, -0.231762745781208, 0.7500000000000001, -0.2317627457812104, -0.1770509831248422, 0.2317627457812079, -0.1770509831248436, 0.2317627457812103, -1.908813728906057, 0.9817627457812144, 0.1094235253127383, -0.1094235253127382, -0.5729490168751551, -0.5729490168751564 },
-              { 0.4452882373436312, 0.4817627457812116, 0.0, 0.0, 0.0, 0.0, -0.1770509831248431, -0.2317627457812085, -1.677050983124844, 2.195288237343638, -0.1770509831248399, 0.2317627457812087, -1.67705098312484, -2.195288237343637, -0.4088137289060509, -0.5182372542187912, 1.036474508437583, -1.036474508437584, 0.3541019662496828, 3.354101966249683 },
-              { 0.445288237343633, 0.4817627457812108, 0.0, 0.0, 0.0, 0.0, -1.677050983124843, 2.195288237343627, -0.1770509831248449, -0.2317627457812113, -1.677050983124849, -2.195288237343627, -0.1770509831248427, 0.2317627457812112, -0.4088137289060512, -0.5182372542187936, 1.036474508437576, -1.036474508437576, 3.35410196624969, 0.3541019662496875 },
-              { -0.4817627457812096, 0.481762745781209, 0.0, 0.0, 0.0, 0.0, -1.677050983124839, 2.195288237343628, -0.750000000000004, -0.2317627457812101, 1.677050983124837, -2.195288237343628, 0.7499999999999989, 0.23176274578121, -0.0547117626563673, 0.0547117626563675, 4.390576474687268, -4.390576474687269, 0.0, 0.0 },
-              { -0.4817627457812106, -0.445288237343631, 0.0, 0.0, 0.0, 0.0, 0.1770509831248375, -0.231762745781208, 1.677050983124836, 2.195288237343636, 0.1770509831248416, 0.231762745781208, 1.677050983124841, -2.195288237343635, 0.5182372542187902, 0.4088137289060525, 1.03647450843758, -1.036474508437581, -0.3541019662496789, -3.354101966249678 },
-              { -0.4817627457812084, 0.4817627457812078, 0.0, 0.0, 0.0, 0.0, 3.177050983124841, -0.2317627457812126, 0.7499999999999984, -0.2317627457812105, 0.7499999999999973, 0.2317627457812121, 0.1770509831248414, 0.2317627457812104, 1.445288237343626, -1.445288237343626, 0.4635254915624227, -0.4635254915624224, -3.927050983124839, -0.9270509831248397 },
-              { -0.4817627457812102, 0.4817627457812114, 0.0, 0.0, 0.0, 0.0, -0.75, -0.2317627457812106, -1.677050983124847, 2.195288237343636, 0.7499999999999997, 0.2317627457812108, 1.677050983124843, -2.195288237343634, -0.05471176265636803, 0.05471176265636778, 4.390576474687269, -4.390576474687271, 0.0, 0.0 },
-              { -0.4817627457812099, -0.4452882373436338, 0.0, 0.0, 0.0, 0.0, 1.677050983124847, 2.195288237343627, 0.1770509831248403, -0.2317627457812118, 1.677050983124837, -2.195288237343628, 0.177050983124841, 0.2317627457812113, 0.5182372542187906, 0.4088137289060529, 1.036474508437584, -1.036474508437583, -3.354101966249686, -0.3541019662496813 },
-              { -0.4817627457812076, 0.4817627457812089, 0.0, 0.0, 0.0, 0.0, 0.7499999999999986, -0.2317627457812077, 3.177050983124842, -0.2317627457812101, 0.177050983124845, 0.2317627457812077, 0.7500000000000003, 0.2317627457812103, 1.445288237343624, -1.445288237343626, 0.463525491562423, -0.4635254915624233, -0.9270509831248438, -3.927050983124844 } } } };
-    static const double FE17_C0_Q818[1][1][24][20] =
-        { { { { 0.05183342742053288, -0.01137528241650886, 0.05183342742053281, 0.05183342742053277, -0.07381880034180852, -0.07381880034180849, 0.02358804473394379, -0.1225222228796847, 0.02358804473394378, -0.1225222228796847, -0.07381880034180864, -0.07381880034180852, -0.0738188003418087, -0.07381880034180853, -0.1225222228796849, 0.02358804473394362, 0.4429128020508511, 0.2668519304904312, 0.4429128020508512, 0.4429128020508511 },
-              { -0.01137528241650879, 0.05183342742053278, 0.05183342742053279, 0.05183342742053282, -0.0738188003418085, -0.07381880034180852, -0.07381880034180832, -0.07381880034180859, -0.07381880034180847, -0.07381880034180859, 0.02358804473394362, -0.1225222228796846, 0.02358804473394359, -0.1225222228796847, 0.02358804473394354, -0.1225222228796848, 0.2668519304904314, 0.4429128020508509, 0.4429128020508512, 0.4429128020508511 },
-              { 0.05183342742053285, 0.05183342742053278, 0.0518334274205328, -0.01137528241650888, -0.1225222228796846, 0.02358804473394371, -0.1225222228796845, 0.02358804473394372, -0.07381880034180846, -0.07381880034180857, -0.1225222228796848, 0.02358804473394376, -0.07381880034180867, -0.07381880034180852, -0.07381880034180874, -0.0738188003418086, 0.4429128020508511, 0.4429128020508509, 0.4429128020508512, 0.2668519304904314 },
-              { 0.05183342742053285, 0.0518334274205328, -0.01137528241650886, 0.05183342742053276, 0.02358804473394365, -0.1225222228796846, -0.07381880034180839, -0.07381880034180857, -0.1225222228796845, 0.0235880447339436, -0.07381880034180867, -0.07381880034180853, -0.1225222228796848, 0.02358804473394371, -0.07381880034180865, -0.0738188003418086, 0.4429128020508511, 0.442912802050851, 0.2668519304904314, 0.4429128020508512 },
-              { 0.03353209363244256, 0.4547080149710238, 0.03353209363244244, 0.03353209363244244, -0.00653625658062916, -0.00653625658062913, 0.2625713032082069, -0.1410900364750473, 0.262571303208207, -0.1410900364750473, -0.006536256580629242, -0.006536256580629146, -0.006536256580629237, -0.00653625658062906, -0.1410900364750478, 0.2625713032082077, 0.03921753948377495, 0.001816824964619136, 0.03921753948377495, 0.0392175394837749 },
-              { 0.4547080149710245, 0.03353209363244244, 0.0335320936324424, 0.03353209363244249, -0.006536256580629139, -0.00653625658062913, -0.006536256580628996, -0.006536256580629097, -0.006536256580629299, -0.006536256580628993, 0.2625713032082071, -0.1410900364750474, 0.2625713032082069, -0.1410900364750473, 0.2625713032082067, -0.1410900364750471, 0.00181682496461931, 0.03921753948377473, 0.03921753948377484, 0.0392175394837747 },
-              { 0.03353209363244258, 0.03353209363244244, 0.03353209363244258, 0.4547080149710242, -0.1410900364750473, 0.2625713032082072, -0.1410900364750472, 0.262571303208207, -0.00653625658062913, -0.006536256580629222, -0.1410900364750475, 0.2625713032082075, -0.006536256580629242, -0.006536256580629152, -0.006536256580629303, -0.0065362565806292, 0.0392175394837749, 0.03921753948377477, 0.03921753948377485, 0.00181682496461929 },
-              { 0.03353209363244258, 0.03353209363244249, 0.454708014971024, 0.03353209363244245, 0.2625713032082069, -0.1410900364750473, -0.0065362565806291, -0.006536256580629159, -0.1410900364750472, 0.2625713032082069, -0.006536256580629304, -0.006536256580629229, -0.1410900364750478, 0.2625713032082079, -0.006536256580629195, -0.006536256580629144, 0.039217539483775, 0.03921753948377503, 0.001816824964619191, 0.03921753948377486 },
-              { 0.005491739535993311, 0.02825140445644189, 0.005491739535993141, 0.0054917395359932, -0.01542301302648356, -0.01542301302648368, -0.04311242233496329, -0.001578308372243742, -0.04311242233496351, -0.001578308372243738, -0.01542301302648394, -0.01542301302648352, -0.01542301302648401, -0.01542301302648357, -0.001578308372243887, -0.04311242233496351, 0.09253807815890219, 0.9042694127393965, 0.09253807815890198, 0.09253807815890173 },
-              { 0.02825140445644183, 0.005491739535993165, 0.005491739535993186, 0.005491739535993084, -0.01542301302648356, -0.01542301302648349, -0.01542301302648351, -0.01542301302648353, -0.01542301302648345, -0.01542301302648364, -0.0431124223349635, -0.00157830837224371, -0.04311242233496347, -0.001578308372243648, -0.04311242233496344, -0.001578308372243711, 0.9042694127393971, 0.09253807815890117, 0.09253807815890136, 0.09253807815890124 },
-              { 0.005491739535993379, 0.005491739535993169, 0.005491739535993203, 0.02825140445644192, -0.001578308372243799, -0.04311242233496347, -0.001578308372243602, -0.04311242233496354, -0.01542301302648348, -0.01542301302648368, -0.001578308372243886, -0.04311242233496346, -0.01542301302648396, -0.01542301302648357, -0.01542301302648396, -0.01542301302648363, 0.09253807815890204, 0.09253807815890172, 0.09253807815890189, 0.9042694127393964 },
-              { 0.00549173953599336, 0.005491739535993155, 0.02825140445644195, 0.005491739535993231, -0.04311242233496342, -0.001578308372243693, -0.01542301302648338, -0.01542301302648358, -0.001578308372243793, -0.04311242233496351, -0.01542301302648386, -0.01542301302648353, -0.001578308372243954, -0.04311242233496337, -0.01542301302648414, -0.0154230130264836, 0.09253807815890205, 0.09253807815890172, 0.9042694127393965, 0.09253807815890186 },
-              { -0.04658474953124554, 0.03066949906249121, 0.04658474953124563, 0.04658474953124569, -0.01475424859373684, -0.01475424859373687, -0.01475424859373663, -0.06250000000000008, -0.01475424859373683, -0.06250000000000006, 0.1397542485937368, -0.1397542485937369, 0.1397542485937367, -0.1397542485937369, 0.5920084971874736, -0.1397542485937369, 0.02950849718747382, 0.06598300562505244, 0.2795084971874736, 0.2795084971874737 },
-              { -0.04658474953124555, 0.0465847495312456, 0.03066949906249124, 0.04658474953124565, -0.01475424859373682, -0.06250000000000004, -0.01475424859373667, -0.01475424859373693, -0.06250000000000003, -0.01475424859373684, 0.1397542485937367, -0.1397542485937369, 0.5920084971874736, -0.1397542485937368, 0.1397542485937366, -0.1397542485937369, 0.02950849718747385, 0.2795084971874736, 0.06598300562505265, 0.2795084971874736 },
-              { -0.04658474953124556, 0.04658474953124564, 0.04658474953124565, 0.03066949906249148, -0.06249999999999994, -0.0147542485937369, -0.06249999999999957, -0.01475424859373694, -0.01475424859373694, -0.01475424859373683, 0.5920084971874738, -0.1397542485937368, 0.1397542485937366, -0.1397542485937368, 0.1397542485937366, -0.1397542485937369, 0.02950849718747392, 0.2795084971874736, 0.2795084971874737, 0.06598300562505249 },
-              { 0.03066949906249122, -0.0465847495312456, 0.04658474953124566, 0.04658474953124565, -0.01475424859373685, -0.01475424859373686, 0.1397542485937368, -0.1397542485937369, 0.1397542485937368, -0.1397542485937369, -0.01475424859373687, -0.06250000000000004, -0.01475424859373689, -0.06250000000000006, -0.1397542485937369, 0.5920084971874737, 0.06598300562505267, 0.02950849718747363, 0.2795084971874737, 0.2795084971874738 },
-              { 0.0306694990624912, 0.04658474953124561, -0.04658474953124554, 0.04658474953124564, 0.1397542485937366, -0.1397542485937369, -0.01475424859373672, -0.01475424859373694, -0.1397542485937368, 0.1397542485937366, -0.01475424859373693, -0.06250000000000007, -0.1397542485937369, 0.5920084971874738, -0.0147542485937369, -0.06250000000000006, 0.0659830056250527, 0.2795084971874738, 0.02950849718747375, 0.2795084971874736 },
-              { 0.03066949906249131, 0.04658474953124565, 0.0465847495312457, -0.04658474953124549, -0.1397542485937368, 0.1397542485937368, -0.1397542485937367, 0.1397542485937369, -0.01475424859373689, -0.01475424859373689, -0.1397542485937368, 0.5920084971874739, -0.01475424859373694, -0.0625, -0.01475424859373704, -0.06250000000000003, 0.06598300562505266, 0.2795084971874735, 0.2795084971874736, 0.02950849718747372 },
-              { 0.04658474953124572, 0.04658474953124562, 0.03066949906249133, -0.04658474953124565, -0.1397542485937369, 0.5920084971874738, -0.1397542485937368, 0.1397542485937369, -0.06249999999999994, -0.01475424859373684, -0.1397542485937371, 0.1397542485937369, -0.06250000000000021, -0.01475424859373681, -0.01475424859373705, -0.0147542485937369, 0.2795084971874737, 0.2795084971874738, 0.06598300562505266, 0.02950849718747368 },
-              { 0.04658474953124569, 0.03066949906249132, -0.04658474953124563, 0.04658474953124561, 0.1397542485937367, -0.1397542485937369, -0.0147542485937367, -0.06250000000000006, -0.1397542485937369, 0.5920084971874736, -0.01475424859373697, -0.01475424859373696, -0.1397542485937372, 0.139754248593737, -0.06250000000000008, -0.01475424859373687, 0.2795084971874737, 0.06598300562505252, 0.02950849718747382, 0.2795084971874738 },
-              { 0.04658474953124574, -0.04658474953124569, 0.04658474953124567, 0.03066949906249124, -0.06249999999999999, -0.01475424859373683, 0.5920084971874734, -0.1397542485937368, 0.1397542485937368, -0.139754248593737, -0.0625000000000001, -0.0147542485937369, -0.01475424859373702, -0.01475424859373684, -0.1397542485937372, 0.1397542485937368, 0.2795084971874737, 0.02950849718747375, 0.279508497187474, 0.06598300562505263 },
-              { 0.04658474953124577, 0.04658474953124565, -0.04658474953124565, 0.03066949906249127, 0.5920084971874734, -0.1397542485937369, -0.06249999999999989, -0.0147542485937369, -0.1397542485937369, 0.1397542485937368, -0.06250000000000021, -0.01475424859373697, -0.1397542485937372, 0.139754248593737, -0.01475424859373693, -0.01475424859373683, 0.2795084971874738, 0.2795084971874741, 0.02950849718747381, 0.06598300562505248 },
-              { 0.04658474953124569, 0.03066949906249122, 0.04658474953124571, -0.04658474953124569, -0.1397542485937368, 0.1397542485937369, -0.139754248593737, 0.5920084971874739, -0.01475424859373686, -0.06250000000000008, -0.1397542485937371, 0.1397542485937369, -0.01475424859373699, -0.01475424859373684, -0.06250000000000017, -0.0147542485937369, 0.2795084971874738, 0.06598300562505241, 0.2795084971874738, 0.02950849718747372 },
-              { 0.04658474953124574, -0.04658474953124567, 0.03066949906249127, 0.04658474953124561, -0.01475424859373686, -0.0625, 0.1397542485937369, -0.1397542485937369, 0.5920084971874736, -0.1397542485937369, -0.01475424859373699, -0.01475424859373687, -0.06250000000000018, -0.01475424859373683, -0.1397542485937372, 0.1397542485937369, 0.2795084971874736, 0.02950849718747376, 0.06598300562505267, 0.2795084971874741 } } } };
-    static const double FE9_C0_D001_Q818[1][1][1][4] = { { { { -1.0, 0.0, 0.0, 1.0 } } } };
-    static const double FE9_C0_D010_Q818[1][1][1][3] = { { { { -1.0, 0.0, 1.0 } } } };
-    static const double FE9_C0_D100_Q818[1][1][1][2] = { { { { -1.0, 1.0 } } } };
-    // Quadrature loop independent computations for quadrature rule 818
-    const double J_c4 = coordinate_dofs[1] * FE9_C0_D010_Q818[0][0][0][0] + coordinate_dofs[4] * FE9_C0_D010_Q818[0][0][0][1] + coordinate_dofs[7] * FE9_C0_D010_Q818[0][0][0][2];
-    const double J_c8 = coordinate_dofs[2] * FE9_C0_D001_Q818[0][0][0][0] + coordinate_dofs[5] * FE9_C0_D001_Q818[0][0][0][1] + coordinate_dofs[8] * FE9_C0_D001_Q818[0][0][0][2] + coordinate_dofs[11] * FE9_C0_D001_Q818[0][0][0][3];
-    const double J_c5 = coordinate_dofs[1] * FE9_C0_D001_Q818[0][0][0][0] + coordinate_dofs[4] * FE9_C0_D001_Q818[0][0][0][1] + coordinate_dofs[7] * FE9_C0_D001_Q818[0][0][0][2] + coordinate_dofs[10] * FE9_C0_D001_Q818[0][0][0][3];
-    const double J_c7 = coordinate_dofs[2] * FE9_C0_D010_Q818[0][0][0][0] + coordinate_dofs[5] * FE9_C0_D010_Q818[0][0][0][1] + coordinate_dofs[8] * FE9_C0_D010_Q818[0][0][0][2];
-    const double J_c0 = coordinate_dofs[0] * FE9_C0_D100_Q818[0][0][0][0] + coordinate_dofs[3] * FE9_C0_D100_Q818[0][0][0][1];
-    const double J_c1 = coordinate_dofs[0] * FE9_C0_D010_Q818[0][0][0][0] + coordinate_dofs[3] * FE9_C0_D010_Q818[0][0][0][1] + coordinate_dofs[6] * FE9_C0_D010_Q818[0][0][0][2];
-    const double J_c6 = coordinate_dofs[2] * FE9_C0_D100_Q818[0][0][0][0] + coordinate_dofs[5] * FE9_C0_D100_Q818[0][0][0][1];
-    const double J_c3 = coordinate_dofs[1] * FE9_C0_D100_Q818[0][0][0][0] + coordinate_dofs[4] * FE9_C0_D100_Q818[0][0][0][1];
-    const double J_c2 = coordinate_dofs[0] * FE9_C0_D001_Q818[0][0][0][0] + coordinate_dofs[3] * FE9_C0_D001_Q818[0][0][0][1] + coordinate_dofs[6] * FE9_C0_D001_Q818[0][0][0][2] + coordinate_dofs[9] * FE9_C0_D001_Q818[0][0][0][3];
-    ufc_scalar_t sp_818[80];
-    sp_818[0] = J_c4 * J_c8;
-    sp_818[1] = J_c5 * J_c7;
-    sp_818[2] = sp_818[0] + -1 * sp_818[1];
-    sp_818[3] = J_c0 * sp_818[2];
-    sp_818[4] = J_c5 * J_c6;
-    sp_818[5] = J_c3 * J_c8;
-    sp_818[6] = sp_818[4] + -1 * sp_818[5];
-    sp_818[7] = J_c1 * sp_818[6];
-    sp_818[8] = sp_818[3] + sp_818[7];
-    sp_818[9] = J_c3 * J_c7;
-    sp_818[10] = J_c4 * J_c6;
-    sp_818[11] = sp_818[9] + -1 * sp_818[10];
-    sp_818[12] = J_c2 * sp_818[11];
-    sp_818[13] = sp_818[8] + sp_818[12];
-    sp_818[14] = sp_818[2] / sp_818[13];
-    sp_818[15] = J_c3 * (-1 * J_c8);
-    sp_818[16] = sp_818[4] + sp_818[15];
-    sp_818[17] = sp_818[16] / sp_818[13];
-    sp_818[18] = sp_818[11] / sp_818[13];
-    sp_818[19] = sp_818[14] * sp_818[14];
-    sp_818[20] = sp_818[14] * sp_818[17];
-    sp_818[21] = sp_818[18] * sp_818[14];
-    sp_818[22] = sp_818[17] * sp_818[17];
-    sp_818[23] = sp_818[18] * sp_818[17];
-    sp_818[24] = sp_818[18] * sp_818[18];
-    sp_818[25] = J_c2 * J_c7;
-    sp_818[26] = J_c8 * (-1 * J_c1);
-    sp_818[27] = sp_818[25] + sp_818[26];
-    sp_818[28] = sp_818[27] / sp_818[13];
-    sp_818[29] = J_c0 * J_c8;
-    sp_818[30] = J_c6 * (-1 * J_c2);
-    sp_818[31] = sp_818[29] + sp_818[30];
-    sp_818[32] = sp_818[31] / sp_818[13];
-    sp_818[33] = J_c1 * J_c6;
-    sp_818[34] = J_c0 * J_c7;
-    sp_818[35] = sp_818[33] + -1 * sp_818[34];
-    sp_818[36] = sp_818[35] / sp_818[13];
-    sp_818[37] = sp_818[28] * sp_818[28];
-    sp_818[38] = sp_818[28] * sp_818[32];
-    sp_818[39] = sp_818[28] * sp_818[36];
-    sp_818[40] = sp_818[32] * sp_818[32];
-    sp_818[41] = sp_818[32] * sp_818[36];
-    sp_818[42] = sp_818[36] * sp_818[36];
-    sp_818[43] = sp_818[37] + sp_818[19];
-    sp_818[44] = sp_818[38] + sp_818[20];
-    sp_818[45] = sp_818[39] + sp_818[21];
-    sp_818[46] = sp_818[40] + sp_818[22];
-    sp_818[47] = sp_818[41] + sp_818[23];
-    sp_818[48] = sp_818[24] + sp_818[42];
-    sp_818[49] = J_c1 * J_c5;
-    sp_818[50] = J_c2 * J_c4;
-    sp_818[51] = sp_818[49] + -1 * sp_818[50];
-    sp_818[52] = sp_818[51] / sp_818[13];
-    sp_818[53] = J_c2 * J_c3;
-    sp_818[54] = J_c0 * J_c5;
-    sp_818[55] = sp_818[53] + -1 * sp_818[54];
-    sp_818[56] = sp_818[55] / sp_818[13];
-    sp_818[57] = J_c0 * J_c4;
-    sp_818[58] = J_c1 * J_c3;
-    sp_818[59] = sp_818[57] + -1 * sp_818[58];
-    sp_818[60] = sp_818[59] / sp_818[13];
-    sp_818[61] = sp_818[52] * sp_818[52];
-    sp_818[62] = sp_818[52] * sp_818[56];
-    sp_818[63] = sp_818[60] * sp_818[52];
-    sp_818[64] = sp_818[56] * sp_818[56];
-    sp_818[65] = sp_818[60] * sp_818[56];
-    sp_818[66] = sp_818[60] * sp_818[60];
-    sp_818[67] = sp_818[43] + sp_818[61];
-    sp_818[68] = sp_818[44] + sp_818[62];
-    sp_818[69] = sp_818[45] + sp_818[63];
-    sp_818[70] = sp_818[46] + sp_818[64];
-    sp_818[71] = sp_818[47] + sp_818[65];
-    sp_818[72] = sp_818[48] + sp_818[66];
-    sp_818[73] = fabs(sp_818[13]);
-    sp_818[74] = sp_818[67] * sp_818[73];
-    sp_818[75] = sp_818[68] * sp_818[73];
-    sp_818[76] = sp_818[69] * sp_818[73];
-    sp_818[77] = sp_818[70] * sp_818[73];
-    sp_818[78] = sp_818[71] * sp_818[73];
-    sp_818[79] = sp_818[72] * sp_818[73];
-    for (int iq = 0; iq < 24; ++iq)
+    double FE17_C0_D001_Q738[1][1][64][20] =
+        { { { { -2.895817908681458, 0.0, 0.0, 0.5952511494819428, -0.204650375830156, -0.1733537710627882, -0.2279295036573332, -0.1987410936229522, 0.0, 0.0, 4.777720397936626, -2.477153638737111, -0.9802817901913032, 0.2046503758301576, -1.123842151496783, 0.2279295036573321, 0.09138423357690856, 1.153635561254094, 1.322583245119738, -0.09138423357690477 },
+              { -1.012689559037515, 0.0, 0.0, -0.3788474265028097, -0.1701350922196619, 0.08444595988280609, -0.1907662243101677, 0.09681290644130308, 0.0, 0.0, -0.2111530656107565, 1.602690051151082, -0.5886194585237532, 0.1701350922196617, -0.6748216332276368, 0.1907662243101671, 0.0585166012713524, 0.5041734986409486, 0.5780087267863353, -0.05851660127135182 },
+              { 0.3896190023483256, 0.0, 0.0, -0.04436393338027855, -0.113835978641205, 0.2609014401096529, -0.1287831166761085, 0.2991099485018695, 0.0, 0.0, -3.071761136436666, 2.72650606746862, -0.1914350645801191, 0.1138359786412039, -0.2194703574037238, 0.1287831166761088, 0.02354308636221017, -0.06946637552953351, -0.07963959109814561, -0.0235430863622104 },
+              { 0.1789706919811133, 0.0, 0.0, 2.387960210401145, -0.05062514362385284, 0.1980415618924039, -0.05773106209521028, 0.2270443633962704, 0.0, 0.0, -0.6406271069611006, -1.926303795421158, -0.003921639219525042, 0.0506251436238532, -0.004495955654756106, 0.05773106209521239, 0.004206752156087679, -0.1941199226728807, -0.2225484077415173, -0.004206752156085902 },
+              { -0.7721562494765268, 0.0, 0.0, 0.5952511494819428, -0.2486342120934214, -0.8404247616114292, -0.184174110474719, -0.1524251245348557, 0.0, 0.0, 2.03330371727115, -1.856398617276566, -3.368650790235935, 0.2486342120934218, -0.6109613134572948, 0.1841741104747163, 0.3397861738573467, 4.209075551847364, 0.763386437992151, -0.3397861738573452 },
+              { 0.06721491062212942, 0.0, 0.0, -0.37884742650281, -0.3487195781576119, 0.409396780170706, -0.1523041351673108, 0.07425097171344536, 0.0, 0.0, -0.9886686497103585, 1.30030116559104, -1.967557703831201, 0.3487195781576113, -0.3568495857510777, 0.1523041351673095, 0.2175772698952003, 1.558160923660495, 0.282598614037633, -0.217577269895201 },
+              { 0.4990628392264604, 0.0, 0.0, -0.04436393338027858, -0.3603300383682044, 1.264858729429167, -0.1011827524936207, 0.2294033424033968, 0.0, 0.0, -2.24695429009376, 1.792255384247579, -0.5715818448221895, 0.3603300383682038, -0.1036659530495448, 0.1011827524936213, 0.08753824289696552, -0.6932768846069773, -0.1257373893538523, -0.08753824289696682 },
+              { -0.01836299594989332, 0.0, 0.0, 2.387960210401145, -0.2112055108748342, 0.9601119803865987, -0.04470803075101681, 0.1741324088276885, 0.0, 0.0, 0.2658650448955185, -2.635462259346772, 0.04468858681566229, 0.2112055108748351, 0.008105024651585857, 0.04470803075101912, 0.01564160647339863, -1.004800567202262, -0.1822374334792766, -0.01564160647339691 },
+              { 0.4831107065478402, 0.0, 0.0, 0.5952511494819426, 1.663837059766165, -1.771631667915122, -0.1135775683887486, -0.08776971169564429, 0.0, 0.0, -0.0885147322176984, -0.9898471238120847, -3.029084080871617, -1.663837059766165, -0.1500660895234717, 0.113577568388745, 0.4124472492342985, 4.800715748786735, 0.2378358012191158, -0.4124472492342975 },
+              { 0.4802041865755781, 0.0, 0.0, -0.3788474265028099, 0.6659234017980192, 0.8630163384313169, -0.09251927378282643, 0.04275532921687283, 0.0, 0.0, -0.9795340098997694, 0.8781772498270015, -1.540140019303441, -0.6659234017980191, -0.07630121312082158, 0.09251927378282543, 0.2641047616665511, 0.6771236808721233, 0.03354588390394891, -0.2641047616665525 },
+              { 0.2114830501778265, 0.0, 0.0, -0.04436393338027861, -0.195903438764438, 2.66634668902302, -0.06020216546078079, 0.1320954487405337, 0.0, 0.0, -0.6551944351141369, 0.488075318316589, -0.1558216593793801, 0.1959034387644386, -0.007719675803583487, 0.06020216546078226, 0.1062577299004974, -2.510525029643639, -0.1243757729369506, -0.1062577299004992 },
+              { -0.3725184613179943, 0.0, 0.0, 2.387960210401145, -0.3445053365837126, 2.023934642211366, -0.0260903133176964, 0.1002692395122764, 0.0, 0.0, 1.609980002772974, -3.625421751856126, 0.2816579982100335, 0.3445053365837142, 0.01395382671656467, 0.02609031331769979, 0.01898646284020677, -2.3055926404214, -0.1142230662288438, -0.01898646284020511 },
+              { -0.09299953204549662, 0.0, 0.0, 0.5952511494819428, 5.361287459375161, -2.611469588618519, -0.04039826962231863, -0.02945821602961751, 0.0, 0.0, -0.2939309186617314, -0.2083206987747147, 0.9484955885627868, -5.361287459375159, 0.01069933499237245, 0.04039826962231742, 0.2040524062157882, 1.66297400005573, 0.01875888103724516, -0.2040524062157845 },
+              { -0.2411578463027708, 0.0, 0.0, -0.3788474265028098, 2.844155613080386, 1.272127250325414, -0.0325110916975743, 0.01435000412050561, 0.0, 0.0, 0.1225336097763093, 0.4974716630292719, 1.196224704977303, -2.844155613080384, 0.01349379902135011, 0.03251109169757513, 0.1306620718435022, -2.468351955302718, -0.02784380314185483, -0.1306620718435026 },
+              { -0.4879619662042396, 0.0, 0.0, -0.04436393338027847, 0.4605930875429121, 3.930322209295084, -0.02079261131397138, 0.04433529734063058, 0.0, 0.0, 1.22046595014009, -0.6881400505555717, 1.16498018051314, -0.4605930875429101, 0.01314135074647033, 0.02079261131397456, 0.05256949950684797, -5.095302389808221, -0.05747664808710151, -0.05256949950684971 },
+              { -0.7705598540560997, 0.0, 0.0, 2.387960210401145, -0.3739185830722055, 2.983376208050325, -0.008861583265181938, 0.0336534421910899, 0.0, 0.0, 2.900847164028852, -4.518247520373897, 0.6643810885001001, 0.3739185830722077, 0.007494432145151164, 0.008861583265185657, 0.009393282256732971, -3.647757296550425, -0.04114787433624312, -0.009393282256731833 },
+              { -0.4678780560632, 0.0, 0.0, 0.5952511494819427, -0.2046503758301564, -0.1733537710627885, -0.1489293597361645, -0.9446161967580843, 0.0, 0.0, 1.603905442183236, -1.731278535601978, -0.6373168633029824, 0.2046503758301573, -3.472781860193873, 0.1489293597361626, 0.4343491604652297, 0.8106706343657697, 4.417398056951958, -0.4343491604652291 },
+              { 0.2056276599567358, 0.0, 0.0, -0.3788474265028099, -0.1701350922196621, 0.08444595988280607, -0.3083694599527347, 0.4601516365466861, 0.0, 0.0, -1.066131554499624, 1.239351321045699, -0.3690067190910523, 0.1701350922196617, -2.010742087864454, 0.3083694599527337, 0.2781293407040535, 0.284560759208246, 1.550590451317768, -0.2781293407040542 },
+              { 0.4892360570732331, 0.0, 0.0, -0.04436393338027853, -0.1138359786412049, 0.2609014401096531, -0.3713739514286806, 1.42166925227039, 0.0, 0.0, -2.048818887393054, 1.603946763700099, -0.103077887670106, 0.1138359786412041, -0.5616782468812035, 0.371373951428681, 0.111900263272223, -0.157823552439547, -0.8599910053891872, -0.1119002632722239 },
+              { -0.06383535888795244, 0.0, 0.0, 2.387960210401145, -0.05062514362385262, 0.1980415618924039, -0.2313809182167497, 1.079141606484439, 0.0, 0.0, 0.4542761869961338, -2.778401038509327, 0.01186629693945823, 0.05062514362385348, 0.06466023909277013, 0.231380918216752, 0.01999468831507067, -0.209907858831863, -1.143801845577212, -0.01999468831506884 },
+              { 0.2799340743338202, 0.0, 0.0, 0.5952511494819426, -0.2486342120934215, -0.8404247616114293, -0.3257377681716898, -0.7244764472397189, 0.0, 0.0, 0.4091620707559399, -1.284347294571703, -2.093433657987696, 0.248634212093422, -1.804615294964613, 0.3257377681716869, 1.615003306105586, 2.933858419599124, 2.529091742204332, -1.615003306105586 },
+              { 0.4829185522231057, 0.0, 0.0, -0.3788474265028099, -0.3487195781576119, 0.4093967801707061, -0.3719461781635724, 0.3529147859003536, 0.0, 0.0, -1.125708477124427, 1.021637351404131, -1.150990452114114, 0.3487195781576115, -0.9921952703483163, 0.3719461781635712, 1.034144521612288, 0.7415936719434073, 0.6392804844479624, -1.034144521612289 },
+              { 0.3667795352879982, 0.0, 0.0, -0.04436393338027855, -0.3603300383682043, 1.264858729429167, -0.3393187571083617, 1.090353831079369, 0.0, 0.0, -1.253720497479326, 0.9313048955716065, -0.2430509166744638, 0.360330038368204, -0.2095186537258236, 0.3393187571083625, 0.4160691710446914, -1.021807812754703, -0.8808351773535456, -0.4160691710446927 },
+              { -0.2418723559510947, 0.0, 0.0, 2.387960210401145, -0.211205510874834, 0.9601119803865987, -0.1871951985272102, 0.8276511453197453, 0.0, 0.0, 1.142893141388776, -3.288980995838828, 0.1033915184986221, 0.2112055108748352, 0.08912721687659364, 0.1871951985272131, 0.07434453815635833, -1.063503498885222, -0.9167783621963411, -0.07434453815635642 },
+              { 0.4378070106059077, 0.0, 0.0, 0.5952511494819427, 1.663837059766165, -1.771631667915122, -0.3575889809782535, -0.4171693419871503, 0.0, 0.0, -0.372610666567272, -0.6604474935205786, -1.481170013617509, -1.663837059766164, -0.3487738061710451, 0.3575889809782509, 1.960361316488408, 3.252801681532629, 0.7659431481581951, -1.960361316488406 },
+              { 0.302639767092249, 0.0, 0.0, -0.3788474265028099, 0.6659234017980193, 0.8630163384313169, -0.3230459494282511, 0.2032160321740205, 0.0, 0.0, -0.641508887459293, 0.7177165468698543, -0.5489551427612902, -0.6659234017980188, -0.1292634692829176, 0.3230459494282507, 1.255289638208702, -0.3140611956700264, -0.07395256289110272, -1.255289638208703 },
+              { -0.03243500766322459, 0.0, 0.0, -0.04436393338027858, -0.1959034387644378, 2.66634668902302, -0.239189492840794, 0.6278495208196073, 0.0, 0.0, 0.08447769480598774, -0.007678753762484614, 0.2429634826547054, 0.1959034387644387, 0.05721105465745419, 0.2391894928407958, 0.5050428719345825, -2.909310171677724, -0.6850605754770618, -0.5050428719345845 },
+              { -0.5311934849449861, 0.0, 0.0, 2.387960210401145, -0.3445053365837124, 2.023934642211366, -0.1156178195020039, 0.4765795837855638, 0.0, 0.0, 2.144965370673253, -4.001732096129413, 0.3529141721142451, 0.3445053365837143, 0.08310134415924902, 0.1156178195020071, 0.09024263674441824, -2.376848814325611, -0.5596809279448151, -0.09024263674441654 },
+              { -0.3052983311727134, 0.0, 0.0, 0.595251149481943, 5.361287459375161, -2.611469588618519, -0.1714833846564952, -0.1400148679968901, 0.0, 0.0, -0.1921887715017874, -0.097764046807442, 1.714304041946447, -5.361287459375159, 0.09191301908541209, 0.1714833846564945, 0.9698608595994478, 0.8971655466720716, 0.04810184891147845, -0.9698608595994442 },
+              { -0.4269599542633853, 0.0, 0.0, -0.3788474265028097, 2.844155613080386, 1.272127250325414, -0.1413793783447627, 0.06820555361082561, 0.0, 0.0, 0.3621912672272437, 0.4436161135389519, 1.686599315157398, -2.844155613080384, 0.09042762033477555, 0.1413793783447644, 0.6210366820235965, -2.958726565482811, -0.1586331739456, -0.6210366820235975 },
+              { -0.6206050624415991, 0.0, 0.0, -0.04436393338027847, 0.4605930875429121, 3.930322209295084, -0.09353828403104837, 0.2107256189074788, 0.0, 0.0, 1.519499367944298, -0.8545303721224199, 1.362273453643769, -0.4605930875429101, 0.07303877426675279, 0.09353828403105169, 0.249862772637476, -5.29259566293885, -0.2837643931742321, -0.2498627726374783 },
+              { -0.8328890121381235, 0.0, 0.0, 2.387960210401145, -0.3739185830722055, 2.983376208050325, -0.04117404494101518, 0.1599547732723929, 0.0, 0.0, 3.089477653192178, -4.6445488514552, 0.6996340663533357, 0.3739185830722077, 0.03751112855134159, 0.04117404494101901, 0.04464626010996819, -3.68301027440366, -0.197465901823736, -0.04464626010996747 },
+              { 0.4812574119505104, 0.0, 0.0, 0.5952511494819426, -0.2046503758301568, -0.1733537710627885, 2.172791780814812, -1.917774913608548, 0.0, 0.0, -0.3183887426809381, -0.7581198187515146, -0.1898434099426758, 0.2046503758301572, -2.100196187656609, -2.172791780814813, 0.8818226138255376, 0.3631971810054622, 4.017971101265156, -0.8818226138255369 },
+              { 0.3745115325575973, 0.0, 0.0, -0.3788474265028099, -0.1701350922196622, 0.08444595988280626, 0.9588710308357264, 0.9342072135262691, 0.0, 0.0, -0.7609598501209031, 0.7652957440661157, -0.08247342308476004, 0.1701350922196617, -0.9123854696768562, -0.9588710308357269, 0.5646626367103469, -0.001972536798046515, -0.02182174384941372, -0.5646626367103473 },
+              { 0.0476238812119079, 0.0, 0.0, -0.04436393338027855, -0.1138359786412048, 0.2609014401096533, -0.1163026317109005, 2.886295658289475, 0.0, 0.0, -0.1425803055126436, 0.1393203576810136, 0.01220355361256347, 0.1138359786412042, 0.1350052486979013, 0.1163026317109015, 0.2271817045548927, -0.273104993722216, -3.021300906987377, -0.2271817045548934 },
+              { -0.4827619721466284, 0.0, 0.0, 2.387960210401145, -0.0506251436238524, 0.1980415618924043, -0.355812964294298, 2.190890552427293, 0.0, 0.0, 1.984951746197663, -3.890149984452181, 0.03246514469508466, 0.05062514362385359, 0.3591548062738977, 0.3558129642943006, 0.04059353607069716, -0.2305067065874888, -2.550045358701193, -0.04059353607069516 },
+              { 0.3475710769152417, 0.0, 0.0, 0.5952511494819426, -0.2486342120934216, -0.8404247616114293, 0.7946082552636325, -1.470843672578272, 0.0, 0.0, -0.4048421571640347, -0.5379800692331498, -0.4296314169580841, 0.2486342120934222, -0.7519062741107136, -0.7946082552636339, 3.2788055471352, 1.270056178569513, 2.222749946688985, -3.278805547135198 },
+              { 0.1896272889304795, 0.0, 0.0, -0.3788474265028099, -0.3487195781576118, 0.4093967801707062, 0.1771507192356633, 0.7164932438847014, 0.0, 0.0, -0.4688387558474529, 0.6580588934197834, -0.08559822282134696, 0.3487195781576118, -0.149807109656455, -0.1771507192356635, 2.099536750905055, -0.3237985573493584, -0.5666861342282465, -2.099536750905056 },
+              { -0.1420291720750583, 0.0, 0.0, -0.04436393338027855, -0.3603300383682041, 1.264858729429167, -0.3138038042801881, 2.213653790160982, 0.0, 0.0, 0.3783881689653433, -0.1919950635100069, 0.1855901991612654, 0.3603300383682042, 0.3248050064654061, 0.3138038042801897, 0.8447102868804207, -1.450448928590431, -2.538458796626389, -0.8447102868804216 },
+              { -0.5935657667002437, 0.0, 0.0, 2.387960210401145, -0.2112055108748337, 0.9601119803865987, -0.3130250485042567, 1.680310595097792, 0.0, 0.0, 2.347246001915973, -4.141640445616876, 0.1799824509909746, 0.2112055108748352, 0.3149907776486962, 0.3130250485042598, 0.1509354706487107, -1.140094431377574, -1.995301372746491, -0.1509354706487089 },
+              { -0.05401710966384803, 0.0, 0.0, 0.5952511494819428, 1.663837059766165, -1.771631667915122, -0.2432402833368585, -0.8469438715271483, 0.0, 0.0, -0.3105610758375143, -0.2306729639805806, 0.5384255743731519, -1.663837059766164, 0.2573990117401047, 0.2432402833368576, 3.979956904479069, 1.233206093541971, 0.5895448597870441, -3.979956904479065 },
+              { -0.2061154301671797, 0.0, 0.0, -0.3788474265028098, 0.6659234017980195, 0.8630163384313169, -0.3467356679788726, 0.4125724393504243, 0.0, 0.0, 0.07660271697653959, 0.5083601396934502, 0.7442643232899699, -0.6659234017980185, 0.355802009425889, 0.3467356679788733, 2.548509104259963, -1.607280661721285, -0.7683744487763127, -2.548509104259963 },
+              { -0.4621593309516329, 0.0, 0.0, -0.04436393338027853, -0.1959034387644377, 2.66634668902302, -0.3612385969010115, 1.274670140826891, 0.0, 0.0, 1.16102263810168, -0.654499373769769, 0.7632667284524279, 0.1959034387644391, 0.3648862738856445, 0.3612385969010141, 1.025346117732305, -3.429613417475446, -1.639556414712536, -1.025346117732307 },
+              { -0.7581395618146322, 0.0, 0.0, 2.387960210401145, -0.3445053365837124, 2.023934642211366, -0.2125067311109059, 0.9675594948072075, 0.0, 0.0, 2.862891358564543, -4.492712007151057, 0.4458835800926376, 0.3445053365837143, 0.2131585094199931, 0.2125067311109095, 0.1832120447228105, -2.469818222304004, -1.180718004227202, -0.1832120447228091 },
+              { -0.6310335137414269, 0.0, 0.0, 0.595251149481943, 5.361287459375161, -2.611469588618519, -0.2937683168332536, -0.2842604248140115, 0.0, 0.0, -0.01069914575019509, 0.04648151000967904, 2.71347021429295, -5.361287459375159, 0.2953632694773667, 0.2937683168332538, 1.969027031945951, -0.1020006256744308, -0.01110284466335482, -1.969027031945948 },
+              { -0.7005926923501763, 0.0, 0.0, -0.3788474265028097, 2.844155613080386, 1.272127250325414, -0.2522092157012457, 0.1384720060195224, 0.0, 0.0, 0.7060904577227316, 0.373349661130255, 2.326401239652592, -2.844155613080384, 0.2532305210650835, 0.2522092157012475, 1.260838606518791, -3.598528489978004, -0.391702527084605, -1.260838606518791 },
+              { -0.806225191360899, 0.0, 0.0, -0.04436393338027847, 0.4605930875429121, 3.930322209295084, -0.1758931418234098, 0.4278185224669558, 0.0, 0.0, 1.922212400423074, -1.071623275681897, 1.61968607904983, -0.4605930875429098, 0.176304045393691, 0.1758931418234135, 0.5072753980435372, -5.55000828834491, -0.6041225678606473, -0.5072753980435387 },
+              { -0.9164550475844884, 0.0, 0.0, 2.387960210401145, -0.3739185830722055, 2.983376208050325, -0.08108889370311578, 0.32474273948142, 0.0, 0.0, 3.33783165484757, -4.809336817664228, 0.7456293577213028, 0.3739185830722077, 0.08116231523560608, 0.08108889370311961, 0.09064155147793573, -3.729005565771629, -0.4059050547170281, -0.09064155147793453 },
+              { -0.4917573542746288, 0.0, 0.0, 0.5952511494819427, -0.2046503758301569, -0.173353771062788, 5.652746543579378, -2.66365001674368, 0.0, 0.0, -0.09124907959093015, -0.01224471561638307, 0.1531215169456467, 0.2046503758301572, 2.352773341333094, -5.652746543579376, 1.224787540713863, 0.02023225411714175, 0.3108766754105831, -1.224787540713858 },
+              { -0.5849244295298525, 0.0, 0.0, -0.3788474265028098, -0.1701350922196622, 0.08444595988280656, 3.01902097627486, 1.297545943631652, 0.0, 0.0, 0.5618148420719296, 0.4019570139607327, 0.1371393163479414, 0.1701350922196618, 2.107200437849726, -3.019020976274859, 0.7842753761430497, -0.2215852762307463, -3.404746381481379, -0.7842753761430478 },
+              { -0.7289383038660989, 0.0, 0.0, -0.0443639333802785, -0.1138359786412046, 0.2609014401096535, 0.5172857733394427, 4.008854962057995, 0.0, 0.0, 1.756541183333883, -0.9832389460875065, 0.1005607305225768, 0.1138359786412043, 1.54515583882625, -0.5172857733394404, 0.3155388814649064, -0.3614621706322286, -5.554010800884246, -0.315538881464906 },
+              { -0.8821264643964413, 0.0, 0.0, 2.387960210401145, -0.0506251436238524, 0.1980415618924043, -0.3729043790350905, 3.042987795515463, 0.0, 0.0, 3.236413481535645, -4.74224722754035, 0.04825308085406782, 0.05062514362385365, 0.741427883782918, 0.3729043790350935, 0.0563814722296806, -0.2462946427464725, -3.784415679298383, -0.05638147222967799 },
+              { -0.6008388186101042, 0.0, 0.0, 0.5952511494819428, -0.2486342120934216, -0.8404247616114292, 2.653544816902356, -2.042894995283135, 0.0, 0.0, -0.02848358434355186, 0.03407125347171303, 0.8455857152901549, 0.2486342120934224, 2.055440183053353, -2.653544816902354, 4.554022679383441, -0.005160953678723545, -0.01254518777021801, -4.554022679383435 },
+              { -0.6756610863201368, 0.0, 0.0, -0.3788474265028098, -0.3487195781576117, 0.4093967801707065, 1.238500693090995, 0.9951570580716098, 0.0, 0.0, 0.6751134335900718, 0.379395079232875, 0.7309690288957406, 0.3487195781576121, 1.776831239449492, -1.238500693090993, 2.916104002622144, -1.140365809066444, -2.771988297521101, -2.916104002622143 },
+              { -0.7896962308250461, 0.0, 0.0, -0.0443639333802785, -0.3603300383682039, 1.264858729429167, -0.03655605408340326, 3.074604278836954, 0.0, 0.0, 1.887005716391303, -1.052945552185979, 0.5141211273089913, 0.3603300383682044, 1.249719815412178, 0.03655605408340544, 1.173241215028146, -1.778979856738156, -4.324324094249133, -1.173241215028146 },
+              { -0.9091655046752485, 0.0, 0.0, 2.387960210401145, -0.2112055108748337, 0.9601119803865987, -0.3634218383066479, 2.33382933158985, 0.0, 0.0, 3.316364476383035, -4.795159182108933, 0.2386853826739348, 0.2112055108748353, 0.5801937258213099, 0.3634218383066514, 0.2096384023316709, -1.198797363060534, -2.914023057411162, -0.2096384023316686 },
+              { -0.7626281864689357, 0.0, 0.0, 0.5952511494819429, 1.663837059766165, -1.771631667915122, 0.1760556849367925, -1.176343501818654, 0.0, 0.0, 0.06865037067606788, 0.09872666631092508, 2.08633964162726, -1.663837059766163, 1.385306056818842, -0.1760556849367918, 5.527870971733178, -0.3147079737121354, -0.2089625550001874, -5.527870971733174 },
+              { -0.8084193479978767, 0.0, 0.0, -0.3788474265028097, 0.6659234017980197, 0.863016338431317, -0.152522845276929, 0.573033142307572, 0.0, 0.0, 0.8393673377643842, 0.3478994367363025, 1.735449199832121, -0.665923401798018, 1.152318749958529, 0.1525228452769309, 3.539693980802114, -2.598465538263435, -1.7253518922661, -3.539693980802114 },
+              { -0.8769635727776937, 0.0, 0.0, -0.0443639333802785, -0.1959034387644374, 2.66634668902302, -0.3693397402960146, 1.770424212905966, 0.0, 0.0, 2.071580952006815, -1.150253445848842, 1.162051870486513, 0.1959034387644391, 0.771589372316702, 0.3693397402960177, 1.424131259766391, -3.82839855950953, -2.542013585222667, -1.424131259766392 },
+              { -0.9473490621820385, 0.0, 0.0, 2.387960210401145, -0.3445053365837124, 2.023934642211366, -0.271499760554798, 1.343869839080493, 0.0, 0.0, 3.428411203205235, -4.869022351424343, 0.5171397539968492, 0.3445053365837145, 0.3433749803435076, 0.2714997605548013, 0.254468218627022, -2.541074396208215, -1.687244819424003, -0.2544682186270203 },
+              { -0.9180525724031017, 0.0, 0.0, 0.595251149481943, 5.361287459375161, -2.611469588618519, -0.3501331723329736, -0.3948170767812844, 0.0, 0.0, 0.1657632609442064, 0.1570381619769522, 3.479278667676613, -5.36128745937516, 0.5260174726393211, 0.350133172332974, 2.734835485329615, -0.8678090790580921, -0.1312003958580357, -2.734835485329609 },
+              { -0.9342408615286709, 0.0, 0.0, -0.3788474265028096, 2.844155613080386, 1.272127250325414, -0.3132314411305541, 0.1923275555098424, 0.0, 0.0, 0.9935941763915463, 0.319494111639935, 2.816775849832687, -2.844155613080384, 0.4258564648142694, 0.3132314411305564, 1.751213216698885, -4.088903100158099, -0.6181840203241105, -1.751213216698886 },
+              { -0.9581182769494959, 0.0, 0.0, -0.04436393338027844, 0.4605930875429126, 3.930322209295084, -0.2293888251892493, 0.5942088440338039, 0.0, 0.0, 2.24049580757852, -1.238013597248745, 1.816979352180458, -0.4605930875429098, 0.2747014476164483, 0.2293888251892534, 0.7045686711741661, -5.747301561475538, -0.8689102916502526, -0.704568671174167 },
+              { -0.9822238538486632, 0.0, 0.0, 2.387960210401145, -0.3739185830722055, 2.983376208050325, -0.1099617071967991, 0.4510440705627239, 0.0, 0.0, 3.529901792193049, -4.935638148745531, 0.7808823355745392, 0.3739185830722077, 0.1180583080060971, 0.1099617071968034, 0.1258945293311721, -3.764258543624864, -0.5691023785688235, -0.1258945293311707 } } } };
     {
-        const ufc_scalar_t fw0 = sp_818[73] * weights_818[iq];
+    double t0 = 0;
+    double t1 = 0;
+    if ((cell_permutation & 1 << 12) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D001_Q738[0][0][i2][5];
+            t1 = FE17_C0_D001_Q738[0][0][i2][4];
+            FE17_C0_D001_Q738[0][0][i2][4] = t0;
+            FE17_C0_D001_Q738[0][0][i2][5] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 13) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D001_Q738[0][0][i2][7];
+            t1 = FE17_C0_D001_Q738[0][0][i2][6];
+            FE17_C0_D001_Q738[0][0][i2][6] = t0;
+            FE17_C0_D001_Q738[0][0][i2][7] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 14) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D001_Q738[0][0][i2][9];
+            t1 = FE17_C0_D001_Q738[0][0][i2][8];
+            FE17_C0_D001_Q738[0][0][i2][8] = t0;
+            FE17_C0_D001_Q738[0][0][i2][9] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 15) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D001_Q738[0][0][i2][11];
+            t1 = FE17_C0_D001_Q738[0][0][i2][10];
+            FE17_C0_D001_Q738[0][0][i2][10] = t0;
+            FE17_C0_D001_Q738[0][0][i2][11] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 16) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D001_Q738[0][0][i2][13];
+            t1 = FE17_C0_D001_Q738[0][0][i2][12];
+            FE17_C0_D001_Q738[0][0][i2][12] = t0;
+            FE17_C0_D001_Q738[0][0][i2][13] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 17) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D001_Q738[0][0][i2][15];
+            t1 = FE17_C0_D001_Q738[0][0][i2][14];
+            FE17_C0_D001_Q738[0][0][i2][14] = t0;
+            FE17_C0_D001_Q738[0][0][i2][15] = t1;
+        }
+    }
+    }
+    double FE17_C0_D010_Q738[1][1][64][20] =
+        { { { { -2.895817908681458, 0.0, 0.5508438736472893, 0.0, -0.1471004930517223, -0.1864963780065695, 0.0, 0.0, -0.2279295036573318, -0.1889289084911306, -0.8750261456427531, 0.186496378006569, 4.672464753388073, -2.327490718353903, -1.123842151496785, 0.2279295036573343, 0.08157204844508761, 1.022126638694479, -0.08157204844507825, 1.31277105998792 },
+              { -1.012689559037514, 0.0, 0.6342089901610448, 0.0, -0.7936014414812818, -0.3051441075194293, 0.0, 0.0, -0.1907662243101657, -0.1657927448886286, -3.23017404188562, 0.305144107519429, 2.430401517751107, -2.051920948874637, -0.6748216332276377, 0.1907662243101681, 0.3211222526012847, 4.0237754833669, -0.3211222526012773, 0.8406143781162685 },
+              { 0.3896190023483261, 0.0, 0.762060204474009, 0.0, -1.941707570975215, 1.282348894589376, 0.0, 0.0, -0.1287831166761075, -0.1187354930955848, -3.589046909776108, -1.282348894589376, 0.3258507087593202, -1.477529915581656, -0.2194703574037237, 0.1287831166761084, 0.4413885279596657, 5.530754480751319, -0.4413885279596612, 0.3382058504993112 },
+              { 0.1789706919811135, 0.0, 0.8969150233659922, 0.0, -3.330829985632918, 4.969291590936624, 0.0, 0.0, -0.05773106209521023, -0.0559357213522601, -0.2677227279260093, -4.969291590936623, -0.3768260182546176, -0.6990596970924875, -0.004495955654756079, 0.05773106209521151, 0.2871868369046199, 3.598552713558923, -0.2871868369046175, 0.06043167700701792 },
+              { -0.7721562494765266, 0.0, -0.4340061012409266, 0.0, 0.126694655024587, -0.1864963780065693, 0.0, 0.0, -0.184174110474718, 0.1247991029421718, -0.6202410996312075, 0.1864963780065693, -0.7151059733335768, 1.921268324051031, -0.6109613134572962, 0.1841741104747178, 0.06256194638032062, 0.4935464446066218, -0.06256194638031855, 0.4861622105151257 },
+              { 0.06721491062212964, 0.0, -0.2972658769485543, 0.0, 0.2842397599782674, -0.3051441075194293, 0.0, 0.0, -0.1523041351673103, 0.04554249138264889, -2.227169342801355, 0.3051441075194292, -0.7290570107402059, 0.9591079770666302, -0.3568495857510782, 0.1523041351673101, 0.2462857502259981, 1.942929582823087, -0.246285750225996, 0.3113070943684308 },
+              { 0.4990628392264608, 0.0, 0.03801059142583872, 0.0, -0.4601947283345302, 1.282348894589376, 0.0, 0.0, -0.1011827524936207, -0.02158277378436754, -2.210398236010357, -1.282348894589376, -0.6081378989055946, 0.07106446825329413, -0.1036659530495446, 0.101182752493621, 0.3385243590847312, 2.670592964344885, -0.3385243590847294, 0.1252487268339134 },
+              { -0.01836299594989305, 0.0, 0.5344674999778327, 0.0, -2.366892411001545, 4.969291590936624, 0.0, 0.0, -0.0447080307510173, -0.03048485810033547, 0.6292868832021681, -4.969291590936623, -0.3187332514909881, -0.1973712525369509, 0.008105024651585857, 0.04470803075101826, 0.2202588734014241, 1.737605527799374, -0.2202588734014217, 0.02237983344875088 },
+              { 0.4831107065478398, 0.0, 0.1650501689046028, 0.0, 0.5089027504349507, -0.1864963780065692, 0.0, 0.0, -0.1135775683887465, 0.2886530040919824, -0.2645704171544907, 0.1864963780065696, -2.853028395934822, 2.204867520482379, -0.1500660895234723, 0.1135775683887456, 0.03602453344667075, -0.2443323332804609, -0.03602453344667318, -0.1385869145685112 },
+              { 0.4802041865755779, 0.0, -0.3336305597006547, 0.0, 1.788866980946609, -0.3051441075194292, 0.0, 0.0, -0.09251927378282643, 0.1650433834472551, -0.8270111646228402, 0.3051441075194293, -1.69266286458037, 1.546089237705446, -0.07630121312082166, 0.0925192737828258, 0.1418167074361693, -0.9618558163237693, -0.1418167074361705, -0.08874217032643439 },
+              { 0.2114830501778266, 0.0, -0.464213039151449, 0.0, 1.607943461440376, 1.282348894589376, 0.0, 0.0, -0.06020216546078185, 0.0434234681389724, -0.2858546948181211, -1.282348894589376, -0.5251613996753968, 0.7778913886490187, -0.007719675803583029, 0.06020216546078194, 0.1949297105020599, -1.322088766622255, -0.1949297105020599, -0.03570379233538983 },
+              { -0.3725184613179942, 0.0, 0.1193684465792306, 0.0, -1.021270521487054, 4.969291590936624, 0.0, 0.0, -0.02609031331769782, -0.00757416166005509, 1.881479763327774, -4.969291590936622, 0.0101582376552328, 0.242991777083532, 0.01395382671656481, 0.02609031331769879, 0.12682986401254, -0.8602092418407215, -0.1268298640125385, -0.006379665056508925 },
+              { -0.09299953204549723, 0.0, 2.677956385482761, 0.0, 0.8536090127623913, -0.186496378006569, 0.0, 0.0, -0.04039826962231569, 0.1625032482412038, 0.05620225367124246, 0.1864963780065694, 0.5983624162298165, -3.183319269667081, 0.0106993349923724, 0.0403982696223176, 0.0120909419449621, -0.9098112664336354, -0.01209094194496287, -0.173202583233578 },
+              { -0.241157846302771, 0.0, 0.8967176914041948, 0.0, 3.145861853018223, -0.3051441075194291, 0.0, 0.0, -0.03251109169757366, 0.09741402506974707, 0.4357650509068642, 0.3051441075194293, 0.8829932638467499, -1.538553108948174, 0.01349379902135021, 0.0325110916975753, 0.04759805089425904, -3.581626903925087, -0.04759805089425923, -0.1109078240910998 },
+              { -0.4879619662042395, 0.0, -0.4089557641443955, 0.0, 3.473158233012737, 1.282348894589376, 0.0, 0.0, -0.02079261131397338, 0.031480387770318, 1.449854775329341, -1.282348894589376, 0.9355913553238888, -0.03867362497525305, 0.0131413507464707, 0.02079261131397447, 0.06542440907716146, -4.923013008342076, -0.06542440907716171, -0.04462173851679059 },
+              { -0.7705598540560995, 0.0, -0.1641942009034781, 0.0, 0.1923204453461196, 4.969291590936624, 0.0, 0.0, -0.008861583265183798, 0.0004787193705808601, 3.010808871225653, -4.969291590936622, 0.554419381303298, 0.3803346736562813, 0.007494432145150942, 0.008861583265185047, 0.04256800507724423, -3.203129316571772, -0.04256800507724345, -0.007973151515731783 },
+              { -0.4678780560632001, 0.0, 0.5508438736472888, 0.0, -0.1471004930517227, -0.1864963780065694, 0.0, 0.0, -0.1489293597361629, -0.8979788917491168, -0.5688863386315758, 0.1864963780065692, 1.535474917511829, -1.618440735095917, -3.472781860193874, 0.1489293597361638, 0.3877118554562622, 0.7159868316832981, -0.387711855456259, 4.370760751942991 },
+              { 0.2056276599567361, 0.0, 0.6342089901610447, 0.0, -0.7936014414812818, -0.3051441075194292, 0.0, 0.0, -0.3083694599527331, -0.788012731900811, -2.025002585335352, 0.3051441075194292, 0.5898643117446741, -1.429700961862455, -2.010742087864455, 0.3083694599527341, 1.52629370915155, 2.818604026816632, -1.526293709151546, 2.798754819765267 },
+              { 0.4892360570732335, 0.0, 0.762060204474009, 0.0, -1.941707570975215, 1.282348894589376, 0.0, 0.0, -0.3713739514286798, -0.5643496665110063, -1.932516255682153, -1.282348894589376, -0.2193805193810081, -1.031915742166235, -0.5616782468812038, 0.3713739514286809, 2.09791918205362, 3.874223826657365, -2.097919182053616, 1.12602791339221 },
+              { -0.06383535888795216, 0.0, 0.8969150233659922, 0.0, -3.330829985632918, 4.969291590936624, 0.0, 0.0, -0.2313809182167501, -0.2658624213215504, 0.8100891512904327, -4.969291590936623, -0.3439466673548419, -0.4891329971231971, 0.0646602390927698, 0.2313809182167513, 1.364998716121061, 2.520740834342481, -1.364998716121059, 0.2012021822287818 },
+              { 0.27993407433382, 0.0, -0.4340061012409268, 0.0, 0.1266946550245868, -0.1864963780065693, 0.0, 0.0, -0.3257377681716881, 0.5931699973620351, -0.3854461845076942, 0.1864963780065695, -1.298825402724061, 1.452897429631168, -1.804615294964613, 0.3257377681716876, 0.2973568615038334, 0.2587515294831065, -0.2973568615038337, 1.211445297602578 },
+              { 0.4829185522231059, 0.0, -0.2972658769485544, 0.0, 0.2842397599782674, -0.3051441075194291, 0.0, 0.0, -0.3719461781635717, 0.2164634108453812, -1.302859196360091, 0.3051441075194293, -0.9738397328784496, 0.7881870576038978, -0.992195270348316, 0.3719461781635716, 1.170595896667261, 1.018619436381823, -1.17059589666726, 0.7757318595029348 },
+              { 0.3667795352879986, 0.0, 0.03801059142583878, 0.0, -0.46019472833453, 1.282348894589376, 0.0, 0.0, -0.3393187571083619, -0.102582899771889, -0.9399166931991381, -1.282348894589375, -0.5568547209546533, 0.1520645942408156, -0.2095186537258236, 0.3393187571083623, 1.60900590189595, 1.400111421533667, -1.609005901895948, 0.3121015534977126 },
+              { -0.2418723559510947, 0.0, 0.5344674999778328, 0.0, -2.366892411001545, 4.969291590936624, 0.0, 0.0, -0.1871951985272113, -0.1448944966161861, 1.455918189893034, -4.969291590936623, -0.209633530005637, -0.08296161402110008, 0.08912721687659347, 0.1871951985272123, 1.046890180092291, 0.9109742211085083, -1.046890180092288, 0.05576727973959355 },
+              { 0.4378070106059073, 0.0, 0.1650501689046029, 0.0, 0.5089027504349507, -0.1864963780065691, 0.0, 0.0, -0.3575889809782513, 1.371967407130508, -0.1293703832304137, 0.1864963780065696, -1.724410296954364, 1.121553117443853, -0.3487738061710451, 0.3575889809782511, 0.1712245673707484, -0.3795323672045383, -0.1712245673707503, -1.023193600959464 },
+              { 0.3026397670922489, 0.0, -0.3336305597006547, 0.0, 1.788866980946609, -0.3051441075194291, 0.0, 0.0, -0.3230459494282508, 0.7844510178041337, -0.2947732194804202, 0.3051441075194294, -0.8956908107401622, 0.9266816033485675, -0.1292634692829174, 0.3230459494282508, 0.6740546525785895, -1.494093761466188, -0.6740546525785902, -0.6551875485212173 },
+              { -0.03243500766322431, 0.0, -0.4642130391514488, 0.0, 1.607943461440376, 1.282348894589376, 0.0, 0.0, -0.2391894928407952, 0.2063916957270104, 0.4457162917069999, -1.282348894589376, -0.1182751142463077, 0.614923161060981, 0.05721105465745448, 0.2391894928407957, 0.926500697027181, -2.053659753147375, -0.9265006970271803, -0.2636027503844655 },
+              { -0.5311934849449859, 0.0, 0.1193684465792307, 0.0, -1.021270521487054, 4.969291590936624, 0.0, 0.0, -0.1156178195020053, -0.03599998193894338, 2.357472101784161, -4.969291590936622, 0.1404074410033364, 0.2714175973624201, 0.08310134415924908, 0.1156178195020063, 0.602822202468927, -1.336201580297107, -0.6028222024689252, -0.04710136222030529 },
+              { -0.305298331172714, 0.0, 2.677956385482761, 0.0, 0.8536090127623913, -0.1864963780065688, 0.0, 0.0, -0.1714833846564922, 0.7723777579973672, 0.1015795453314667, 0.1864963780065694, 1.420535725113196, -3.793193779423244, 0.09191301908541248, 0.1714833846564947, 0.05746823360518674, -0.9551885580938594, -0.05746823360518664, -0.8642907770827812 },
+              { -0.4269599542633855, 0.0, 0.8967176914041948, 0.0, 3.145861853018223, -0.305144107519429, 0.0, 0.0, -0.1413793783447625, 0.4630087527185365, 0.6144004829284899, 0.3051441075194293, 1.434390099456153, -1.904147836596963, 0.09042762033477568, 0.1413793783447644, 0.2262334829158847, -3.760262335946711, -0.2262334829158848, -0.5534363730533142 },
+              { -0.6206050624415991, 0.0, -0.4089557641443955, 0.0, 3.473158233012737, 1.282348894589376, 0.0, 0.0, -0.09353828403105037, 0.1496262480294265, 1.695392509767709, -1.282348894589376, 1.186380311820357, -0.1568194852343614, 0.07303877426675319, 0.09353828403105158, 0.3109621435155295, -5.168550742780444, -0.31096214351553, -0.2226650222961814 },
+              { -0.8328890121381234, 0.0, -0.1641942009034781, 0.0, 0.1923204453461196, 4.969291590936624, 0.0, 0.0, -0.04117404494101726, 0.002275352635476069, 3.170566546895296, -4.969291590936622, 0.6185451726502169, 0.3785380403913863, 0.03751112855134159, 0.04117404494101851, 0.2023256807468879, -3.362886992241415, -0.2023256807468863, -0.03978648118681736 },
+              { 0.48125741195051, 0.0, 0.5508438736472886, 0.0, -0.1471004930517222, -0.1864963780065696, 0.0, 0.0, 2.172791780814812, -1.823091110926074, -0.1694593829447733, 0.1864963780065693, -0.3387727696788386, -0.6933285159189585, -2.100196187656609, -2.172791780814814, 0.7871388111430631, 0.3165598759964945, -0.7871388111430631, 3.923287298582682 },
+              { 0.3745115325575973, 0.0, 0.6342089901610446, 0.0, -0.7936014414812813, -0.3051441075194292, 0.0, 0.0, 0.9588710308357267, -1.599836054082117, -0.4525903901681693, 0.3051441075194292, -0.3908428830374935, -0.6178776396811475, -0.9123854696768566, -0.958871030835727, 3.098705904318731, 1.24619183164945, -3.098705904318729, 2.512221523758972 },
+              { 0.04762388121190832, 0.0, 0.7620602044740092, 0.0, -1.941707570975215, 1.282348894589376, 0.0, 0.0, -0.116302631710901, -1.145751720807441, 0.2287936459160358, -1.282348894589376, -0.3591703978161174, -0.4505136878697996, 0.1350052486979006, 0.1163026317109015, 4.259229083651808, 1.712913925059178, -4.259229083651803, 1.01074647210954 },
+              { -0.4827619721466282, 0.0, 0.8969150233659924, 0.0, -3.330829985632918, 4.969291590936624, 0.0, 0.0, -0.355812964294299, -0.5397581407470515, 2.216332664414414, -4.969291590936622, -0.1989157735216668, -0.215237277697696, 0.3591548062738969, 0.3558129642943002, 2.771242229245042, 1.114497321218503, -2.771242229245039, 0.180603334473155 },
+              { 0.3475710769152411, 0.0, -0.4340061012409268, 0.0, 0.1266946550245872, -0.1864963780065693, 0.0, 0.0, 0.7946082552636332, 1.204263217537747, -0.07910438899234565, 0.1864963780065695, -0.7553691851297714, 0.8418042094554568, -0.751906274110713, -0.7946082552636342, 0.6036986570191819, -0.04759026603224183, -0.6036986570191828, -0.4523569434270334 },
+              { 0.1896272889304794, 0.0, -0.2972658769485543, 0.0, 0.2842397599782677, -0.3051441075194291, 0.0, 0.0, 0.1771507192356631, 0.4394674794462864, -0.09689257768388122, 0.3051441075194294, -0.4575444009849186, 0.5651829890029931, -0.1498071096564549, -0.1771507192356633, 2.376562515343471, -0.1873471822943857, -2.37656251534347, -0.2896603697898319 },
+              { -0.1420291720750579, 0.0, 0.03801059142583889, 0.0, -0.4601947283345299, 1.282348894589376, 0.0, 0.0, -0.3138038042801889, -0.2082654441273894, 0.7177069260737048, -1.282348894589375, -0.153728557947097, 0.2577471385963164, 0.3248050064654057, 0.3138038042801895, 3.266629521168793, -0.2575121977391735, -3.26662952116879, -0.1165395623380169 },
+              { -0.5935657667002434, 0.0, 0.5344674999778329, 0.0, -2.366892411001545, 4.969291590936624, 0.0, 0.0, -0.3130250485042579, -0.2941671248959359, 2.534441200443184, -4.969291590936622, -0.007212747536237889, 0.06631101425864983, 0.3149907776486956, 0.3130250485042591, 2.12541319064244, -0.1675487894416408, -2.125413190642438, -0.02082365275275925 },
+              { -0.05401710966384851, 0.0, 0.1650501689046029, 0.0, 0.5089027504349507, -0.1864963780065691, 0.0, 0.0, -0.2432402833368566, 2.785390177210018, 0.0470279051407388, 0.1864963780065697, 0.1808365933949008, -0.2918696526356568, 0.2573990117401054, 0.2432402833368575, 0.347622855741902, -0.5559306555756901, -0.3476228557419022, -3.042789188950124 },
+              { -0.2061154301671797, 0.0, -0.3336305597006546, 0.0, 1.788866980946609, -0.305144107519429, 0.0, 0.0, -0.3467356679788725, 1.592605005146587, 0.3996486664047906, 0.3051441075194294, 0.4212183738617192, 0.1185276160061143, 0.3558020094258894, 0.3467356679788733, 1.368476538463801, -2.188515647351398, -1.3684765384638, -1.948407014572477 },
+              { -0.4621593309516325, 0.0, -0.4642130391514488, 0.0, 1.607943461440376, 1.282348894589376, 0.0, 0.0, -0.3612385969010132, 0.4190197222965424, 1.400212130942474, -1.282348894589376, 0.5240772356116327, 0.4022951344914489, 0.3648862738856446, 0.3612385969010138, 1.880996536262656, -3.008155592382848, -1.880996536262654, -0.7839059961821879 },
+              { -0.758139561814632, 0.0, 0.1193684465792307, 0.0, -1.021270521487054, 4.969291590936624, 0.0, 0.0, -0.2125067311109076, -0.07308773922129475, 2.978509178066548, -4.969291590936622, 0.3302657605906313, 0.3085053546447715, 0.2131585094199929, 0.212506731110909, 1.223859278751314, -1.957238656579494, -1.223859278751312, -0.1400707701986979 },
+              { -0.6310335137414275, 0.0, 2.677956385482761, 0.0, 0.8536090127623913, -0.1864963780065687, 0.0, 0.0, -0.2937683168332507, 1.568093679951916, 0.1607842389063004, 0.1864963780065695, 2.541986829636457, -4.588909701377792, 0.295363269477367, 0.2937683168332539, 0.116672927180021, -1.014393251668692, -0.11667292718002, -1.863456949429284 },
+              { -0.7005926923501765, 0.0, 0.896717691404195, 0.0, 3.145861853018223, -0.3051441075194289, 0.0, 0.0, -0.2522092157012454, 0.9400077764834223, 0.8474698360674953, 0.3051441075194293, 2.185021861307829, -2.381146860361848, 0.2532305210650839, 0.2522092157012474, 0.4593028360548903, -3.993331689085717, -0.4593028360548895, -1.193238297548508 },
+              { -0.8062251913608989, 0.0, -0.4089557641443955, 0.0, 3.473158233012737, 1.282348894589376, 0.0, 0.0, -0.1758931418234118, 0.3037736023085488, 2.015750684454124, -1.282348894589376, 1.526147795018779, -0.3109668395134841, 0.1763040453936913, 0.1758931418234135, 0.6313203182019447, -5.488908917466857, -0.6313203182019446, -0.4800776477022423 },
+              { -0.9164550475844884, 0.0, -0.1641942009034781, 0.0, 0.1923204453461196, 4.969291590936624, 0.0, 0.0, -0.08108889370311764, 0.004619457319178566, 3.379005699788588, -4.969291590936622, 0.7044553127802844, 0.3761939357076837, 0.08116231523560608, 0.08108889370311889, 0.4107648336401791, -3.571326145134707, -0.4107648336401784, -0.08578177255478457 },
+              { -0.4917573542746296, 0.0, 0.5508438736472888, 0.0, -0.1471004930517211, -0.1864963780065701, 0.0, 0.0, 5.652746543579376, -2.532141094184059, 0.1366804240664036, 0.186496378006569, -0.07480798671168497, 0.01572146733902827, 2.352773341333095, -5.652746543579378, 1.09327861815424, 0.01042006898531917, -1.09327861815424, 0.1793677528509655 },
+              { -0.5849244295298525, 0.0, 0.6342089901610448, 0.0, -0.7936014414812806, -0.3051441075194294, 0.0, 0.0, 3.019020976274859, -2.222056041094299, 0.7525810663820969, 0.3051441075194291, -0.05362690796222516, 0.004342347331035383, 2.107200437849727, -3.01902097627486, 4.303877360868998, 0.04102037509918646, -4.303877360868996, 0.1148556032445728 },
+              { -0.7289383038660987, 0.0, 0.7620602044740094, 0.0, -1.941707570975214, 1.282348894589376, 0.0, 0.0, 0.5172857733394401, -1.591365894222862, 1.885324300009991, -1.282348894589376, -0.02822238615353131, -0.004899514454378237, 1.545155838826249, -0.5172857733394401, 5.915759737745761, 0.05638327096522681, -5.915759737745758, 0.04621005539661237 },
+              { -0.8821264643964408, 0.0, 0.8969150233659924, 0.0, -3.330829985632918, 4.969291590936624, 0.0, 0.0, -0.3729043790350918, -0.7496848407163419, 3.294144543630855, -4.969291590936622, -0.009477981241144264, -0.005310577728405597, 0.7414278837829169, 0.3729043790350934, 3.849054108461484, 0.03668544200206247, -3.849054108461481, 0.008256956933425172 },
+              { -0.6008388186101041, 0.0, -0.4340061012409267, 0.0, 0.1266946550245877, -0.1864963780065696, 0.0, 0.0, 2.653544816902353, 1.67263411195761, 0.1556905261311678, 0.1864963780065695, 0.6614116048154367, 0.3734333150355943, 2.055440183053354, -2.653544816902356, 0.8384935721426959, -0.2823851811557535, -0.838493572142695, -3.728074295010961 },
+              { -0.675661086320137, 0.0, -0.2972658769485541, 0.0, 0.2842397599782681, -0.3051441075194292, 0.0, 0.0, 1.238500693090994, 0.610388398909019, 0.8274175687573823, 0.3051441075194293, 0.5786648937284302, 0.3942620695402614, 1.776831239449492, -1.238500693090993, 3.300872661784735, -1.111657328735647, -3.300872661784732, -2.38721963835851 },
+              { -0.7896962308250458, 0.0, 0.03801059142583905, 0.0, -0.4601947283345297, 1.282348894589376, 0.0, 0.0, -0.03655605408340466, -0.2892655701149107, 1.988188468884923, -1.282348894589376, 0.4129383748153698, 0.3387472645838379, 1.249719815412178, 0.03655605408340561, 4.537111063980009, -1.52799374055039, -4.537111063980006, -0.960454245297268 },
+              { -0.9091655046752485, 0.0, 0.5344674999778329, 0.0, -2.366892411001545, 4.969291590936624, 0.0, 0.0, -0.3634218383066496, -0.4085767634117869, 3.361072507134053, -4.969291590936622, 0.1939773519229163, 0.1807206527745008, 0.5801937258213088, 0.3634218383066509, 2.952044497333309, -0.9941800961325082, -2.952044497333307, -0.1716169624095218 },
+              { -0.7626281864689363, 0.0, 0.1650501689046031, 0.0, 0.5089027504349514, -0.186496378006569, 0.0, 0.0, 0.1760556849367938, 3.868704580248545, 0.182227939064816, 0.1864963780065697, 1.972762073238515, -1.375184055674183, 1.385306056818844, -0.1760556849367921, 0.4828228896659799, -0.6911306894997657, -0.4828228896659785, -5.254010637067387 },
+              { -0.8084193479978766, 0.0, -0.3336305597006545, 0.0, 1.78886698094661, -0.3051441075194289, 0.0, 0.0, -0.1525228452769293, 2.212012639503465, 0.9318866115472106, 0.3051441075194295, 1.642929926049295, -0.5008800183507639, 1.152318749958529, 0.1525228452769308, 1.900714483606222, -2.720753592493816, -1.90071448360622, -3.364331389461996 },
+              { -0.8769635727776933, 0.0, -0.4642130391514487, 0.0, 1.607943461440377, 1.282348894589376, 0.0, 0.0, -0.3693397402960167, 0.5819879498845808, 2.131783117467595, -1.282348894589376, 1.101849705025731, 0.239326906903411, 0.771589372316702, 0.3693397402960178, 2.612567522787776, -3.739726578907968, -2.612567522787775, -1.353577322201283 },
+              { -0.9473490621820384, 0.0, 0.1193684465792307, 0.0, -1.021270521487054, 4.969291590936624, 0.0, 0.0, -0.2714997605547996, -0.1015135595001828, 3.454501516522934, -4.969291590936622, 0.4910494406791498, 0.3369311749236596, 0.3433749803435072, 0.2714997605548011, 1.699851617207699, -2.433230995035879, -1.699851617207697, -0.2418614208433244 },
+              { -0.9180525724031018, 0.0, 2.677956385482761, 0.0, 0.8536090127623913, -0.1864963780065687, 0.0, 0.0, -0.3501331723329708, 2.177968189708081, 0.2061615305665246, 0.1864963780065695, 3.438880398054297, -5.198784211133957, 0.526017472639322, 0.3501331723329744, 0.1620502188402461, -1.059770543328917, -0.1620502188402439, -2.703985662347404 },
+              { -0.9342408615286711, 0.0, 0.896717691404195, 0.0, 3.145861853018224, -0.3051441075194289, 0.0, 0.0, -0.3132314411305536, 1.305602504132211, 1.026105268089121, 0.3051441075194294, 2.784264758135113, -2.746741588010637, 0.4258564648142699, 0.3132314411305565, 0.6379382680765164, -4.171967121107341, -0.6379382680765149, -1.731458968946483 },
+              { -0.9581182769494959, 0.0, -0.4089557641443955, 0.0, 3.473158233012737, 1.282348894589376, 0.0, 0.0, -0.2293888251892515, 0.4219194625676576, 2.261288418892493, -1.282348894589376, 1.796186740866484, -0.4291126997725925, 0.2747014476164488, 0.2293888251892533, 0.8768580526403131, -5.734446651905226, -0.8768580526403125, -0.6966209101841081 },
+              { -0.9822238538486632, 0.0, -0.1641942009034781, 0.0, 0.1923204453461196, 4.969291590936624, 0.0, 0.0, -0.1099617071968015, 0.006416090584073775, 3.538763375458233, -4.969291590936622, 0.7720207523093543, 0.3743973024427885, 0.1180583080060971, 0.1099617071968026, 0.5705225093098237, -3.731083820804352, -0.5705225093098234, -0.1244743985901708 } } } };
+    {
+    double t0 = 0;
+    double t1 = 0;
+    if ((cell_permutation & 1 << 12) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D010_Q738[0][0][i2][5];
+            t1 = FE17_C0_D010_Q738[0][0][i2][4];
+            FE17_C0_D010_Q738[0][0][i2][4] = t0;
+            FE17_C0_D010_Q738[0][0][i2][5] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 13) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D010_Q738[0][0][i2][7];
+            t1 = FE17_C0_D010_Q738[0][0][i2][6];
+            FE17_C0_D010_Q738[0][0][i2][6] = t0;
+            FE17_C0_D010_Q738[0][0][i2][7] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 14) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D010_Q738[0][0][i2][9];
+            t1 = FE17_C0_D010_Q738[0][0][i2][8];
+            FE17_C0_D010_Q738[0][0][i2][8] = t0;
+            FE17_C0_D010_Q738[0][0][i2][9] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 15) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D010_Q738[0][0][i2][11];
+            t1 = FE17_C0_D010_Q738[0][0][i2][10];
+            FE17_C0_D010_Q738[0][0][i2][10] = t0;
+            FE17_C0_D010_Q738[0][0][i2][11] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 16) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D010_Q738[0][0][i2][13];
+            t1 = FE17_C0_D010_Q738[0][0][i2][12];
+            FE17_C0_D010_Q738[0][0][i2][12] = t0;
+            FE17_C0_D010_Q738[0][0][i2][13] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 17) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D010_Q738[0][0][i2][15];
+            t1 = FE17_C0_D010_Q738[0][0][i2][14];
+            FE17_C0_D010_Q738[0][0][i2][14] = t0;
+            FE17_C0_D010_Q738[0][0][i2][15] = t1;
+        }
+    }
+    }
+    double FE17_C0_D100_Q738[1][1][64][20] =
+        { { { { -2.895817908681458, 0.4917573542746306, 0.0, 0.0, 0.0, 0.0, -0.136680424066404, -0.1864963780065696, -0.1531215169456473, -0.2046503758301567, -0.8750261456427521, 0.1864963780065692, -0.9802817901913037, 0.2046503758301566, 4.528904392082593, -2.124843837675764, 0.07115197945976777, -0.07115197945976257, 1.01170656970916, 1.133403307136955 },
+              { -1.012689559037515, 0.5849244295298541, 0.0, 0.0, 0.0, 0.0, -0.7525810663820991, -0.3051441075194295, -0.1371393163479411, -0.1701350922196621, -3.230174041885618, 0.3051441075194293, -0.5886194585237539, 0.170135092219662, 2.344199343047224, -1.916434213539562, 0.2801018775021009, -0.2801018775020983, 3.982755108267719, 0.7257587748716973 },
+              { 0.3896190023483259, 0.7289383038660984, 0.0, 0.0, 0.0, 0.0, -1.885324300009991, 1.282348894589376, -0.1005607305225758, -0.1138359786412047, -3.589046909776108, -1.282348894589376, -0.1914350645801202, 0.1138359786412047, 0.2978154159357156, -1.41637272215014, 0.3850052569944394, -0.3850052569944399, 5.474371209786097, 0.2919957951026965 },
+              { 0.1789706919811136, 0.8821264643964425, 0.0, 0.0, 0.0, 0.0, -3.294144543630858, 4.969291590936622, -0.0482530808540666, -0.05062514362385331, -0.2677227279260097, -4.969291590936622, -0.003921639219525208, 0.05062514362385351, -0.3774003346898487, -0.683696821687707, 0.2505013949025596, -0.250501394902561, 3.561867271556864, 0.05217472007359292 },
+              { -0.7721562494765272, 0.6008388186101066, 0.0, 0.0, 0.0, 0.0, -0.1556905261311681, -0.1864963780065696, -0.8455857152901568, -0.2486342120934219, -0.6202410996312072, 0.1864963780065694, -3.368650790235935, 0.2486342120934212, 2.042583503445062, -1.871266072578641, 0.3449471275360746, -0.3449471275360748, 0.7759316257623764, 4.214236505526092 },
+              { 0.06721491062212952, 0.6756610863201382, 0.0, 0.0, 0.0, 0.0, -0.8274175687573835, -0.3051441075194295, -0.7309690288957407, -0.3487195781576121, -2.227169342801355, 0.3051441075194296, -1.967557703831202, 0.3487195781576116, 0.8816511073399166, -1.624527104282185, 1.357943078961648, -1.357943078961648, 3.054586911558738, 2.698526732726943 },
+              { 0.4990628392264607, 0.7896962308250464, 0.0, 0.0, 0.0, 0.0, -1.988188468884923, 1.282348894589376, -0.5141211273089903, -0.3603300383682046, -2.210398236010357, -1.282348894589376, -0.5715818448221905, 0.3603300383682045, -0.1402220071329501, -1.148537062918558, 1.866518099635123, -1.866518099635123, 4.198586704895279, 1.08570297213118 },
+              { -0.0183629959498931, 0.909165504675249, 0.0, 0.0, 0.0, 0.0, -3.361072507134054, 4.969291590936622, -0.2386853826739336, -0.2112055108748349, 0.6292868832021674, -4.969291590936622, 0.04468858681566212, 0.2112055108748352, -0.3553168136550648, -0.5354856950702909, 1.214438969533932, -1.214438969533932, 2.731785623931883, 0.1939967958582723 },
+              { 0.4831107065478399, 0.7626281864689365, 0.0, 0.0, 0.0, 0.0, -0.182227939064816, -0.1864963780065695, -2.086339641627259, 1.663837059766164, -0.264570417154491, 0.1864963780065698, -3.029084080871618, -1.663837059766165, 0.02598959541331992, -1.271728488430097, 0.7271552229464376, -0.727155222946441, 0.4467983562193062, 5.115423722498876 },
+              { 0.4802041865755782, 0.8084193479978771, 0.0, 0.0, 0.0, 0.0, -0.9318866115472104, -0.3051441075194295, -1.73544919983212, 0.6659234017980182, -0.8270111646228406, 0.3051441075194298, -1.540140019303442, -0.6659234017980193, -0.2288240583977523, -1.059799476175703, 2.862570299929988, -2.862570299929989, 1.758897776170051, 3.27558921913556 },
+              { 0.2114830501778267, 0.8769635727776927, 0.0, 0.0, 0.0, 0.0, -2.131783117467593, 1.282348894589376, -1.162051870486512, -0.1959034387644388, -0.2858546948181215, -1.282348894589375, -0.1558216593793808, 0.1959034387644386, -0.3770594160996011, -0.7113872068559187, 3.934656289410027, -3.934656289410028, 2.417637812285714, 1.317873529865891 },
+              { -0.3725184613179941, 0.9473490621820404, 0.0, 0.0, 0.0, 0.0, -3.454501516522937, 4.969291590936622, -0.5171397539968488, -0.344505336583714, 1.881479763327774, -4.969291590936622, 0.2816579982100335, 0.3445053365837142, -0.2575459338382364, -0.3172846670258095, 2.560060859048422, -2.560060859048422, 1.573021753195161, 0.2354817557868159 },
+              { -0.09299953204549641, 0.918052572403101, 0.0, 0.0, 0.0, 0.0, -0.2061615305665246, -0.1864963780065693, -3.479278667676609, 5.361287459375159, 0.05620225367124146, 0.1864963780065701, 0.9484955885627847, -5.361287459375161, -0.3394338373406015, -0.4856192030170024, 1.071861485273881, -1.071861485273881, 0.149959276895283, 2.530783079113824 },
+              { -0.2411578463027704, 0.934240861528671, 0.0, 0.0, 0.0, 0.0, -1.026105268089121, -0.3051441075194295, -2.816775849832686, 2.844155613080384, 0.4357650509068632, 0.3051441075194301, 1.196224704977302, -2.844155613080385, -0.2997376421092065, -0.3933453731166939, 4.219565172001604, -4.219565172001601, 0.5903402171822583, 1.620551144855383 },
+              { -0.4879619662042393, 0.9581182769494955, 0.0, 0.0, 0.0, 0.0, -2.26128841889249, 1.282348894589375, -1.816979352180457, 0.4605930875429102, 1.44985477532934, -1.282348894589375, 1.164980180513139, -0.4605930875429102, -0.2162474744427827, -0.2539088363024734, 5.799871060982388, -5.799871060982384, 0.8114336435631514, 0.6519991716673161 },
+              { -0.7705598540560996, 0.9822238538486634, 0.0, 0.0, 0.0, 0.0, -3.538763375458232, 4.969291590936622, -0.7808823355745385, -0.3739185830722069, 3.010808871225652, -4.969291590936622, 0.6643810885001001, 0.3739185830722072, -0.1024672750516515, -0.1091967247409118, 3.773651825881596, -3.773651825881593, 0.5279545042325785, 0.1165012470744386 },
+              { -0.4678780560632007, -0.4812574119505102, 0.0, 0.0, 0.0, 0.0, 0.1694593829447724, -0.1864963780065692, 0.1898434099426745, -0.2046503758301562, -0.5688863386315747, 0.1864963780065692, -0.6373168633029815, 0.2046503758301563, -1.299990079379061, 2.249125547392773, 0.07115197945976599, -0.0711519794597654, 0.3994269556868029, 0.4474734533603082 },
+              { 0.2056276599567358, -0.3745115325575976, 0.0, 0.0, 0.0, 0.0, 0.4525903901681679, -0.3051441075194293, 0.08247342308475969, -0.1701350922196619, -2.025002585335351, 0.3051441075194292, -0.3690067190910527, 0.1701350922196618, -1.051871057028729, 1.22075492962959, 0.2801018775020999, -0.2801018775020996, 1.572412195167183, 0.2865332960062932 },
+              { 0.4892360570732332, -0.04762388121190865, 0.0, 0.0, 0.0, 0.0, -0.2287936459160355, 1.282348894589376, -0.01220355361256295, -0.1138359786412047, -1.932516255682153, -1.282348894589376, -0.1030778876701066, 0.1138359786412047, -0.677980878592105, 0.2363687027307802, 0.3850052569944397, -0.3850052569944401, 2.161309901598186, 0.11528144128267 },
+              { -0.06383535888795233, 0.4827619721466295, 0.0, 0.0, 0.0, 0.0, -2.216332664414416, 4.969291590936622, -0.03246514469508383, -0.05062514362385342, 0.8100891512904327, -4.969291590936623, 0.0118662969394579, 0.05062514362385351, -0.2911527252015298, -0.127773888057147, 0.2505013949025601, -0.250501394902561, 1.406243513123981, 0.02059884775562721 },
+              { 0.2799340743338197, -0.347571076915241, 0.0, 0.0, 0.0, 0.0, 0.07910438899234487, -0.1864963780065693, 0.429631416958082, -0.2486342120934213, -0.3854461845076936, 0.1864963780065693, -2.093433657987695, 0.2486342120934215, -1.010007039700979, 1.077644042282399, 0.3449471275360739, -0.3449471275360754, 0.3063417955153481, 1.663802241029612 },
+              { 0.4829185522231058, -0.1896272889304793, 0.0, 0.0, 0.0, 0.0, 0.09689257768388021, -0.3051441075194294, 0.0855982228213461, -0.3487195781576117, -1.302859196360091, 0.3051441075194294, -1.150990452114114, 0.3487195781576117, -0.8150445511126524, 0.5217532878200254, 1.357943078961647, -1.357943078961648, 1.20596661867621, 1.065392229292767 },
+              { 0.3667795352879984, 0.1420291720750577, 0.0, 0.0, 0.0, 0.0, -0.7177069260737043, 1.282348894589376, -0.1855901991612649, -0.3603300383682045, -0.9399166931991378, -1.282348894589376, -0.2430509166744642, 0.3603300383682045, -0.523322458006013, 0.01451375064295645, 1.866518099635123, -1.866518099635123, 1.657623619272841, 0.4286411158357286 },
+              { -0.2418723559510947, 0.5935657667002447, 0.0, 0.0, 0.0, 0.0, -2.534441200443187, 4.969291590936622, -0.1799824509909743, -0.211205510874835, 1.455918189893034, -4.969291590936623, 0.103391518498622, 0.2112055108748352, -0.2238978316276654, -0.1277955791214843, 1.214438969533933, -1.214438969533932, 1.07852301055015, 0.07659093249235313 },
+              { 0.4378070106059075, 0.05401710966384837, 0.0, 0.0, 0.0, 0.0, -0.04702790514073921, -0.1864963780065693, -0.5384255743731524, 1.663837059766164, -0.1293703832304137, 0.1864963780065696, -1.481170013617508, -1.663837059766164, -0.5920140895079024, 0.1001899692381462, 0.7271552229464379, -0.7271552229464399, 0.1763982883711521, 2.01959558799066 },
+              { 0.302639767092249, 0.2061154301671796, 0.0, 0.0, 0.0, 0.0, -0.3996486664047906, -0.3051441075194294, -0.7442643232899699, 0.6659234017980187, -0.2947732194804206, 0.3051441075194297, -0.5489551427612906, -0.6659234017980189, -0.4759991372617909, -0.03275605999763828, 2.862570299929988, -2.862570299929988, 0.6944218858852113, 1.293219466051259 },
+              { -0.03243500766322421, 0.4621593309516318, 0.0, 0.0, 0.0, 0.0, -1.400212130942472, 1.282348894589376, -0.7632667284524268, -0.1959034387644387, 0.4457162917069994, -1.282348894589376, 0.2429634826547049, 0.1959034387644386, -0.3040275422435593, -0.1256967810448485, 3.934656289410028, -3.934656289410027, 0.954495839235473, 0.5203032457977207 },
+              { -0.531193484944986, 0.7581395618146333, 0.0, 0.0, 0.0, 0.0, -2.97850917806655, 4.969291590936622, -0.4458835800926373, -0.3445053365837141, 2.357472101784161, -4.969291590936622, 0.352914172114245, 0.3445053365837142, -0.1294053869516597, -0.09754068991798714, 2.560060859048422, -2.560060859048421, 0.6210370762823879, 0.0929694079783929 },
+              { -0.3052983311727133, 0.6310335137414271, 0.0, 0.0, 0.0, 0.0, -0.1607842389063006, -0.1864963780065693, -2.713470214292949, 5.361287459375159, 0.1015795453314655, 0.18649637800657, 1.714304041946445, -5.361287459375161, -0.2018552977478411, -0.1238798848208717, 1.071861485273881, -1.07186148527388, 0.05920469357483488, 0.9991661723465038 },
+              { -0.426959954263385, 0.7005926923501762, 0.0, 0.0, 0.0, 0.0, -0.8474698360674946, -0.3051441075194294, -2.326401239652591, 2.844155613080384, 0.614400482928489, 0.30514410751943, 1.686599315157397, -2.844155613080385, -0.1617815953664721, -0.1118511427203188, 4.219565172001604, -4.219565172001601, 0.2330693531390068, 0.639801924495193 },
+              { -0.6206050624415989, 0.8062251913608987, 0.0, 0.0, 0.0, 0.0, -2.015750684454122, 1.282348894589375, -1.619686079049829, 0.4605930875429102, 1.695392509767708, -1.282348894589375, 1.362273453643768, -0.4605930875429102, -0.1028543675566605, -0.08276576136263894, 5.799871060982388, -5.799871060982384, 0.3203581746864154, 0.2574126254060593 },
+              { -0.8328890121381232, 0.9164550475844895, 0.0, 0.0, 0.0, 0.0, -3.379005699788589, 4.969291590936622, -0.7456293577213029, -0.3739185830722069, 3.170566546895295, -4.969291590936622, 0.6996340663533357, 0.3739185830722072, -0.04357776515177786, -0.03998827029458796, 3.773651825881596, -3.773651825881593, 0.2084391528932928, 0.04599529136796741 },
+              { 0.4812574119505099, 0.467878056063201, 0.0, 0.0, 0.0, 0.0, 0.5688863386315753, -0.1864963780065693, 0.6373168633029822, -0.2046503758301564, -0.1694593829447731, 0.1864963780065695, -0.1898434099426753, 0.2046503758301566, -2.249125547392772, 1.299990079379062, 0.07115197945976577, -0.07115197945976701, -0.3994269556868035, -0.4474734533603081 },
+              { 0.3745115325575974, -0.2056276599567359, 0.0, 0.0, 0.0, 0.0, 2.025002585335351, -0.3051441075194293, 0.3690067190910524, -0.1701350922196621, -0.4525903901681684, 0.3051441075194292, -0.08247342308476002, 0.1701350922196619, -1.22075492962959, 1.051871057028728, 0.2801018775021002, -0.2801018775021002, -1.572412195167183, -0.286533296006293 },
+              { 0.04762388121190805, -0.4892360570732335, 0.0, 0.0, 0.0, 0.0, 1.932516255682154, 1.282348894589376, 0.1030778876701064, -0.1138359786412051, 0.228793645916037, -1.282348894589376, 0.01220355361256328, 0.1138359786412047, -0.236368702730779, 0.6779808785921045, 0.3850052569944403, -0.3850052569944394, -2.161309901598192, -0.1152814412826692 },
+              { -0.4827619721466283, 0.06383535888795311, 0.0, 0.0, 0.0, 0.0, -0.8100891512904349, 4.969291590936622, -0.0118662969394574, -0.05062514362385354, 2.216332664414414, -4.969291590936623, 0.03246514469508499, 0.0506251436238534, 0.1277738880571465, 0.2911527252015294, 0.2505013949025601, -0.2505013949025601, -1.406243513123981, -0.02059884775562578 },
+              { 0.3475710769152409, -0.2799340743338205, 0.0, 0.0, 0.0, 0.0, 0.3854461845076935, -0.1864963780065693, 2.093433657987694, -0.2486342120934208, -0.07910438899234531, 0.1864963780065693, -0.429631416958083, 0.248634212093422, -1.0776440422824, 1.01000703970098, 0.3449471275360741, -0.3449471275360751, -0.3063417955153493, -1.663802241029612 },
+              { 0.1896272889304793, -0.482918552223106, 0.0, 0.0, 0.0, 0.0, 1.30285919636009, -0.3051441075194293, 1.150990452114113, -0.3487195781576115, -0.09689257768388068, 0.3051441075194292, -0.08559822282134646, 0.348719578157612, -0.5217532878200259, 0.8150445511126525, 1.357943078961648, -1.357943078961647, -1.20596661867621, -1.065392229292767 },
+              { -0.1420291720750581, -0.3667795352879986, 0.0, 0.0, 0.0, 0.0, 0.9399166931991387, 1.282348894589376, 0.2430509166744637, -0.3603300383682046, 0.7177069260737052, -1.282348894589376, 0.1855901991612652, 0.3603300383682047, -0.01451375064295583, 0.5233224580060125, 1.866518099635124, -1.866518099635122, -1.657623619272844, -0.4286411158357293 },
+              { -0.5935657667002435, 0.2418723559510957, 0.0, 0.0, 0.0, 0.0, -1.455918189893036, 4.969291590936622, -0.1033915184986217, -0.2112055108748351, 2.534441200443184, -4.969291590936623, 0.179982450990975, 0.2112055108748351, 0.1277955791214837, 0.2238978316276649, 1.214438969533933, -1.214438969533931, -1.07852301055015, -0.07659093249235202 },
+              { -0.05401710966384846, -0.4378070106059079, 0.0, 0.0, 0.0, 0.0, 0.1293703832304131, -0.1864963780065693, 1.481170013617507, 1.663837059766165, 0.04702790514073876, 0.1864963780065694, 0.5384255743731522, -1.663837059766164, -0.1001899692381458, 0.5920140895079021, 0.7271552229464388, -0.7271552229464385, -0.1763982883711527, -2.01959558799066 },
+              { -0.2061154301671796, -0.3026397670922493, 0.0, 0.0, 0.0, 0.0, 0.2947732194804203, -0.3051441075194294, 0.5489551427612893, 0.6659234017980193, 0.3996486664047905, 0.3051441075194294, 0.7442643232899699, -0.6659234017980187, 0.03275605999763851, 0.4759991372617904, 2.862570299929989, -2.862570299929987, -0.6944218858852101, -1.29321946605126 },
+              { -0.4621593309516326, 0.03243500766322364, 0.0, 0.0, 0.0, 0.0, -0.4457162917069978, 1.282348894589376, -0.2429634826547047, -0.1959034387644386, 1.400212130942474, -1.282348894589376, 0.7632667284524275, 0.1959034387644388, 0.1256967810448495, 0.3040275422435594, 3.934656289410028, -3.934656289410026, -0.9544958392354757, -0.5203032457977236 },
+              { -0.758139561814632, 0.531193484944987, 0.0, 0.0, 0.0, 0.0, -2.357472101784163, 4.969291590936622, -0.352914172114245, -0.3445053365837141, 2.978509178066548, -4.969291590936622, 0.4458835800926377, 0.3445053365837142, 0.09754068991798653, 0.1294053869516592, 2.560060859048422, -2.560060859048421, -0.621037076282387, -0.09296940797839207 },
+              { -0.6310335137414268, 0.3052983311727134, 0.0, 0.0, 0.0, 0.0, -0.1015795453314668, -0.1864963780065693, -1.714304041946447, 5.36128745937516, 0.1607842389062996, 0.1864963780065698, 2.713470214292948, -5.36128745937516, 0.1238798848208727, 0.2018552977478419, 1.071861485273881, -1.071861485273879, -0.05920469357483259, -0.9991661723465018 },
+              { -0.700592692350176, 0.426959954263385, 0.0, 0.0, 0.0, 0.0, -0.6144004829284897, -0.3051441075194294, -1.686599315157398, 2.844155613080384, 0.8474698360674942, 0.3051441075194299, 2.32640123965259, -2.844155613080385, 0.1118511427203192, 0.1617815953664723, 4.219565172001604, -4.219565172001599, -0.2330693531390032, -0.6398019244951932 },
+              { -0.8062251913608989, 0.6206050624415986, 0.0, 0.0, 0.0, 0.0, -1.695392509767707, 1.282348894589375, -1.362273453643768, 0.4605930875429104, 2.015750684454123, -1.282348894589375, 1.619686079049829, -0.4605930875429102, 0.08276576136263962, 0.1028543675566609, 5.799871060982388, -5.799871060982384, -0.3203581746864148, -0.2574126254060621 },
+              { -0.9164550475844883, 0.8328890121381245, 0.0, 0.0, 0.0, 0.0, -3.170566546895297, 4.969291590936622, -0.6996340663533358, -0.3739185830722069, 3.379005699788587, -4.969291590936622, 0.7456293577213028, 0.3739185830722072, 0.03998827029458724, 0.04357776515177708, 3.773651825881596, -3.773651825881593, -0.2084391528932911, -0.04599529136796679 },
+              { -0.4917573542746294, 2.895817908681459, 0.0, 0.0, 0.0, 0.0, 0.8750261456427536, -0.1864963780065696, 0.9802817901913063, -0.2046503758301571, 0.1366804240664031, 0.1864963780065697, 0.1531215169456465, 0.2046503758301569, 2.124843837675762, -4.52890439208259, 0.07115197945976755, -0.07115197945976684, -1.011706569709158, -1.133403307136953 },
+              { -0.5849244295298524, 1.012689559037514, 0.0, 0.0, 0.0, 0.0, 3.230174041885618, -0.3051441075194295, 0.588619458523755, -0.1701350922196627, 0.7525810663820973, 0.3051441075194292, 0.1371393163479411, 0.1701350922196621, 1.916434213539559, -2.34419934304722, 0.2801018775021017, -0.2801018775020996, -3.982755108267714, -0.7257587748716954 },
+              { -0.7289383038660986, -0.3896190023483257, 0.0, 0.0, 0.0, 0.0, 3.589046909776109, 1.282348894589376, 0.1914350645801195, -0.1138359786412054, 1.885324300009991, -1.282348894589376, 0.1005607305225768, 0.1138359786412046, 1.416372722150143, -0.2978154159357171, 0.3850052569944412, -0.3850052569944388, -5.474371209786099, -0.2919957951026956 },
+              { -0.882126464396441, -0.1789706919811128, 0.0, 0.0, 0.0, 0.0, 0.267722727926007, 4.969291590936622, 0.003921639219525264, -0.05062514362385365, 3.294144543630856, -4.969291590936623, 0.04825308085406799, 0.0506251436238534, 0.6836968216877062, 0.3774003346898486, 0.250501394902561, -0.2505013949025596, -3.561867271556864, -0.05217472007359147 },
+              { -0.6008388186101045, 0.7721562494765257, 0.0, 0.0, 0.0, 0.0, 0.6202410996312073, -0.1864963780065695, 3.368650790235933, -0.2486342120934208, 0.1556905261311676, 0.1864963780065693, 0.8455857152901557, 0.2486342120934226, 1.871266072578636, -2.042583503445056, 0.3449471275360755, -0.3449471275360741, -0.775931625762376, -4.214236505526088 },
+              { -0.6756610863201369, -0.06721491062212998, 0.0, 0.0, 0.0, 0.0, 2.227169342801354, -0.3051441075194295, 1.9675577038312, -0.3487195781576116, 0.8274175687573824, 0.3051441075194291, 0.7309690288957409, 0.3487195781576123, 1.624527104282182, -0.8816511073399151, 1.357943078961649, -1.357943078961646, -3.054586911558736, -2.69852673272694 },
+              { -0.7896962308250461, -0.4990628392264607, 0.0, 0.0, 0.0, 0.0, 2.210398236010358, 1.282348894589376, 0.5715818448221894, -0.3603300383682047, 1.988188468884923, -1.282348894589376, 0.5141211273089912, 0.3603300383682048, 1.148537062918558, 0.1402220071329492, 1.866518099635124, -1.866518099635121, -4.198586704895279, -1.08570297213118 },
+              { -0.9091655046752487, 0.01836299594989321, 0.0, 0.0, 0.0, 0.0, -0.6292868832021674, 4.969291590936622, -0.04468858681566207, -0.2112055108748352, 3.361072507134054, -4.969291590936623, 0.238685382673935, 0.2112055108748351, 0.5354856950702918, 0.3553168136550645, 1.214438969533933, -1.214438969533931, -2.731785623931888, -0.1939967958582714 },
+              { -0.762628186468936, -0.4831107065478402, 0.0, 0.0, 0.0, 0.0, 0.2645704171544905, -0.1864963780065694, 3.029084080871615, 1.663837059766166, 0.1822279390648159, 0.1864963780065692, 2.08633964162726, -1.663837059766164, 1.271728488430097, -0.02598959541332035, 0.7271552229464394, -0.727155222946437, -0.4467983562193066, -5.115423722498877 },
+              { -0.8084193479978767, -0.4802041865755783, 0.0, 0.0, 0.0, 0.0, 0.8270111646228404, -0.3051441075194294, 1.540140019303439, 0.6659234017980196, 0.9318866115472104, 0.3051441075194293, 1.735449199832121, -0.6659234017980182, 1.059799476175704, 0.2288240583977517, 2.86257029992999, -2.862570299929986, -1.758897776170049, -3.275589219135561 },
+              { -0.8769635727776934, -0.2114830501778273, 0.0, 0.0, 0.0, 0.0, 0.2858546948181232, 1.282348894589376, 0.1558216593793804, -0.1959034387644385, 2.131783117467595, -1.282348894589376, 1.162051870486513, 0.1959034387644389, 0.7113872068559206, 0.3770594160996003, 3.934656289410029, -3.934656289410026, -2.417637812285717, -1.317873529865894 },
+              { -0.9473490621820385, 0.3725184613179956, 0.0, 0.0, 0.0, 0.0, -1.881479763327777, 4.969291590936622, -0.2816579982100338, -0.3445053365837141, 3.454501516522933, -4.969291590936622, 0.5171397539968493, 0.3445053365837142, 0.3172846670258081, 0.2575459338382355, 2.560060859048422, -2.560060859048421, -1.573021753195157, -0.2354817557868148 },
+              { -0.9180525724031016, 0.09299953204549583, 0.0, 0.0, 0.0, 0.0, -0.05620225367124257, -0.1864963780065692, -0.9484955885627847, 5.36128745937516, 0.2061615305665238, 0.1864963780065697, 3.479278667676611, -5.36128745937516, 0.4856192030170047, 0.3394338373406023, 1.071861485273882, -1.071861485273879, -0.1499592768952809, -2.530783079113826 },
+              { -0.9342408615286708, 0.2411578463027704, 0.0, 0.0, 0.0, 0.0, -0.4357650509068638, -0.3051441075194294, -1.196224704977304, 2.844155613080385, 1.02610526808912, 0.3051441075194298, 2.816775849832686, -2.844155613080385, 0.3933453731166944, 0.2997376421092066, 4.219565172001605, -4.219565172001599, -0.5903402171822545, -1.620551144855383 },
+              { -0.9581182769494958, 0.487961966204239, 0.0, 0.0, 0.0, 0.0, -1.449854775329339, 1.282348894589375, -1.16498018051314, 0.4605930875429104, 2.261288418892492, -1.282348894589375, 1.816979352180457, -0.4605930875429102, 0.2539088363024743, 0.2162474744427829, 5.799871060982388, -5.799871060982384, -0.8114336435631506, -0.6519991716673188 },
+              { -0.9822238538486631, 0.7705598540560998, 0.0, 0.0, 0.0, 0.0, -3.010808871225652, 4.969291590936622, -0.6643810885000996, -0.3739185830722069, 3.538763375458232, -4.969291590936622, 0.7808823355745392, 0.3739185830722072, 0.1091967247409122, 0.1024672750516517, 3.773651825881596, -3.773651825881593, -0.5279545042325816, -0.1165012470744391 } } } };
+    {
+    double t0 = 0;
+    double t1 = 0;
+    if ((cell_permutation & 1 << 12) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D100_Q738[0][0][i2][5];
+            t1 = FE17_C0_D100_Q738[0][0][i2][4];
+            FE17_C0_D100_Q738[0][0][i2][4] = t0;
+            FE17_C0_D100_Q738[0][0][i2][5] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 13) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D100_Q738[0][0][i2][7];
+            t1 = FE17_C0_D100_Q738[0][0][i2][6];
+            FE17_C0_D100_Q738[0][0][i2][6] = t0;
+            FE17_C0_D100_Q738[0][0][i2][7] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 14) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D100_Q738[0][0][i2][9];
+            t1 = FE17_C0_D100_Q738[0][0][i2][8];
+            FE17_C0_D100_Q738[0][0][i2][8] = t0;
+            FE17_C0_D100_Q738[0][0][i2][9] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 15) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D100_Q738[0][0][i2][11];
+            t1 = FE17_C0_D100_Q738[0][0][i2][10];
+            FE17_C0_D100_Q738[0][0][i2][10] = t0;
+            FE17_C0_D100_Q738[0][0][i2][11] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 16) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D100_Q738[0][0][i2][13];
+            t1 = FE17_C0_D100_Q738[0][0][i2][12];
+            FE17_C0_D100_Q738[0][0][i2][12] = t0;
+            FE17_C0_D100_Q738[0][0][i2][13] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 17) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_D100_Q738[0][0][i2][15];
+            t1 = FE17_C0_D100_Q738[0][0][i2][14];
+            FE17_C0_D100_Q738[0][0][i2][14] = t0;
+            FE17_C0_D100_Q738[0][0][i2][15] = t1;
+        }
+    }
+    }
+    double FE17_C0_Q738[1][1][64][20] =
+        { { { { 0.3169426462707758, 0.04591828708383736, 0.04177132842617729, 0.03842858062261754, -0.009925655672296975, -0.01013320819427436, -0.01105470616256194, -0.01161719682296222, -0.0123844609684377, -0.01274804219430131, 0.2741613132482146, -0.1557007961861394, 0.3071397858114789, -0.170857079355319, 0.3521198099877711, -0.1902921953396233, 0.004432185539272659, 0.0594028686804585, 0.06810230324680321, 0.07629423197850742 },
+              { 0.001415902329562763, 0.0392228167323023, 0.03534202511640774, 0.04354059863307073, -0.04059435848706532, -0.01326738896951871, -0.04551696182038991, -0.01521037227605624, -0.00829434237070543, -0.008480642509924308, 0.7203406316237254, -0.2038587371601135, 0.1312642932055456, -0.1136627717587872, 0.1504876936069945, -0.1274458874425341, 0.01396210422237281, 0.1871286831914954, 0.2145333148376131, 0.0390933992960039 },
+              { -0.04188463766237061, 0.02726120526885194, 0.02425040418336488, -0.06395474524402384, -0.05885858484199345, 0.03536542053256184, -0.06658696213249202, 0.04054461757587735, -0.003551661406627637, -0.003599204740501807, 0.2674612099011286, 0.5434038291534241, 0.0142660308648052, -0.04823874918133415, 0.01635526333432488, -0.05457269782613917, 0.01217288912198906, 0.1631485251616873, 0.1870413093111279, 0.009976538626339237 },
+              { 0.06060203549740997, 0.01257193314170104, 0.01105330698451381, 0.2139855659883352, -0.04029009233427119, 0.05793071267540092, -0.04594534762516067, 0.06641455285847836, -0.0006730137504474647, -0.000676604746500907, -0.2967764787949939, 0.8901285668133219, -0.004347222545096955, -0.009068271747387198, -0.004983864830503264, -0.01034112541456549, 0.003347949668162181, 0.0448712746170981, 0.05144258550007491, 0.0007535380444297791 },
+              { -0.02331412978759613, 0.03799461324998415, 0.03342063930254705, 0.03842858062261763, -0.01205889589785223, -0.04912612531484769, -0.008932545551935702, -0.008909846676427115, -0.04851440294788373, -0.01187847577494843, 0.1286983816019961, -0.1194152292121012, 0.6989860961220259, -0.1592026169326476, 0.1267728506062185, -0.1179282614083719, 0.01647981612657468, 0.220872602144184, 0.0400589504569248, 0.2175679992715395 },
+              { -0.06369420044470792, 0.03190450350680572, 0.05299126439225883, 0.04354059863307077, -0.08320474854718045, -0.06432073639675993, -0.03633987898311879, -0.01166564421144779, -0.03210389415633495, -0.01333153230918564, 0.2955071788300041, -0.1563501177974808, 0.2610611663292178, -0.1786773717062808, 0.04734782053856702, -0.07803778243673333, 0.05191409707151574, 0.6957845658035814, 0.12619219939295, 0.1114825124912597 },
+              { 0.004163310008531654, 0.02166719204875141, 0.06401438304842305, -0.06395474524402384, -0.186307671683133, 0.1714527174006553, -0.05231626848804156, 0.03109582558172799, -0.01352834469800383, -0.008737684472791614, -0.01890120888351309, 0.41676532427948, -0.004887620550452425, -0.117107805778746, -0.0008864519527641843, -0.03288454712474925, 0.04526141170806525, 0.6066211967352647, 0.1100209271328051, 0.02845006093251415 },
+              { 0.06411797206788243, 0.009782360656033813, 0.0429556497001765, 0.2139855659883352, -0.1680882052973493, 0.2808499930040158, -0.03558094966457034, 0.05093685611686352, -0.002526768633691679, -0.002164925225587932, -0.2892297853109992, 0.6826869832263218, -0.0205395515393154, -0.02901565553587053, -0.003725192122216222, -0.006142040586845341, 0.01244839469003697, 0.1668410197412738, 0.03025941687251746, 0.002148861852987799 },
+              { -0.01748602809877367, 0.02419795969055224, -0.06177310709815981, 0.03842858062261759, 0.08069701158893548, -0.1035588232346618, -0.005508574471708039, -0.005130484074911065, -0.0630680308857182, 0.04577187841190331, 0.008538797452701877, -0.06876189389380313, 0.09776125279593618, 0.6134627845490287, 0.004843262359947495, -0.04187646317714565, 0.02000391820576644, 0.2681047794011663, 0.0132823767030295, 0.152070803153297 },
+              { 0.01889383703961694, 0.019880943301904, -0.04934966142771522, 0.04354059863307075, 0.1588898148220525, -0.1355893575596559, -0.02207516696234512, -0.006717332410304873, -0.04111050675720675, 0.01465939777124328, -0.036392063376584, -0.09002980843572778, -0.06777281322056292, 0.1964742389558562, -0.003357582947346926, -0.02729691411376884, 0.06301559092459838, 0.8445735945272719, 0.0418416436327582, 0.07792154760284647 },
+              { 0.05903572070550177, 0.0130980546488276, 0.02512919290070734, -0.06395474524402384, -0.1012913431147969, 0.3614256475674169, -0.03112736681092292, 0.01790565469160708, -0.01696777431511043, -0.002735432878068417, -0.1909661136946049, 0.2399825650028394, -0.1040971418715296, -0.03666194896406951, -0.005157153315709761, -0.01126641130737677, 0.05494027182898298, 0.7363432157357872, 0.03647972257700187, 0.01988538585754073 },
+              { 0.05317409734377725, 0.005746515921331073, 0.06287538273839535, 0.2139855659883352, -0.2741750605931532, 0.592037222446455, -0.02076401284726137, 0.02933055288426051, -0.003108377994469027, -0.002033394862963698, -0.2160734693961723, 0.3931060570164858, -0.03234625322186933, -0.02725280495364035, -0.001602489598223861, -0.002063928028162174, 0.01511040337222231, 0.2025188926039815, 0.01003313789129252, 0.001501963289378384 },
+              { 0.06336457808996047, 0.008853058872630642, 0.2713729123748657, 0.03842858062261756, 0.2600253875229914, -0.1526506453955511, -0.001959338273390216, -0.001721948326996132, -0.03306671151808083, 0.0495015510214936, -0.01698165123776919, -0.02307860748082872, -0.2865903097010131, 0.6634501441226377, -0.003232830775423047, -0.004999216700526547, 0.009896653817447452, 0.1326410236856315, 0.00149623336497972, 0.02525113591432232 },
+              { 0.05926778057119936, 0.007144618132984969, -0.01107368371109868, 0.04354059863307073, 0.6786176269932491, -0.1998651809064005, -0.00775717045765761, -0.002254543457675853, -0.02129431656544956, 0.02101391530122937, -0.07473725287818311, -0.03021677404161215, -0.20516227285544, 0.2816413798656125, -0.002314296356826446, -0.003219397941706001, 0.03117606671191423, 0.4178407651149235, 0.004713378083505665, 0.01293875976436034 },
+              { 0.04617258560480267, 0.004588098980638987, -0.03856873960872395, -0.06395474524402384, 0.2381484100578316, 0.5327586451871232, -0.01075076343804648, 0.00600968869404709, -0.00863840057902665, 0.002158555352948058, -0.1186048715912711, 0.08054553338069299, -0.09530080327165909, 0.02893028259636271, -0.001075023681228427, -0.001306003362835003, 0.02718091752500661, 0.3642953256458807, 0.004109368322046489, 0.003301939429433599 },
+              { 0.02346274581426416, 0.001963389085501073, 0.06120422296004722, 0.2139855659883352, -0.2975836345159674, 0.8726911071580412, -0.007052503606407218, 0.009844236086006708, -0.001556242931079184, -0.0007407379384663342, -0.08751318058692453, 0.1319384891031535, -0.0193111235761632, -0.009927824116443116, -0.000217835678638905, -0.0002352818074113951, 0.007475657002725226, 0.1001933396736595, 0.001130213063824201, 0.0002493988219434296 },
+              { -0.04749340988821903, 0.01839743077286514, 0.04177132842617735, 0.0384285806226176, -0.009925655672296948, -0.01013320819427441, -0.00722315577599345, -0.05521652356767184, -0.008092018861585464, -0.06059143035882807, 0.1053815952034381, -0.1121014694414298, 0.1180577966883033, -0.1230136911907922, 0.643304764711186, -0.08952023759307098, 0.02106617293440569, 0.04276888128532599, 0.2330504709050119, 0.2610837789948315 },
+              { -0.05934355567588374, 0.04417353516267802, 0.03534202511640772, 0.04354059863307074, -0.04059435848706533, -0.01326738896951878, -0.07357718058319193, -0.07229488249642782, -0.01340762436729309, -0.04030848440930872, 0.2287873351745189, -0.146774226939742, 0.0416908425370494, -0.08183492985940279, 0.2271761662613251, -0.1483256205217938, 0.0663618658268004, 0.1347289215870679, 0.7341468300496218, 0.133780131961088 },
+              { 0.01401719441475575, 0.06392446264511686, 0.02425040418336484, -0.06395474524402385, -0.05885858484199342, 0.0353654205325618, -0.1920178970584202, 0.1927085222052589, -0.01024198330308551, -0.01710701612509322, -0.06013396113964103, 0.3912399245240425, -0.003207466779793017, -0.03473093779674274, -0.01747769922846709, -0.1133048247167385, 0.05785772844636948, 0.1174636858373068, 0.6400674152778256, 0.03414035816739538 },
+              { 0.06377349943860808, 0.04651858326990711, 0.01105330698451381, 0.2139855659883352, -0.04029009233427119, 0.05793071267540092, -0.1841448318370586, 0.3156682958059335, -0.002697378740308187, -0.003215901606945262, -0.2831742521396724, 0.640874823865867, -0.004147975264383832, -0.006528974886942816, -0.02260259234320148, -0.02984051197127142, 0.0159128010459525, 0.03230642323930792, 0.1760398430566511, 0.002578655753577375 },
+              { -0.05447231887399361, 0.04773063726529249, 0.03342063930254705, 0.0384285806226176, -0.01205889589785223, -0.04912612531484772, -0.01579846073196544, -0.04234849133492032, -0.08580453191652564, -0.05645838213561507, 0.03853893697540612, -0.08597658455360804, 0.2093125085942348, -0.114622710571981, 0.1804349294735512, -0.1501681752046154, 0.07832854770483834, 0.1590238705659201, 0.1370843102635446, 0.7445317157679726 },
+              { -0.01758294016941076, 0.06012630891736453, 0.05299126439225883, 0.04354059863307076, -0.08320474854718048, -0.06432073639675999, -0.08874663243942474, -0.05544679395121408, -0.07840181569922051, -0.06336475822535188, 0.04226829226747217, -0.1125689680577145, 0.0373412575686982, -0.1286441457901146, 0.03218951041728307, -0.1372125380013054, 0.24674764559191, 0.500951017283187, 0.4318378394117878, 0.3815003427946647 },
+              { 0.04525804612115583, 0.06236799224325384, 0.06401438304842304, -0.06395474524402384, -0.186307671683133, 0.1714527174006553, -0.1754438455410546, 0.1477984243751404, -0.04536762437797448, -0.04153020457268602, -0.1622514081965321, 0.3000627254860676, -0.04195622205587823, -0.08431528567885159, -0.03616777620445359, -0.07939875918018649, 0.2151274394649741, 0.4367551689783558, 0.3764987034988371, 0.09735794211791056 },
+              { 0.05924050992244755, 0.03855889636610928, 0.0429556497001765, 0.2139855659883352, -0.1680882052973493, 0.2808499930040158, -0.1489795641713496, 0.2421028204222799, -0.01057973138316949, -0.01028988718729803, -0.2491214286893205, 0.4915210189209054, -0.01769127069195246, -0.02089069357416042, -0.01525051322082282, -0.01851579305287936, 0.05916720610461798, 0.1201222083266929, 0.1035496747576178, 0.007353543755102747 },
+              { 0.03252993339295299, 0.06387879736841882, -0.06177310709815981, 0.03842858062261756, 0.0806970115889354, -0.1035588232346618, -0.01734326205363702, -0.02438518509697209, -0.1985641462188886, 0.2175536871400817, -0.01179728738948086, -0.04950719287174209, -0.1350679180736867, 0.4416809758208503, -0.03180468916131043, -0.09492531082548107, 0.09507860096432699, 0.1930300966426055, 0.04545314912714113, 0.5203960893560901 },
+              { 0.05250081167457772, 0.06052113623175343, -0.04934966142771523, 0.04354059863307074, 0.1588898148220525, -0.1355893575596559, -0.07707900179672236, -0.03192747346867369, -0.1435439573167464, 0.06967610128837716, -0.08273138611529676, -0.06481966737735892, -0.1540703730000097, 0.1414575354387222, -0.03627923190138437, -0.06862243272454166, 0.2995130335178072, 0.6080761519340632, 0.1431848012058482, 0.2666525579418326 },
+              { 0.06405091069272408, 0.04786179667770293, 0.02512919290070733, -0.06395474524402384, -0.1012913431147969, 0.3614256475674169, -0.1236722802907187, 0.08510555681724399, -0.06741474001815122, -0.01300150942446844, -0.1867774394149657, 0.1727826628772025, -0.1018138623288641, -0.02639587241766949, -0.0239742959680136, -0.03222820067117057, 0.2611310508455178, 0.5301524367192526, 0.1248359617771585, 0.06804907201791596 },
+              { 0.04318924178239492, 0.02461167127449067, 0.06287538273839537, 0.2139855659883352, -0.2741750605931531, 0.592037222446455, -0.09201460558480437, 0.1394080852091206, -0.01377460981523541, -0.009664723520160283, -0.1691237832672247, 0.2830285246916256, -0.02531787328953358, -0.01962147629644378, -0.005961645827396101, -0.006585071590767141, 0.07181973040778805, 0.1458095655684156, 0.03433404449988808, 0.005139815177809022 },
+              { 0.05655729144608557, 0.03559889505883666, 0.2713729123748657, 0.03842858062261754, 0.2600253875229914, -0.1526506453955511, -0.008317038376870657, -0.008184418481398073, -0.1403622398581125, 0.2352808169017185, -0.01424792477653217, -0.01661613732642675, -0.2404546599815524, 0.4776708782424127, -0.01289206185792282, -0.01527853516035785, 0.04703878457771024, 0.09549889292536871, 0.00512020700722314, 0.08641101453489339 },
+              { 0.05005267815464728, 0.02976268478726155, -0.01107368371109867, 0.04354059863307073, 0.6786176269932491, -0.1998651809064005, -0.03373322394768441, -0.01071584254465242, -0.09260154246141358, 0.09987911603476814, -0.06017730488369408, -0.02175547495463558, -0.1651935570120139, 0.2027761791320737, -0.008856911135315816, -0.01007974740094111, 0.1481798103775919, 0.3008370214492458, 0.01612948357904349, 0.04427726981689826 },
+              { 0.03643591520382984, 0.02009177033956136, -0.03856873960872395, -0.06395474524402384, 0.2381484100578316, 0.5327586451871232, -0.04836371674695872, 0.02856404367302547, -0.03886097588867821, 0.01025961118973182, -0.0909450732072041, 0.05799117840171464, -0.07307573807014066, 0.02082922675957899, -0.003917981608615601, -0.004230046393397376, 0.1291908707394852, 0.2622853724314022, 0.01406252324689171, 0.01129944953756663 },
+              { 0.01750305515999979, 0.009020559494407871, 0.06120422296004721, 0.2139855659883352, -0.2975836345159674, 0.8726911071580412, -0.03276842204685435, 0.04678964315852197, -0.007230854178749936, -0.003520726596965829, -0.06453471102930769, 0.09499308203063822, -0.01424057234899707, -0.007147835457943614, -0.0007635133360676429, -0.000787083904625039, 0.03553178941230636, 0.07213720726407839, 0.003867661946654374, 0.0008534588424480433 },
+              { 0.01839743077286511, -0.04749340988821904, 0.04177132842617732, 0.03842858062261761, -0.009925655672296975, -0.01013320819427439, 0.1053815952034381, -0.1121014694414298, 0.1180577966883031, -0.1230136911907924, -0.007223155775993393, -0.05521652356767186, -0.008092018861585431, -0.06059143035882798, -0.08952023759307103, 0.6433047647111861, 0.04276888128532574, 0.02106617293440571, 0.2330504709050118, 0.2610837789948315 },
+              { 0.04417353516267798, -0.05934355567588375, 0.03534202511640771, 0.04354059863307076, -0.04059435848706537, -0.01326738896951876, 0.2287873351745188, -0.1467742269397419, 0.04169084253704925, -0.08183492985940276, -0.07357718058319189, -0.07229488249642788, -0.01340762436729306, -0.04030848440930877, -0.1483256205217938, 0.2271761662613251, 0.1347289215870679, 0.0663618658268004, 0.7341468300496218, 0.1337801319610879 },
+              { 0.06392446264511684, 0.01401719441475571, 0.02425040418336484, -0.06395474524402385, -0.05885858484199342, 0.0353654205325618, -0.06013396113964092, 0.3912399245240427, -0.003207466779793019, -0.03473093779674275, -0.1920178970584202, 0.1927085222052588, -0.01024198330308551, -0.01710701612509323, -0.1133048247167385, -0.01747769922846701, 0.1174636858373068, 0.05785772844636952, 0.6400674152778254, 0.03414035816739543 },
+              { 0.04651858326990715, 0.06377349943860808, 0.01105330698451379, 0.2139855659883352, -0.04029009233427119, 0.05793071267540092, -0.2831742521396722, 0.6408748238658661, -0.004147975264383706, -0.006528974886942873, -0.1841448318370589, 0.315668295805934, -0.00269737874030828, -0.003215901606945218, -0.02984051197127158, -0.02260259234320134, 0.03230642323930763, 0.01591280104595268, 0.1760398430566512, 0.00257865575357742 },
+              { 0.04773063726529243, -0.05447231887399362, 0.03342063930254701, 0.0384285806226176, -0.01205889589785219, -0.04912612531484772, 0.03853893697540607, -0.08597658455360799, 0.2093125085942346, -0.1146227105719809, -0.01579846073196547, -0.04234849133492038, -0.08580453191652568, -0.05645838213561497, -0.1501681752046153, 0.1804349294735512, 0.1590238705659197, 0.07832854770483835, 0.1370843102635445, 0.7445317157679726 },
+              { 0.06012630891736445, -0.01758294016941075, 0.05299126439225882, 0.04354059863307076, -0.08320474854718045, -0.06432073639675999, 0.04226829226747209, -0.1125689680577145, 0.03734125756869811, -0.1286441457901147, -0.08874663243942474, -0.05544679395121409, -0.07840181569922058, -0.06336475822535183, -0.1372125380013055, 0.03218951041728306, 0.5009510172831869, 0.2467476455919101, 0.4318378394117879, 0.3815003427946647 },
+              { 0.0623679922432538, 0.04525804612115582, 0.06401438304842302, -0.06395474524402384, -0.186307671683133, 0.1714527174006553, -0.1622514081965321, 0.3000627254860677, -0.04195622205587818, -0.08431528567885163, -0.1754438455410546, 0.1477984243751403, -0.04536762437797456, -0.04153020457268596, -0.07939875918018659, -0.03616777620445348, 0.4367551689783557, 0.2151274394649742, 0.376498703498837, 0.09735794211791055 },
+              { 0.03855889636610938, 0.05924050992244752, 0.04295564970017648, 0.2139855659883352, -0.1680882052973493, 0.2808499930040158, -0.2491214286893202, 0.4915210189209048, -0.01769127069195228, -0.02089069357416054, -0.14897956417135, 0.2421028204222806, -0.01057973138316963, -0.01028988718729794, -0.01851579305287956, -0.01525051322082263, 0.1201222083266928, 0.05916720610461817, 0.1035496747576179, 0.007353543755102764 },
+              { 0.06387879736841878, 0.03252993339295297, -0.06177310709815984, 0.03842858062261754, 0.08069701158893543, -0.1035588232346618, -0.01179728738948092, -0.04950719287174212, -0.1350679180736866, 0.4416809758208505, -0.01734326205363705, -0.02438518509697202, -0.1985641462188888, 0.2175536871400815, -0.09492531082548113, -0.03180468916131036, 0.1930300966426056, 0.09507860096432676, 0.0454531491271411, 0.5203960893560899 },
+              { 0.06052113623175338, 0.05250081167457774, -0.04934966142771523, 0.04354059863307073, 0.1588898148220525, -0.135589357559656, -0.08273138611529679, -0.06481966737735896, -0.1540703730000096, 0.1414575354387224, -0.07707900179672235, -0.03192747346867364, -0.1435439573167465, 0.06967610128837712, -0.06862243272454177, -0.03627923190138425, 0.6080761519340634, 0.2995130335178071, 0.1431848012058483, 0.2666525579418326 },
+              { 0.04786179667770285, 0.0640509106927241, 0.02512919290070734, -0.06395474524402384, -0.1012913431147969, 0.3614256475674169, -0.1867774394149657, 0.1727826628772026, -0.101813862328864, -0.02639587241766957, -0.1236722802907185, 0.08510555681724388, -0.06741474001815125, -0.01300150942446835, -0.03222820067117072, -0.02397429596801341, 0.5301524367192529, 0.2611310508455175, 0.1248359617771584, 0.06804907201791587 },
+              { 0.02461167127449077, 0.04318924178239485, 0.06287538273839537, 0.2139855659883352, -0.2741750605931531, 0.592037222446455, -0.1691237832672244, 0.2830285246916249, -0.02531787328953333, -0.01962147629644389, -0.09201460558480479, 0.1394080852091213, -0.01377460981523564, -0.009664723520160156, -0.006585071590767422, -0.005961645827395862, 0.1458095655684153, 0.07181973040778843, 0.03433404449988806, 0.005139815177809036 },
+              { 0.03559889505883664, 0.05655729144608561, 0.2713729123748657, 0.03842858062261756, 0.2600253875229914, -0.1526506453955511, -0.0142479247765323, -0.01661613732642678, -0.2404546599815523, 0.4776708782424128, -0.008317038376870617, -0.008184418481398021, -0.1403622398581128, 0.2352808169017182, -0.01527853516035785, -0.01289206185792278, 0.09549889292536885, 0.04703878457771007, 0.00512020700722321, 0.08641101453489347 },
+              { 0.02976268478726152, 0.0500526781546473, -0.01107368371109867, 0.04354059863307073, 0.6786176269932491, -0.1998651809064005, -0.06017730488369415, -0.02175547495463558, -0.165193557012014, 0.2027761791320738, -0.03373322394768438, -0.0107158425446524, -0.09260154246141365, 0.09987911603476807, -0.01007974740094116, -0.008856911135315766, 0.3008370214492461, 0.1481798103775919, 0.01612948357904356, 0.04427726981689829 },
+              { 0.02009177033956134, 0.03643591520382988, -0.03856873960872394, -0.06395474524402384, 0.2381484100578316, 0.5327586451871232, -0.09094507320720416, 0.05799117840171462, -0.07307573807014064, 0.02082922675957898, -0.04836371674695869, 0.02856404367302545, -0.03886097588867817, 0.01025961118973182, -0.004230046393397508, -0.00391798160861542, 0.2622853724314027, 0.1291908707394847, 0.01406252324689169, 0.01129944953756661 },
+              { 0.009020559494408028, 0.01750305515999968, 0.06120422296004721, 0.2139855659883352, -0.2975836345159674, 0.8726911071580412, -0.06453471102930722, 0.09499308203063761, -0.01424057234899678, -0.007147835457943747, -0.03276842204685482, 0.04678964315852258, -0.007230854178750233, -0.003520726596965699, -0.0007870839046253027, -0.0007635133360674069, 0.0721372072640782, 0.03553178941230654, 0.003867661946654402, 0.0008534588424480433 },
+              { 0.04591828708383736, 0.3169426462707759, 0.04177132842617728, 0.03842858062261759, -0.009925655672296961, -0.01013320819427433, 0.2741613132482149, -0.1557007961861394, 0.307139785811479, -0.1708570793553191, -0.01105470616256208, -0.01161719682296227, -0.01238446096843792, -0.01274804219430117, -0.1902921953396234, 0.3521198099877716, 0.05940286868045866, 0.0044321855392726, 0.06810230324680332, 0.07629423197850772 },
+              { 0.03922281673230237, 0.00141590232956263, 0.03534202511640774, 0.04354059863307076, -0.0405943584870654, -0.01326738896951867, 0.7203406316237249, -0.2038587371601135, 0.1312642932055454, -0.1136627717587872, -0.04551696182039007, -0.01521037227605639, -0.008294342370705454, -0.008480642509924355, -0.1274458874425342, 0.1504876936069949, 0.1871286831914955, 0.01396210422237292, 0.2145333148376138, 0.03909339929600417 },
+              { 0.0272612052688519, -0.04188463766237058, 0.02425040418336487, -0.06395474524402384, -0.05885858484199345, 0.03536542053256185, 0.2674612099011289, 0.5434038291534241, 0.01426603086480513, -0.04823874918133422, -0.06658696213249179, 0.04054461757587723, -0.003551661406627537, -0.003599204740501824, -0.05457269782613901, 0.01635526333432478, 0.1631485251616873, 0.0121728891219892, 0.1870413093111272, 0.009976538626339394 },
+              { 0.01257193314170114, 0.06060203549741002, 0.0110533069845138, 0.2139855659883352, -0.04029009233427114, 0.05793071267540092, -0.2967764787949939, 0.8901285668133212, -0.004347222545096837, -0.009068271747387207, -0.04594534762516109, 0.06641455285847908, -0.0006730137504475132, -0.0006766047465008359, -0.01034112541456567, -0.004983864830503119, 0.04487127461709788, 0.003347949668162389, 0.05144258550007479, 0.0007535380444298762 },
+              { 0.03799461324998427, -0.02331412978759636, 0.033420639302547, 0.0384285806226176, -0.01205889589785208, -0.04912612531484772, 0.128698381601996, -0.1194152292121012, 0.6989860961220251, -0.1592026169326474, -0.008932545551935872, -0.008909846676427212, -0.04851440294788401, -0.01187847577494821, -0.1179282614083723, 0.1267728506062191, 0.2208726021441834, 0.01647981612657452, 0.04005895045692463, 0.2175679992715402 },
+              { 0.03190450350680576, -0.06369420044470796, 0.05299126439225883, 0.04354059863307076, -0.08320474854718042, -0.06432073639675995, 0.2955071788300039, -0.1563501177974808, 0.2610611663292174, -0.1786773717062808, -0.03633987898311893, -0.01166564421144786, -0.03210389415633511, -0.01333153230918556, -0.07803778243673351, 0.04734782053856708, 0.6957845658035813, 0.05191409707151603, 0.1261921993929503, 0.1114825124912598 },
+              { 0.02166719204875139, 0.004163310008531683, 0.06401438304842305, -0.06395474524402384, -0.186307671683133, 0.1714527174006553, -0.01890120888351309, 0.4167653242794799, -0.00488762055045246, -0.117107805778746, -0.05231626848804154, 0.031095825581728, -0.01352834469800386, -0.008737684472791548, -0.03288454712474929, -0.0008864519527641418, 0.6066211967352646, 0.0452614117080655, 0.1100209271328049, 0.02845006093251414 },
+              { 0.009782360656033809, 0.06411797206788244, 0.04295564970017648, 0.2139855659883352, -0.1680882052973492, 0.2808499930040158, -0.2892297853109991, 0.6826869832263218, -0.0205395515393152, -0.02901565553587066, -0.03558094966457037, 0.05093685611686363, -0.002526768633691761, -0.002164925225587826, -0.006142040586845533, -0.003725192122215995, 0.1668410197412737, 0.01244839469003711, 0.03025941687251714, 0.002148861852987847 },
+              { 0.0241979596905522, -0.01748602809877371, -0.06177310709815984, 0.03842858062261757, 0.08069701158893546, -0.1035588232346618, 0.008538797452701761, -0.06876189389380313, 0.09776125279593613, 0.613462784549029, -0.005508574471708086, -0.005130484074911019, -0.06306803088571836, 0.04577187841190321, -0.04187646317714565, 0.004843262359947535, 0.2681047794011663, 0.02000391820576625, 0.01328237670302937, 0.1520708031532969 },
+              { 0.01988094330190397, 0.01889383703961692, -0.04934966142771521, 0.04354059863307075, 0.1588898148220526, -0.1355893575596559, -0.03639206337658404, -0.09002980843572778, -0.06777281322056301, 0.1964742389558563, -0.02207516696234513, -0.006717332410304814, -0.04111050675720684, 0.01465939777124326, -0.02729691411376893, -0.00335758294734685, 0.8445735945272721, 0.06301559092459846, 0.04184164363275834, 0.07792154760284636 },
+              { 0.01309805464882746, 0.05903572070550178, 0.02512919290070734, -0.06395474524402384, -0.1012913431147969, 0.3614256475674169, -0.1909661136946048, 0.2399825650028395, -0.1040971418715295, -0.03666194896406959, -0.03112736681092264, 0.01790565469160699, -0.01696777431511034, -0.002735432878068318, -0.01126641130737682, -0.005157153315709575, 0.7363432157357879, 0.05494027182898273, 0.03647972257700167, 0.01988538585754049 },
+              { 0.005746515921331271, 0.05317409734377718, 0.06287538273839535, 0.2139855659883352, -0.2741750605931531, 0.592037222446455, -0.2160734693961718, 0.3931060570164849, -0.03234625322186905, -0.02725280495364045, -0.02076401284726201, 0.0293305528842614, -0.003108377994469285, -0.002033394862963594, -0.002063928028162475, -0.001602489598223657, 0.202518892603981, 0.01511040337222276, 0.01003313789129269, 0.001501963289378409 },
+              { 0.008853058872630531, 0.06336457808996053, 0.2713729123748657, 0.03842858062261757, 0.2600253875229913, -0.152650645395551, -0.01698165123776939, -0.02307860748082876, -0.2865903097010131, 0.6634501441226384, -0.00195933827339017, -0.001721948326996032, -0.03306671151808065, 0.04950155102149267, -0.004999216700526471, -0.003232830775422947, 0.1326410236856318, 0.00989665381744728, 0.001496233364979848, 0.02525113591432214 },
+              { 0.007144618132984946, 0.05926778057119939, -0.01107368371109865, 0.04354059863307073, 0.6786176269932491, -0.1998651809064005, -0.0747372528781832, -0.03021677404161215, -0.2051622728554401, 0.2816413798656125, -0.007757170457657565, -0.002254543457675805, -0.02129431656544961, 0.02101391530122929, -0.003219397941706027, -0.002314296356826361, 0.4178407651149236, 0.03117606671191429, 0.004713378083505831, 0.01293875976436034 },
+              { 0.004588098980638947, 0.04617258560480271, -0.03856873960872394, -0.06395474524402384, 0.2381484100578316, 0.5327586451871232, -0.1186048715912712, 0.08054553338069299, -0.09530080327165913, 0.02893028259636271, -0.01075076343804639, 0.006009688694047111, -0.008638400579026633, 0.002158555352948051, -0.001306003362835127, -0.00107502368122826, 0.3642953256458811, 0.02718091752500613, 0.004109368322046503, 0.003301939429433502 },
+              { 0.001963389085501118, 0.02346274581426415, 0.06120422296004721, 0.2139855659883352, -0.2975836345159674, 0.8726911071580412, -0.08751318058692434, 0.1319384891031534, -0.019311123576163, -0.009927824116443284, -0.007052503606407412, 0.009844236086006874, -0.001556242931079413, -0.0007407379384661416, -0.0002352818074116379, -0.0002178356786386483, 0.1001933396736596, 0.007475657002725074, 0.001130213063824145, 0.0002493988219434261 } } } };
+    {
+    double t0 = 0;
+    double t1 = 0;
+    if ((cell_permutation & 1 << 12) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_Q738[0][0][i2][5];
+            t1 = FE17_C0_Q738[0][0][i2][4];
+            FE17_C0_Q738[0][0][i2][4] = t0;
+            FE17_C0_Q738[0][0][i2][5] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 13) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_Q738[0][0][i2][7];
+            t1 = FE17_C0_Q738[0][0][i2][6];
+            FE17_C0_Q738[0][0][i2][6] = t0;
+            FE17_C0_Q738[0][0][i2][7] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 14) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_Q738[0][0][i2][9];
+            t1 = FE17_C0_Q738[0][0][i2][8];
+            FE17_C0_Q738[0][0][i2][8] = t0;
+            FE17_C0_Q738[0][0][i2][9] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 15) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_Q738[0][0][i2][11];
+            t1 = FE17_C0_Q738[0][0][i2][10];
+            FE17_C0_Q738[0][0][i2][10] = t0;
+            FE17_C0_Q738[0][0][i2][11] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 16) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_Q738[0][0][i2][13];
+            t1 = FE17_C0_Q738[0][0][i2][12];
+            FE17_C0_Q738[0][0][i2][12] = t0;
+            FE17_C0_Q738[0][0][i2][13] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 17) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE17_C0_Q738[0][0][i2][15];
+            t1 = FE17_C0_Q738[0][0][i2][14];
+            FE17_C0_Q738[0][0][i2][14] = t0;
+            FE17_C0_Q738[0][0][i2][15] = t1;
+        }
+    }
+    }
+    static const double FE9_C0_D001_Q738[1][1][1][4] = { { { { -1.0, 0.0, 0.0, 1.0 } } } };
+    static const double FE9_C0_D010_Q738[1][1][1][3] = { { { { -1.0, 0.0, 1.0 } } } };
+    static const double FE9_C0_D100_Q738[1][1][1][2] = { { { { -1.0, 1.0 } } } };
+    // Quadrature loop independent computations for quadrature rule 738
+    const double J_c4 = coordinate_dofs[1] * FE9_C0_D010_Q738[0][0][0][0] + coordinate_dofs[4] * FE9_C0_D010_Q738[0][0][0][1] + coordinate_dofs[7] * FE9_C0_D010_Q738[0][0][0][2];
+    const double J_c8 = coordinate_dofs[2] * FE9_C0_D001_Q738[0][0][0][0] + coordinate_dofs[5] * FE9_C0_D001_Q738[0][0][0][1] + coordinate_dofs[8] * FE9_C0_D001_Q738[0][0][0][2] + coordinate_dofs[11] * FE9_C0_D001_Q738[0][0][0][3];
+    const double J_c5 = coordinate_dofs[1] * FE9_C0_D001_Q738[0][0][0][0] + coordinate_dofs[4] * FE9_C0_D001_Q738[0][0][0][1] + coordinate_dofs[7] * FE9_C0_D001_Q738[0][0][0][2] + coordinate_dofs[10] * FE9_C0_D001_Q738[0][0][0][3];
+    const double J_c7 = coordinate_dofs[2] * FE9_C0_D010_Q738[0][0][0][0] + coordinate_dofs[5] * FE9_C0_D010_Q738[0][0][0][1] + coordinate_dofs[8] * FE9_C0_D010_Q738[0][0][0][2];
+    const double J_c0 = coordinate_dofs[0] * FE9_C0_D100_Q738[0][0][0][0] + coordinate_dofs[3] * FE9_C0_D100_Q738[0][0][0][1];
+    const double J_c1 = coordinate_dofs[0] * FE9_C0_D010_Q738[0][0][0][0] + coordinate_dofs[3] * FE9_C0_D010_Q738[0][0][0][1] + coordinate_dofs[6] * FE9_C0_D010_Q738[0][0][0][2];
+    const double J_c6 = coordinate_dofs[2] * FE9_C0_D100_Q738[0][0][0][0] + coordinate_dofs[5] * FE9_C0_D100_Q738[0][0][0][1];
+    const double J_c3 = coordinate_dofs[1] * FE9_C0_D100_Q738[0][0][0][0] + coordinate_dofs[4] * FE9_C0_D100_Q738[0][0][0][1];
+    const double J_c2 = coordinate_dofs[0] * FE9_C0_D001_Q738[0][0][0][0] + coordinate_dofs[3] * FE9_C0_D001_Q738[0][0][0][1] + coordinate_dofs[6] * FE9_C0_D001_Q738[0][0][0][2] + coordinate_dofs[9] * FE9_C0_D001_Q738[0][0][0][3];
+    ufc_scalar_t sp_738[80];
+    sp_738[0] = J_c4 * J_c8;
+    sp_738[1] = J_c5 * J_c7;
+    sp_738[2] = sp_738[0] + -1 * sp_738[1];
+    sp_738[3] = J_c0 * sp_738[2];
+    sp_738[4] = J_c5 * J_c6;
+    sp_738[5] = J_c3 * J_c8;
+    sp_738[6] = sp_738[4] + -1 * sp_738[5];
+    sp_738[7] = J_c1 * sp_738[6];
+    sp_738[8] = sp_738[3] + sp_738[7];
+    sp_738[9] = J_c3 * J_c7;
+    sp_738[10] = J_c4 * J_c6;
+    sp_738[11] = sp_738[9] + -1 * sp_738[10];
+    sp_738[12] = J_c2 * sp_738[11];
+    sp_738[13] = sp_738[8] + sp_738[12];
+    sp_738[14] = sp_738[2] / sp_738[13];
+    sp_738[15] = J_c3 * (-1 * J_c8);
+    sp_738[16] = sp_738[4] + sp_738[15];
+    sp_738[17] = sp_738[16] / sp_738[13];
+    sp_738[18] = sp_738[11] / sp_738[13];
+    sp_738[19] = sp_738[14] * sp_738[14];
+    sp_738[20] = sp_738[14] * sp_738[17];
+    sp_738[21] = sp_738[18] * sp_738[14];
+    sp_738[22] = sp_738[17] * sp_738[17];
+    sp_738[23] = sp_738[18] * sp_738[17];
+    sp_738[24] = sp_738[18] * sp_738[18];
+    sp_738[25] = J_c2 * J_c7;
+    sp_738[26] = J_c8 * (-1 * J_c1);
+    sp_738[27] = sp_738[25] + sp_738[26];
+    sp_738[28] = sp_738[27] / sp_738[13];
+    sp_738[29] = J_c0 * J_c8;
+    sp_738[30] = J_c6 * (-1 * J_c2);
+    sp_738[31] = sp_738[29] + sp_738[30];
+    sp_738[32] = sp_738[31] / sp_738[13];
+    sp_738[33] = J_c1 * J_c6;
+    sp_738[34] = J_c0 * J_c7;
+    sp_738[35] = sp_738[33] + -1 * sp_738[34];
+    sp_738[36] = sp_738[35] / sp_738[13];
+    sp_738[37] = sp_738[28] * sp_738[28];
+    sp_738[38] = sp_738[28] * sp_738[32];
+    sp_738[39] = sp_738[28] * sp_738[36];
+    sp_738[40] = sp_738[32] * sp_738[32];
+    sp_738[41] = sp_738[32] * sp_738[36];
+    sp_738[42] = sp_738[36] * sp_738[36];
+    sp_738[43] = sp_738[37] + sp_738[19];
+    sp_738[44] = sp_738[38] + sp_738[20];
+    sp_738[45] = sp_738[39] + sp_738[21];
+    sp_738[46] = sp_738[40] + sp_738[22];
+    sp_738[47] = sp_738[41] + sp_738[23];
+    sp_738[48] = sp_738[24] + sp_738[42];
+    sp_738[49] = J_c1 * J_c5;
+    sp_738[50] = J_c2 * J_c4;
+    sp_738[51] = sp_738[49] + -1 * sp_738[50];
+    sp_738[52] = sp_738[51] / sp_738[13];
+    sp_738[53] = J_c2 * J_c3;
+    sp_738[54] = J_c0 * J_c5;
+    sp_738[55] = sp_738[53] + -1 * sp_738[54];
+    sp_738[56] = sp_738[55] / sp_738[13];
+    sp_738[57] = J_c0 * J_c4;
+    sp_738[58] = J_c1 * J_c3;
+    sp_738[59] = sp_738[57] + -1 * sp_738[58];
+    sp_738[60] = sp_738[59] / sp_738[13];
+    sp_738[61] = sp_738[52] * sp_738[52];
+    sp_738[62] = sp_738[52] * sp_738[56];
+    sp_738[63] = sp_738[60] * sp_738[52];
+    sp_738[64] = sp_738[56] * sp_738[56];
+    sp_738[65] = sp_738[60] * sp_738[56];
+    sp_738[66] = sp_738[60] * sp_738[60];
+    sp_738[67] = sp_738[43] + sp_738[61];
+    sp_738[68] = sp_738[44] + sp_738[62];
+    sp_738[69] = sp_738[45] + sp_738[63];
+    sp_738[70] = sp_738[46] + sp_738[64];
+    sp_738[71] = sp_738[47] + sp_738[65];
+    sp_738[72] = sp_738[48] + sp_738[66];
+    sp_738[73] = fabs(sp_738[13]);
+    sp_738[74] = sp_738[67] * sp_738[73];
+    sp_738[75] = sp_738[68] * sp_738[73];
+    sp_738[76] = sp_738[69] * sp_738[73];
+    sp_738[77] = sp_738[70] * sp_738[73];
+    sp_738[78] = sp_738[71] * sp_738[73];
+    sp_738[79] = sp_738[72] * sp_738[73];
+    for (int iq = 0; iq < 64; ++iq)
+    {
+        const ufc_scalar_t fw0 = sp_738[73] * weights_738[iq];
         for (int i = 0; i < 20; ++i)
             for (int j = 0; j < 20; ++j)
-                A[20 * i + j] += fw0 * FE17_C0_Q818[0][0][iq][i] * FE17_C0_Q818[0][0][iq][j];
-        const ufc_scalar_t fw1 = sp_818[74] * weights_818[iq];
+                A[20 * i + j] += fw0 * FE17_C0_Q738[0][0][iq][i] * FE17_C0_Q738[0][0][iq][j];
+        const ufc_scalar_t fw1 = sp_738[74] * weights_738[iq];
         for (int i = 0; i < 20; ++i)
             for (int j = 0; j < 20; ++j)
-                A[20 * i + j] += fw1 * FE17_C0_D100_Q818[0][0][iq][i] * FE17_C0_D100_Q818[0][0][iq][j];
-        const ufc_scalar_t fw2 = sp_818[75] * weights_818[iq];
+                A[20 * i + j] += fw1 * FE17_C0_D100_Q738[0][0][iq][i] * FE17_C0_D100_Q738[0][0][iq][j];
+        const ufc_scalar_t fw2 = sp_738[75] * weights_738[iq];
         for (int i = 0; i < 20; ++i)
             for (int j = 0; j < 20; ++j)
-                A[20 * i + j] += fw2 * FE17_C0_D100_Q818[0][0][iq][i] * FE17_C0_D010_Q818[0][0][iq][j];
-        const ufc_scalar_t fw3 = sp_818[76] * weights_818[iq];
+                A[20 * i + j] += fw2 * FE17_C0_D100_Q738[0][0][iq][i] * FE17_C0_D010_Q738[0][0][iq][j];
+        const ufc_scalar_t fw3 = sp_738[76] * weights_738[iq];
         for (int i = 0; i < 20; ++i)
             for (int j = 0; j < 20; ++j)
-                A[20 * i + j] += fw3 * FE17_C0_D100_Q818[0][0][iq][i] * FE17_C0_D001_Q818[0][0][iq][j];
+                A[20 * i + j] += fw3 * FE17_C0_D100_Q738[0][0][iq][i] * FE17_C0_D001_Q738[0][0][iq][j];
         for (int i = 0; i < 20; ++i)
             for (int j = 0; j < 20; ++j)
-                A[20 * i + j] += fw2 * FE17_C0_D010_Q818[0][0][iq][i] * FE17_C0_D100_Q818[0][0][iq][j];
-        const ufc_scalar_t fw4 = sp_818[77] * weights_818[iq];
+                A[20 * i + j] += fw2 * FE17_C0_D010_Q738[0][0][iq][i] * FE17_C0_D100_Q738[0][0][iq][j];
+        const ufc_scalar_t fw4 = sp_738[77] * weights_738[iq];
         for (int i = 0; i < 20; ++i)
             for (int j = 0; j < 20; ++j)
-                A[20 * i + j] += fw4 * FE17_C0_D010_Q818[0][0][iq][i] * FE17_C0_D010_Q818[0][0][iq][j];
-        const ufc_scalar_t fw5 = sp_818[78] * weights_818[iq];
+                A[20 * i + j] += fw4 * FE17_C0_D010_Q738[0][0][iq][i] * FE17_C0_D010_Q738[0][0][iq][j];
+        const ufc_scalar_t fw5 = sp_738[78] * weights_738[iq];
         for (int i = 0; i < 20; ++i)
             for (int j = 0; j < 20; ++j)
-                A[20 * i + j] += fw5 * FE17_C0_D010_Q818[0][0][iq][i] * FE17_C0_D001_Q818[0][0][iq][j];
+                A[20 * i + j] += fw5 * FE17_C0_D010_Q738[0][0][iq][i] * FE17_C0_D001_Q738[0][0][iq][j];
         for (int i = 0; i < 20; ++i)
             for (int j = 0; j < 20; ++j)
-                A[20 * i + j] += fw3 * FE17_C0_D001_Q818[0][0][iq][i] * FE17_C0_D100_Q818[0][0][iq][j];
+                A[20 * i + j] += fw3 * FE17_C0_D001_Q738[0][0][iq][i] * FE17_C0_D100_Q738[0][0][iq][j];
         for (int i = 0; i < 20; ++i)
             for (int j = 0; j < 20; ++j)
-                A[20 * i + j] += fw5 * FE17_C0_D001_Q818[0][0][iq][i] * FE17_C0_D010_Q818[0][0][iq][j];
-        const ufc_scalar_t fw6 = sp_818[79] * weights_818[iq];
+                A[20 * i + j] += fw5 * FE17_C0_D001_Q738[0][0][iq][i] * FE17_C0_D010_Q738[0][0][iq][j];
+        const ufc_scalar_t fw6 = sp_738[79] * weights_738[iq];
         for (int i = 0; i < 20; ++i)
             for (int j = 0; j < 20; ++j)
-                A[20 * i + j] += fw6 * FE17_C0_D001_Q818[0][0][iq][i] * FE17_C0_D001_Q818[0][0][iq][j];
+                A[20 * i + j] += fw6 * FE17_C0_D001_Q738[0][0][iq][i] * FE17_C0_D001_Q738[0][0][iq][j];
     }
 }
 
 
-ufc_integral* create_integral_cell_otherwise_32dfa35028340e7d6c012f81fa6d228b6edd4b97(void)
+ufc_integral* create_integral_cell_otherwise_726e602d497be77b561b62144fa710a5219a470c(void)
 {
   static const bool enabled[1] = {false};  /* No coefficients, but C does not permit zero-sized arrays */
   ufc_integral* integral = (ufc_integral*)malloc(sizeof(*integral));
   integral->enabled_coefficients = enabled;
-  integral->tabulate_tensor = tabulate_tensor_integral_cell_otherwise_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
+  integral->tabulate_tensor = tabulate_tensor_integral_cell_otherwise_726e602d497be77b561b62144fa710a5219a470c;
   integral->needs_permutation_data = 1;
   return integral;
 }
 
-// End of code for integral integral_cell_otherwise_32dfa35028340e7d6c012f81fa6d228b6edd4b97
-#define tabulate_cell_L tabulate_tensor_integral_cell_otherwise_b2e4b1e5b423dd359e732fc7707ef351a42630b5
+// End of code for integral integral_cell_otherwise_726e602d497be77b561b62144fa710a5219a470c
+#define tabulate_cell_L tabulate_tensor_integral_cell_otherwise_d7784bb426acb67ec050072a6ec8e2234c9eb501
 
-// Code for integral integral_cell_otherwise_b2e4b1e5b423dd359e732fc7707ef351a42630b5
+// Code for integral integral_cell_otherwise_d7784bb426acb67ec050072a6ec8e2234c9eb501
 
 
-void tabulate_tensor_integral_cell_otherwise_b2e4b1e5b423dd359e732fc7707ef351a42630b5(ufc_scalar_t* restrict A,
+void tabulate_tensor_integral_cell_otherwise_d7784bb426acb67ec050072a6ec8e2234c9eb501(ufc_scalar_t* restrict A,
                                     const ufc_scalar_t* restrict w,
                                     const ufc_scalar_t* restrict c,
                                     const double* restrict coordinate_dofs,
@@ -2576,207 +1524,311 @@ void tabulate_tensor_integral_cell_otherwise_b2e4b1e5b423dd359e732fc7707ef351a42
                                     const uint32_t cell_permutation)
 {
     // Quadrature rules
-    static const double weights_818[24] = { 0.006653791709694649, 0.006653791709694649, 0.006653791709694649, 0.006653791709694649, 0.001679535175886783, 0.001679535175886783, 0.001679535175886783, 0.001679535175886783, 0.009226196923942399, 0.009226196923942399, 0.009226196923942399, 0.009226196923942399, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283, 0.008035714285714283 };
+    static const double weights_738[64] = { 0.002613459007507403, 0.003381089578564919, 0.001617588723434511, 0.000243985421620605, 0.00392412678076308, 0.005076729393991831, 0.002428820659384972, 0.0003663457985554325, 0.002504309443009022, 0.003239880378814601, 0.001550031090353912, 0.0002337955152791077, 0.0006013729287201761, 0.0007780094259316945, 0.0003722170752562635, 5.614254026695101e-5, 0.004899614459888756, 0.00633873932658916, 0.003032594380369393, 0.0004574146739399296, 0.007356805009082981, 0.009517660952894894, 0.004553461442867281, 0.0006868112975047708, 0.004694984969634424, 0.006074005640321838, 0.002905939875758181, 0.000438311021534327, 0.001127431304213666, 0.001458582752694613, 0.0006978185458062608, 0.0001052539187783915, 0.004899614459888754, 0.006338739326589158, 0.003032594380369392, 0.0004574146739399295, 0.007356805009082978, 0.00951766095289489, 0.004553461442867279, 0.0006868112975047704, 0.004694984969634422, 0.006074005640321836, 0.00290593987575818, 0.0004383110215343269, 0.001127431304213666, 0.001458582752694613, 0.0006978185458062604, 0.0001052539187783915, 0.002613459007507403, 0.003381089578564919, 0.001617588723434511, 0.000243985421620605, 0.00392412678076308, 0.005076729393991831, 0.002428820659384972, 0.0003663457985554325, 0.002504309443009022, 0.003239880378814601, 0.001550031090353912, 0.0002337955152791077, 0.0006013729287201761, 0.0007780094259316945, 0.0003722170752562635, 5.614254026695101e-5 };
     // Precomputed values of basis functions and precomputations
     // FE* dimensions: [permutation][entities][points][dofs]
-    static const double FE11_C0_Q818[1][1][24][20] =
-        { { { { 0.05183342742053288, -0.01137528241650886, 0.05183342742053281, 0.05183342742053277, -0.07381880034180852, -0.07381880034180849, 0.02358804473394379, -0.1225222228796847, 0.02358804473394378, -0.1225222228796847, -0.07381880034180864, -0.07381880034180852, -0.0738188003418087, -0.07381880034180853, -0.1225222228796849, 0.02358804473394362, 0.4429128020508511, 0.2668519304904312, 0.4429128020508512, 0.4429128020508511 },
-              { -0.01137528241650879, 0.05183342742053278, 0.05183342742053279, 0.05183342742053282, -0.0738188003418085, -0.07381880034180852, -0.07381880034180832, -0.07381880034180859, -0.07381880034180847, -0.07381880034180859, 0.02358804473394362, -0.1225222228796846, 0.02358804473394359, -0.1225222228796847, 0.02358804473394354, -0.1225222228796848, 0.2668519304904314, 0.4429128020508509, 0.4429128020508512, 0.4429128020508511 },
-              { 0.05183342742053285, 0.05183342742053278, 0.0518334274205328, -0.01137528241650888, -0.1225222228796846, 0.02358804473394371, -0.1225222228796845, 0.02358804473394372, -0.07381880034180846, -0.07381880034180857, -0.1225222228796848, 0.02358804473394376, -0.07381880034180867, -0.07381880034180852, -0.07381880034180874, -0.0738188003418086, 0.4429128020508511, 0.4429128020508509, 0.4429128020508512, 0.2668519304904314 },
-              { 0.05183342742053285, 0.0518334274205328, -0.01137528241650886, 0.05183342742053276, 0.02358804473394365, -0.1225222228796846, -0.07381880034180839, -0.07381880034180857, -0.1225222228796845, 0.0235880447339436, -0.07381880034180867, -0.07381880034180853, -0.1225222228796848, 0.02358804473394371, -0.07381880034180865, -0.0738188003418086, 0.4429128020508511, 0.442912802050851, 0.2668519304904314, 0.4429128020508512 },
-              { 0.03353209363244256, 0.4547080149710238, 0.03353209363244244, 0.03353209363244244, -0.00653625658062916, -0.00653625658062913, 0.2625713032082069, -0.1410900364750473, 0.262571303208207, -0.1410900364750473, -0.006536256580629242, -0.006536256580629146, -0.006536256580629237, -0.00653625658062906, -0.1410900364750478, 0.2625713032082077, 0.03921753948377495, 0.001816824964619136, 0.03921753948377495, 0.0392175394837749 },
-              { 0.4547080149710245, 0.03353209363244244, 0.0335320936324424, 0.03353209363244249, -0.006536256580629139, -0.00653625658062913, -0.006536256580628996, -0.006536256580629097, -0.006536256580629299, -0.006536256580628993, 0.2625713032082071, -0.1410900364750474, 0.2625713032082069, -0.1410900364750473, 0.2625713032082067, -0.1410900364750471, 0.00181682496461931, 0.03921753948377473, 0.03921753948377484, 0.0392175394837747 },
-              { 0.03353209363244258, 0.03353209363244244, 0.03353209363244258, 0.4547080149710242, -0.1410900364750473, 0.2625713032082072, -0.1410900364750472, 0.262571303208207, -0.00653625658062913, -0.006536256580629222, -0.1410900364750475, 0.2625713032082075, -0.006536256580629242, -0.006536256580629152, -0.006536256580629303, -0.0065362565806292, 0.0392175394837749, 0.03921753948377477, 0.03921753948377485, 0.00181682496461929 },
-              { 0.03353209363244258, 0.03353209363244249, 0.454708014971024, 0.03353209363244245, 0.2625713032082069, -0.1410900364750473, -0.0065362565806291, -0.006536256580629159, -0.1410900364750472, 0.2625713032082069, -0.006536256580629304, -0.006536256580629229, -0.1410900364750478, 0.2625713032082079, -0.006536256580629195, -0.006536256580629144, 0.039217539483775, 0.03921753948377503, 0.001816824964619191, 0.03921753948377486 },
-              { 0.005491739535993311, 0.02825140445644189, 0.005491739535993141, 0.0054917395359932, -0.01542301302648356, -0.01542301302648368, -0.04311242233496329, -0.001578308372243742, -0.04311242233496351, -0.001578308372243738, -0.01542301302648394, -0.01542301302648352, -0.01542301302648401, -0.01542301302648357, -0.001578308372243887, -0.04311242233496351, 0.09253807815890219, 0.9042694127393965, 0.09253807815890198, 0.09253807815890173 },
-              { 0.02825140445644183, 0.005491739535993165, 0.005491739535993186, 0.005491739535993084, -0.01542301302648356, -0.01542301302648349, -0.01542301302648351, -0.01542301302648353, -0.01542301302648345, -0.01542301302648364, -0.0431124223349635, -0.00157830837224371, -0.04311242233496347, -0.001578308372243648, -0.04311242233496344, -0.001578308372243711, 0.9042694127393971, 0.09253807815890117, 0.09253807815890136, 0.09253807815890124 },
-              { 0.005491739535993379, 0.005491739535993169, 0.005491739535993203, 0.02825140445644192, -0.001578308372243799, -0.04311242233496347, -0.001578308372243602, -0.04311242233496354, -0.01542301302648348, -0.01542301302648368, -0.001578308372243886, -0.04311242233496346, -0.01542301302648396, -0.01542301302648357, -0.01542301302648396, -0.01542301302648363, 0.09253807815890204, 0.09253807815890172, 0.09253807815890189, 0.9042694127393964 },
-              { 0.00549173953599336, 0.005491739535993155, 0.02825140445644195, 0.005491739535993231, -0.04311242233496342, -0.001578308372243693, -0.01542301302648338, -0.01542301302648358, -0.001578308372243793, -0.04311242233496351, -0.01542301302648386, -0.01542301302648353, -0.001578308372243954, -0.04311242233496337, -0.01542301302648414, -0.0154230130264836, 0.09253807815890205, 0.09253807815890172, 0.9042694127393965, 0.09253807815890186 },
-              { -0.04658474953124554, 0.03066949906249121, 0.04658474953124563, 0.04658474953124569, -0.01475424859373684, -0.01475424859373687, -0.01475424859373663, -0.06250000000000008, -0.01475424859373683, -0.06250000000000006, 0.1397542485937368, -0.1397542485937369, 0.1397542485937367, -0.1397542485937369, 0.5920084971874736, -0.1397542485937369, 0.02950849718747382, 0.06598300562505244, 0.2795084971874736, 0.2795084971874737 },
-              { -0.04658474953124555, 0.0465847495312456, 0.03066949906249124, 0.04658474953124565, -0.01475424859373682, -0.06250000000000004, -0.01475424859373667, -0.01475424859373693, -0.06250000000000003, -0.01475424859373684, 0.1397542485937367, -0.1397542485937369, 0.5920084971874736, -0.1397542485937368, 0.1397542485937366, -0.1397542485937369, 0.02950849718747385, 0.2795084971874736, 0.06598300562505265, 0.2795084971874736 },
-              { -0.04658474953124556, 0.04658474953124564, 0.04658474953124565, 0.03066949906249148, -0.06249999999999994, -0.0147542485937369, -0.06249999999999957, -0.01475424859373694, -0.01475424859373694, -0.01475424859373683, 0.5920084971874738, -0.1397542485937368, 0.1397542485937366, -0.1397542485937368, 0.1397542485937366, -0.1397542485937369, 0.02950849718747392, 0.2795084971874736, 0.2795084971874737, 0.06598300562505249 },
-              { 0.03066949906249122, -0.0465847495312456, 0.04658474953124566, 0.04658474953124565, -0.01475424859373685, -0.01475424859373686, 0.1397542485937368, -0.1397542485937369, 0.1397542485937368, -0.1397542485937369, -0.01475424859373687, -0.06250000000000004, -0.01475424859373689, -0.06250000000000006, -0.1397542485937369, 0.5920084971874737, 0.06598300562505267, 0.02950849718747363, 0.2795084971874737, 0.2795084971874738 },
-              { 0.0306694990624912, 0.04658474953124561, -0.04658474953124554, 0.04658474953124564, 0.1397542485937366, -0.1397542485937369, -0.01475424859373672, -0.01475424859373694, -0.1397542485937368, 0.1397542485937366, -0.01475424859373693, -0.06250000000000007, -0.1397542485937369, 0.5920084971874738, -0.0147542485937369, -0.06250000000000006, 0.0659830056250527, 0.2795084971874738, 0.02950849718747375, 0.2795084971874736 },
-              { 0.03066949906249131, 0.04658474953124565, 0.0465847495312457, -0.04658474953124549, -0.1397542485937368, 0.1397542485937368, -0.1397542485937367, 0.1397542485937369, -0.01475424859373689, -0.01475424859373689, -0.1397542485937368, 0.5920084971874739, -0.01475424859373694, -0.0625, -0.01475424859373704, -0.06250000000000003, 0.06598300562505266, 0.2795084971874735, 0.2795084971874736, 0.02950849718747372 },
-              { 0.04658474953124572, 0.04658474953124562, 0.03066949906249133, -0.04658474953124565, -0.1397542485937369, 0.5920084971874738, -0.1397542485937368, 0.1397542485937369, -0.06249999999999994, -0.01475424859373684, -0.1397542485937371, 0.1397542485937369, -0.06250000000000021, -0.01475424859373681, -0.01475424859373705, -0.0147542485937369, 0.2795084971874737, 0.2795084971874738, 0.06598300562505266, 0.02950849718747368 },
-              { 0.04658474953124569, 0.03066949906249132, -0.04658474953124563, 0.04658474953124561, 0.1397542485937367, -0.1397542485937369, -0.0147542485937367, -0.06250000000000006, -0.1397542485937369, 0.5920084971874736, -0.01475424859373697, -0.01475424859373696, -0.1397542485937372, 0.139754248593737, -0.06250000000000008, -0.01475424859373687, 0.2795084971874737, 0.06598300562505252, 0.02950849718747382, 0.2795084971874738 },
-              { 0.04658474953124574, -0.04658474953124569, 0.04658474953124567, 0.03066949906249124, -0.06249999999999999, -0.01475424859373683, 0.5920084971874734, -0.1397542485937368, 0.1397542485937368, -0.139754248593737, -0.0625000000000001, -0.0147542485937369, -0.01475424859373702, -0.01475424859373684, -0.1397542485937372, 0.1397542485937368, 0.2795084971874737, 0.02950849718747375, 0.279508497187474, 0.06598300562505263 },
-              { 0.04658474953124577, 0.04658474953124565, -0.04658474953124565, 0.03066949906249127, 0.5920084971874734, -0.1397542485937369, -0.06249999999999989, -0.0147542485937369, -0.1397542485937369, 0.1397542485937368, -0.06250000000000021, -0.01475424859373697, -0.1397542485937372, 0.139754248593737, -0.01475424859373693, -0.01475424859373683, 0.2795084971874738, 0.2795084971874741, 0.02950849718747381, 0.06598300562505248 },
-              { 0.04658474953124569, 0.03066949906249122, 0.04658474953124571, -0.04658474953124569, -0.1397542485937368, 0.1397542485937369, -0.139754248593737, 0.5920084971874739, -0.01475424859373686, -0.06250000000000008, -0.1397542485937371, 0.1397542485937369, -0.01475424859373699, -0.01475424859373684, -0.06250000000000017, -0.0147542485937369, 0.2795084971874738, 0.06598300562505241, 0.2795084971874738, 0.02950849718747372 },
-              { 0.04658474953124574, -0.04658474953124567, 0.03066949906249127, 0.04658474953124561, -0.01475424859373686, -0.0625, 0.1397542485937369, -0.1397542485937369, 0.5920084971874736, -0.1397542485937369, -0.01475424859373699, -0.01475424859373687, -0.06250000000000018, -0.01475424859373683, -0.1397542485937372, 0.1397542485937369, 0.2795084971874736, 0.02950849718747376, 0.06598300562505267, 0.2795084971874741 } } } };
-    static const double FE9_C0_D001_Q818[1][1][1][4] = { { { { -1.0, 0.0, 0.0, 1.0 } } } };
-    static const double FE9_C0_D010_Q818[1][1][1][3] = { { { { -1.0, 0.0, 1.0 } } } };
-    static const double FE9_C0_D100_Q818[1][1][1][2] = { { { { -1.0, 1.0 } } } };
-    // Quadrature loop independent computations for quadrature rule 818
-    const double J_c0 = coordinate_dofs[0] * FE9_C0_D100_Q818[0][0][0][0] + coordinate_dofs[3] * FE9_C0_D100_Q818[0][0][0][1];
-    const double J_c4 = coordinate_dofs[1] * FE9_C0_D010_Q818[0][0][0][0] + coordinate_dofs[4] * FE9_C0_D010_Q818[0][0][0][1] + coordinate_dofs[7] * FE9_C0_D010_Q818[0][0][0][2];
-    const double J_c8 = coordinate_dofs[2] * FE9_C0_D001_Q818[0][0][0][0] + coordinate_dofs[5] * FE9_C0_D001_Q818[0][0][0][1] + coordinate_dofs[8] * FE9_C0_D001_Q818[0][0][0][2] + coordinate_dofs[11] * FE9_C0_D001_Q818[0][0][0][3];
-    const double J_c5 = coordinate_dofs[1] * FE9_C0_D001_Q818[0][0][0][0] + coordinate_dofs[4] * FE9_C0_D001_Q818[0][0][0][1] + coordinate_dofs[7] * FE9_C0_D001_Q818[0][0][0][2] + coordinate_dofs[10] * FE9_C0_D001_Q818[0][0][0][3];
-    const double J_c7 = coordinate_dofs[2] * FE9_C0_D010_Q818[0][0][0][0] + coordinate_dofs[5] * FE9_C0_D010_Q818[0][0][0][1] + coordinate_dofs[8] * FE9_C0_D010_Q818[0][0][0][2];
-    const double J_c1 = coordinate_dofs[0] * FE9_C0_D010_Q818[0][0][0][0] + coordinate_dofs[3] * FE9_C0_D010_Q818[0][0][0][1] + coordinate_dofs[6] * FE9_C0_D010_Q818[0][0][0][2];
-    const double J_c6 = coordinate_dofs[2] * FE9_C0_D100_Q818[0][0][0][0] + coordinate_dofs[5] * FE9_C0_D100_Q818[0][0][0][1];
-    const double J_c3 = coordinate_dofs[1] * FE9_C0_D100_Q818[0][0][0][0] + coordinate_dofs[4] * FE9_C0_D100_Q818[0][0][0][1];
-    const double J_c2 = coordinate_dofs[0] * FE9_C0_D001_Q818[0][0][0][0] + coordinate_dofs[3] * FE9_C0_D001_Q818[0][0][0][1] + coordinate_dofs[6] * FE9_C0_D001_Q818[0][0][0][2] + coordinate_dofs[9] * FE9_C0_D001_Q818[0][0][0][3];
-    ufc_scalar_t sp_818[15];
-    sp_818[0] = J_c4 * J_c8;
-    sp_818[1] = J_c5 * J_c7;
-    sp_818[2] = sp_818[0] + -1 * sp_818[1];
-    sp_818[3] = J_c0 * sp_818[2];
-    sp_818[4] = J_c5 * J_c6;
-    sp_818[5] = J_c3 * J_c8;
-    sp_818[6] = sp_818[4] + -1 * sp_818[5];
-    sp_818[7] = J_c1 * sp_818[6];
-    sp_818[8] = sp_818[3] + sp_818[7];
-    sp_818[9] = J_c3 * J_c7;
-    sp_818[10] = J_c4 * J_c6;
-    sp_818[11] = sp_818[9] + -1 * sp_818[10];
-    sp_818[12] = J_c2 * sp_818[11];
-    sp_818[13] = sp_818[8] + sp_818[12];
-    sp_818[14] = fabs(sp_818[13]);
-    for (int iq = 0; iq < 24; ++iq)
+    double FE11_C0_Q738[1][1][64][20] =
+        { { { { 0.3169426462707758, 0.04591828708383736, 0.04177132842617729, 0.03842858062261754, -0.009925655672296975, -0.01013320819427436, -0.01105470616256194, -0.01161719682296222, -0.0123844609684377, -0.01274804219430131, 0.2741613132482146, -0.1557007961861394, 0.3071397858114789, -0.170857079355319, 0.3521198099877711, -0.1902921953396233, 0.004432185539272659, 0.0594028686804585, 0.06810230324680321, 0.07629423197850742 },
+              { 0.001415902329562763, 0.0392228167323023, 0.03534202511640774, 0.04354059863307073, -0.04059435848706532, -0.01326738896951871, -0.04551696182038991, -0.01521037227605624, -0.00829434237070543, -0.008480642509924308, 0.7203406316237254, -0.2038587371601135, 0.1312642932055456, -0.1136627717587872, 0.1504876936069945, -0.1274458874425341, 0.01396210422237281, 0.1871286831914954, 0.2145333148376131, 0.0390933992960039 },
+              { -0.04188463766237061, 0.02726120526885194, 0.02425040418336488, -0.06395474524402384, -0.05885858484199345, 0.03536542053256184, -0.06658696213249202, 0.04054461757587735, -0.003551661406627637, -0.003599204740501807, 0.2674612099011286, 0.5434038291534241, 0.0142660308648052, -0.04823874918133415, 0.01635526333432488, -0.05457269782613917, 0.01217288912198906, 0.1631485251616873, 0.1870413093111279, 0.009976538626339237 },
+              { 0.06060203549740997, 0.01257193314170104, 0.01105330698451381, 0.2139855659883352, -0.04029009233427119, 0.05793071267540092, -0.04594534762516067, 0.06641455285847836, -0.0006730137504474647, -0.000676604746500907, -0.2967764787949939, 0.8901285668133219, -0.004347222545096955, -0.009068271747387198, -0.004983864830503264, -0.01034112541456549, 0.003347949668162181, 0.0448712746170981, 0.05144258550007491, 0.0007535380444297791 },
+              { -0.02331412978759613, 0.03799461324998415, 0.03342063930254705, 0.03842858062261763, -0.01205889589785223, -0.04912612531484769, -0.008932545551935702, -0.008909846676427115, -0.04851440294788373, -0.01187847577494843, 0.1286983816019961, -0.1194152292121012, 0.6989860961220259, -0.1592026169326476, 0.1267728506062185, -0.1179282614083719, 0.01647981612657468, 0.220872602144184, 0.0400589504569248, 0.2175679992715395 },
+              { -0.06369420044470792, 0.03190450350680572, 0.05299126439225883, 0.04354059863307077, -0.08320474854718045, -0.06432073639675993, -0.03633987898311879, -0.01166564421144779, -0.03210389415633495, -0.01333153230918564, 0.2955071788300041, -0.1563501177974808, 0.2610611663292178, -0.1786773717062808, 0.04734782053856702, -0.07803778243673333, 0.05191409707151574, 0.6957845658035814, 0.12619219939295, 0.1114825124912597 },
+              { 0.004163310008531654, 0.02166719204875141, 0.06401438304842305, -0.06395474524402384, -0.186307671683133, 0.1714527174006553, -0.05231626848804156, 0.03109582558172799, -0.01352834469800383, -0.008737684472791614, -0.01890120888351309, 0.41676532427948, -0.004887620550452425, -0.117107805778746, -0.0008864519527641843, -0.03288454712474925, 0.04526141170806525, 0.6066211967352647, 0.1100209271328051, 0.02845006093251415 },
+              { 0.06411797206788243, 0.009782360656033813, 0.0429556497001765, 0.2139855659883352, -0.1680882052973493, 0.2808499930040158, -0.03558094966457034, 0.05093685611686352, -0.002526768633691679, -0.002164925225587932, -0.2892297853109992, 0.6826869832263218, -0.0205395515393154, -0.02901565553587053, -0.003725192122216222, -0.006142040586845341, 0.01244839469003697, 0.1668410197412738, 0.03025941687251746, 0.002148861852987799 },
+              { -0.01748602809877367, 0.02419795969055224, -0.06177310709815981, 0.03842858062261759, 0.08069701158893548, -0.1035588232346618, -0.005508574471708039, -0.005130484074911065, -0.0630680308857182, 0.04577187841190331, 0.008538797452701877, -0.06876189389380313, 0.09776125279593618, 0.6134627845490287, 0.004843262359947495, -0.04187646317714565, 0.02000391820576644, 0.2681047794011663, 0.0132823767030295, 0.152070803153297 },
+              { 0.01889383703961694, 0.019880943301904, -0.04934966142771522, 0.04354059863307075, 0.1588898148220525, -0.1355893575596559, -0.02207516696234512, -0.006717332410304873, -0.04111050675720675, 0.01465939777124328, -0.036392063376584, -0.09002980843572778, -0.06777281322056292, 0.1964742389558562, -0.003357582947346926, -0.02729691411376884, 0.06301559092459838, 0.8445735945272719, 0.0418416436327582, 0.07792154760284647 },
+              { 0.05903572070550177, 0.0130980546488276, 0.02512919290070734, -0.06395474524402384, -0.1012913431147969, 0.3614256475674169, -0.03112736681092292, 0.01790565469160708, -0.01696777431511043, -0.002735432878068417, -0.1909661136946049, 0.2399825650028394, -0.1040971418715296, -0.03666194896406951, -0.005157153315709761, -0.01126641130737677, 0.05494027182898298, 0.7363432157357872, 0.03647972257700187, 0.01988538585754073 },
+              { 0.05317409734377725, 0.005746515921331073, 0.06287538273839535, 0.2139855659883352, -0.2741750605931532, 0.592037222446455, -0.02076401284726137, 0.02933055288426051, -0.003108377994469027, -0.002033394862963698, -0.2160734693961723, 0.3931060570164858, -0.03234625322186933, -0.02725280495364035, -0.001602489598223861, -0.002063928028162174, 0.01511040337222231, 0.2025188926039815, 0.01003313789129252, 0.001501963289378384 },
+              { 0.06336457808996047, 0.008853058872630642, 0.2713729123748657, 0.03842858062261756, 0.2600253875229914, -0.1526506453955511, -0.001959338273390216, -0.001721948326996132, -0.03306671151808083, 0.0495015510214936, -0.01698165123776919, -0.02307860748082872, -0.2865903097010131, 0.6634501441226377, -0.003232830775423047, -0.004999216700526547, 0.009896653817447452, 0.1326410236856315, 0.00149623336497972, 0.02525113591432232 },
+              { 0.05926778057119936, 0.007144618132984969, -0.01107368371109868, 0.04354059863307073, 0.6786176269932491, -0.1998651809064005, -0.00775717045765761, -0.002254543457675853, -0.02129431656544956, 0.02101391530122937, -0.07473725287818311, -0.03021677404161215, -0.20516227285544, 0.2816413798656125, -0.002314296356826446, -0.003219397941706001, 0.03117606671191423, 0.4178407651149235, 0.004713378083505665, 0.01293875976436034 },
+              { 0.04617258560480267, 0.004588098980638987, -0.03856873960872395, -0.06395474524402384, 0.2381484100578316, 0.5327586451871232, -0.01075076343804648, 0.00600968869404709, -0.00863840057902665, 0.002158555352948058, -0.1186048715912711, 0.08054553338069299, -0.09530080327165909, 0.02893028259636271, -0.001075023681228427, -0.001306003362835003, 0.02718091752500661, 0.3642953256458807, 0.004109368322046489, 0.003301939429433599 },
+              { 0.02346274581426416, 0.001963389085501073, 0.06120422296004722, 0.2139855659883352, -0.2975836345159674, 0.8726911071580412, -0.007052503606407218, 0.009844236086006708, -0.001556242931079184, -0.0007407379384663342, -0.08751318058692453, 0.1319384891031535, -0.0193111235761632, -0.009927824116443116, -0.000217835678638905, -0.0002352818074113951, 0.007475657002725226, 0.1001933396736595, 0.001130213063824201, 0.0002493988219434296 },
+              { -0.04749340988821903, 0.01839743077286514, 0.04177132842617735, 0.0384285806226176, -0.009925655672296948, -0.01013320819427441, -0.00722315577599345, -0.05521652356767184, -0.008092018861585464, -0.06059143035882807, 0.1053815952034381, -0.1121014694414298, 0.1180577966883033, -0.1230136911907922, 0.643304764711186, -0.08952023759307098, 0.02106617293440569, 0.04276888128532599, 0.2330504709050119, 0.2610837789948315 },
+              { -0.05934355567588374, 0.04417353516267802, 0.03534202511640772, 0.04354059863307074, -0.04059435848706533, -0.01326738896951878, -0.07357718058319193, -0.07229488249642782, -0.01340762436729309, -0.04030848440930872, 0.2287873351745189, -0.146774226939742, 0.0416908425370494, -0.08183492985940279, 0.2271761662613251, -0.1483256205217938, 0.0663618658268004, 0.1347289215870679, 0.7341468300496218, 0.133780131961088 },
+              { 0.01401719441475575, 0.06392446264511686, 0.02425040418336484, -0.06395474524402385, -0.05885858484199342, 0.0353654205325618, -0.1920178970584202, 0.1927085222052589, -0.01024198330308551, -0.01710701612509322, -0.06013396113964103, 0.3912399245240425, -0.003207466779793017, -0.03473093779674274, -0.01747769922846709, -0.1133048247167385, 0.05785772844636948, 0.1174636858373068, 0.6400674152778256, 0.03414035816739538 },
+              { 0.06377349943860808, 0.04651858326990711, 0.01105330698451381, 0.2139855659883352, -0.04029009233427119, 0.05793071267540092, -0.1841448318370586, 0.3156682958059335, -0.002697378740308187, -0.003215901606945262, -0.2831742521396724, 0.640874823865867, -0.004147975264383832, -0.006528974886942816, -0.02260259234320148, -0.02984051197127142, 0.0159128010459525, 0.03230642323930792, 0.1760398430566511, 0.002578655753577375 },
+              { -0.05447231887399361, 0.04773063726529249, 0.03342063930254705, 0.0384285806226176, -0.01205889589785223, -0.04912612531484772, -0.01579846073196544, -0.04234849133492032, -0.08580453191652564, -0.05645838213561507, 0.03853893697540612, -0.08597658455360804, 0.2093125085942348, -0.114622710571981, 0.1804349294735512, -0.1501681752046154, 0.07832854770483834, 0.1590238705659201, 0.1370843102635446, 0.7445317157679726 },
+              { -0.01758294016941076, 0.06012630891736453, 0.05299126439225883, 0.04354059863307076, -0.08320474854718048, -0.06432073639675999, -0.08874663243942474, -0.05544679395121408, -0.07840181569922051, -0.06336475822535188, 0.04226829226747217, -0.1125689680577145, 0.0373412575686982, -0.1286441457901146, 0.03218951041728307, -0.1372125380013054, 0.24674764559191, 0.500951017283187, 0.4318378394117878, 0.3815003427946647 },
+              { 0.04525804612115583, 0.06236799224325384, 0.06401438304842304, -0.06395474524402384, -0.186307671683133, 0.1714527174006553, -0.1754438455410546, 0.1477984243751404, -0.04536762437797448, -0.04153020457268602, -0.1622514081965321, 0.3000627254860676, -0.04195622205587823, -0.08431528567885159, -0.03616777620445359, -0.07939875918018649, 0.2151274394649741, 0.4367551689783558, 0.3764987034988371, 0.09735794211791056 },
+              { 0.05924050992244755, 0.03855889636610928, 0.0429556497001765, 0.2139855659883352, -0.1680882052973493, 0.2808499930040158, -0.1489795641713496, 0.2421028204222799, -0.01057973138316949, -0.01028988718729803, -0.2491214286893205, 0.4915210189209054, -0.01769127069195246, -0.02089069357416042, -0.01525051322082282, -0.01851579305287936, 0.05916720610461798, 0.1201222083266929, 0.1035496747576178, 0.007353543755102747 },
+              { 0.03252993339295299, 0.06387879736841882, -0.06177310709815981, 0.03842858062261756, 0.0806970115889354, -0.1035588232346618, -0.01734326205363702, -0.02438518509697209, -0.1985641462188886, 0.2175536871400817, -0.01179728738948086, -0.04950719287174209, -0.1350679180736867, 0.4416809758208503, -0.03180468916131043, -0.09492531082548107, 0.09507860096432699, 0.1930300966426055, 0.04545314912714113, 0.5203960893560901 },
+              { 0.05250081167457772, 0.06052113623175343, -0.04934966142771523, 0.04354059863307074, 0.1588898148220525, -0.1355893575596559, -0.07707900179672236, -0.03192747346867369, -0.1435439573167464, 0.06967610128837716, -0.08273138611529676, -0.06481966737735892, -0.1540703730000097, 0.1414575354387222, -0.03627923190138437, -0.06862243272454166, 0.2995130335178072, 0.6080761519340632, 0.1431848012058482, 0.2666525579418326 },
+              { 0.06405091069272408, 0.04786179667770293, 0.02512919290070733, -0.06395474524402384, -0.1012913431147969, 0.3614256475674169, -0.1236722802907187, 0.08510555681724399, -0.06741474001815122, -0.01300150942446844, -0.1867774394149657, 0.1727826628772025, -0.1018138623288641, -0.02639587241766949, -0.0239742959680136, -0.03222820067117057, 0.2611310508455178, 0.5301524367192526, 0.1248359617771585, 0.06804907201791596 },
+              { 0.04318924178239492, 0.02461167127449067, 0.06287538273839537, 0.2139855659883352, -0.2741750605931531, 0.592037222446455, -0.09201460558480437, 0.1394080852091206, -0.01377460981523541, -0.009664723520160283, -0.1691237832672247, 0.2830285246916256, -0.02531787328953358, -0.01962147629644378, -0.005961645827396101, -0.006585071590767141, 0.07181973040778805, 0.1458095655684156, 0.03433404449988808, 0.005139815177809022 },
+              { 0.05655729144608557, 0.03559889505883666, 0.2713729123748657, 0.03842858062261754, 0.2600253875229914, -0.1526506453955511, -0.008317038376870657, -0.008184418481398073, -0.1403622398581125, 0.2352808169017185, -0.01424792477653217, -0.01661613732642675, -0.2404546599815524, 0.4776708782424127, -0.01289206185792282, -0.01527853516035785, 0.04703878457771024, 0.09549889292536871, 0.00512020700722314, 0.08641101453489339 },
+              { 0.05005267815464728, 0.02976268478726155, -0.01107368371109867, 0.04354059863307073, 0.6786176269932491, -0.1998651809064005, -0.03373322394768441, -0.01071584254465242, -0.09260154246141358, 0.09987911603476814, -0.06017730488369408, -0.02175547495463558, -0.1651935570120139, 0.2027761791320737, -0.008856911135315816, -0.01007974740094111, 0.1481798103775919, 0.3008370214492458, 0.01612948357904349, 0.04427726981689826 },
+              { 0.03643591520382984, 0.02009177033956136, -0.03856873960872395, -0.06395474524402384, 0.2381484100578316, 0.5327586451871232, -0.04836371674695872, 0.02856404367302547, -0.03886097588867821, 0.01025961118973182, -0.0909450732072041, 0.05799117840171464, -0.07307573807014066, 0.02082922675957899, -0.003917981608615601, -0.004230046393397376, 0.1291908707394852, 0.2622853724314022, 0.01406252324689171, 0.01129944953756663 },
+              { 0.01750305515999979, 0.009020559494407871, 0.06120422296004721, 0.2139855659883352, -0.2975836345159674, 0.8726911071580412, -0.03276842204685435, 0.04678964315852197, -0.007230854178749936, -0.003520726596965829, -0.06453471102930769, 0.09499308203063822, -0.01424057234899707, -0.007147835457943614, -0.0007635133360676429, -0.000787083904625039, 0.03553178941230636, 0.07213720726407839, 0.003867661946654374, 0.0008534588424480433 },
+              { 0.01839743077286511, -0.04749340988821904, 0.04177132842617732, 0.03842858062261761, -0.009925655672296975, -0.01013320819427439, 0.1053815952034381, -0.1121014694414298, 0.1180577966883031, -0.1230136911907924, -0.007223155775993393, -0.05521652356767186, -0.008092018861585431, -0.06059143035882798, -0.08952023759307103, 0.6433047647111861, 0.04276888128532574, 0.02106617293440571, 0.2330504709050118, 0.2610837789948315 },
+              { 0.04417353516267798, -0.05934355567588375, 0.03534202511640771, 0.04354059863307076, -0.04059435848706537, -0.01326738896951876, 0.2287873351745188, -0.1467742269397419, 0.04169084253704925, -0.08183492985940276, -0.07357718058319189, -0.07229488249642788, -0.01340762436729306, -0.04030848440930877, -0.1483256205217938, 0.2271761662613251, 0.1347289215870679, 0.0663618658268004, 0.7341468300496218, 0.1337801319610879 },
+              { 0.06392446264511684, 0.01401719441475571, 0.02425040418336484, -0.06395474524402385, -0.05885858484199342, 0.0353654205325618, -0.06013396113964092, 0.3912399245240427, -0.003207466779793019, -0.03473093779674275, -0.1920178970584202, 0.1927085222052588, -0.01024198330308551, -0.01710701612509323, -0.1133048247167385, -0.01747769922846701, 0.1174636858373068, 0.05785772844636952, 0.6400674152778254, 0.03414035816739543 },
+              { 0.04651858326990715, 0.06377349943860808, 0.01105330698451379, 0.2139855659883352, -0.04029009233427119, 0.05793071267540092, -0.2831742521396722, 0.6408748238658661, -0.004147975264383706, -0.006528974886942873, -0.1841448318370589, 0.315668295805934, -0.00269737874030828, -0.003215901606945218, -0.02984051197127158, -0.02260259234320134, 0.03230642323930763, 0.01591280104595268, 0.1760398430566512, 0.00257865575357742 },
+              { 0.04773063726529243, -0.05447231887399362, 0.03342063930254701, 0.0384285806226176, -0.01205889589785219, -0.04912612531484772, 0.03853893697540607, -0.08597658455360799, 0.2093125085942346, -0.1146227105719809, -0.01579846073196547, -0.04234849133492038, -0.08580453191652568, -0.05645838213561497, -0.1501681752046153, 0.1804349294735512, 0.1590238705659197, 0.07832854770483835, 0.1370843102635445, 0.7445317157679726 },
+              { 0.06012630891736445, -0.01758294016941075, 0.05299126439225882, 0.04354059863307076, -0.08320474854718045, -0.06432073639675999, 0.04226829226747209, -0.1125689680577145, 0.03734125756869811, -0.1286441457901147, -0.08874663243942474, -0.05544679395121409, -0.07840181569922058, -0.06336475822535183, -0.1372125380013055, 0.03218951041728306, 0.5009510172831869, 0.2467476455919101, 0.4318378394117879, 0.3815003427946647 },
+              { 0.0623679922432538, 0.04525804612115582, 0.06401438304842302, -0.06395474524402384, -0.186307671683133, 0.1714527174006553, -0.1622514081965321, 0.3000627254860677, -0.04195622205587818, -0.08431528567885163, -0.1754438455410546, 0.1477984243751403, -0.04536762437797456, -0.04153020457268596, -0.07939875918018659, -0.03616777620445348, 0.4367551689783557, 0.2151274394649742, 0.376498703498837, 0.09735794211791055 },
+              { 0.03855889636610938, 0.05924050992244752, 0.04295564970017648, 0.2139855659883352, -0.1680882052973493, 0.2808499930040158, -0.2491214286893202, 0.4915210189209048, -0.01769127069195228, -0.02089069357416054, -0.14897956417135, 0.2421028204222806, -0.01057973138316963, -0.01028988718729794, -0.01851579305287956, -0.01525051322082263, 0.1201222083266928, 0.05916720610461817, 0.1035496747576179, 0.007353543755102764 },
+              { 0.06387879736841878, 0.03252993339295297, -0.06177310709815984, 0.03842858062261754, 0.08069701158893543, -0.1035588232346618, -0.01179728738948092, -0.04950719287174212, -0.1350679180736866, 0.4416809758208505, -0.01734326205363705, -0.02438518509697202, -0.1985641462188888, 0.2175536871400815, -0.09492531082548113, -0.03180468916131036, 0.1930300966426056, 0.09507860096432676, 0.0454531491271411, 0.5203960893560899 },
+              { 0.06052113623175338, 0.05250081167457774, -0.04934966142771523, 0.04354059863307073, 0.1588898148220525, -0.135589357559656, -0.08273138611529679, -0.06481966737735896, -0.1540703730000096, 0.1414575354387224, -0.07707900179672235, -0.03192747346867364, -0.1435439573167465, 0.06967610128837712, -0.06862243272454177, -0.03627923190138425, 0.6080761519340634, 0.2995130335178071, 0.1431848012058483, 0.2666525579418326 },
+              { 0.04786179667770285, 0.0640509106927241, 0.02512919290070734, -0.06395474524402384, -0.1012913431147969, 0.3614256475674169, -0.1867774394149657, 0.1727826628772026, -0.101813862328864, -0.02639587241766957, -0.1236722802907185, 0.08510555681724388, -0.06741474001815125, -0.01300150942446835, -0.03222820067117072, -0.02397429596801341, 0.5301524367192529, 0.2611310508455175, 0.1248359617771584, 0.06804907201791587 },
+              { 0.02461167127449077, 0.04318924178239485, 0.06287538273839537, 0.2139855659883352, -0.2741750605931531, 0.592037222446455, -0.1691237832672244, 0.2830285246916249, -0.02531787328953333, -0.01962147629644389, -0.09201460558480479, 0.1394080852091213, -0.01377460981523564, -0.009664723520160156, -0.006585071590767422, -0.005961645827395862, 0.1458095655684153, 0.07181973040778843, 0.03433404449988806, 0.005139815177809036 },
+              { 0.03559889505883664, 0.05655729144608561, 0.2713729123748657, 0.03842858062261756, 0.2600253875229914, -0.1526506453955511, -0.0142479247765323, -0.01661613732642678, -0.2404546599815523, 0.4776708782424128, -0.008317038376870617, -0.008184418481398021, -0.1403622398581128, 0.2352808169017182, -0.01527853516035785, -0.01289206185792278, 0.09549889292536885, 0.04703878457771007, 0.00512020700722321, 0.08641101453489347 },
+              { 0.02976268478726152, 0.0500526781546473, -0.01107368371109867, 0.04354059863307073, 0.6786176269932491, -0.1998651809064005, -0.06017730488369415, -0.02175547495463558, -0.165193557012014, 0.2027761791320738, -0.03373322394768438, -0.0107158425446524, -0.09260154246141365, 0.09987911603476807, -0.01007974740094116, -0.008856911135315766, 0.3008370214492461, 0.1481798103775919, 0.01612948357904356, 0.04427726981689829 },
+              { 0.02009177033956134, 0.03643591520382988, -0.03856873960872394, -0.06395474524402384, 0.2381484100578316, 0.5327586451871232, -0.09094507320720416, 0.05799117840171462, -0.07307573807014064, 0.02082922675957898, -0.04836371674695869, 0.02856404367302545, -0.03886097588867817, 0.01025961118973182, -0.004230046393397508, -0.00391798160861542, 0.2622853724314027, 0.1291908707394847, 0.01406252324689169, 0.01129944953756661 },
+              { 0.009020559494408028, 0.01750305515999968, 0.06120422296004721, 0.2139855659883352, -0.2975836345159674, 0.8726911071580412, -0.06453471102930722, 0.09499308203063761, -0.01424057234899678, -0.007147835457943747, -0.03276842204685482, 0.04678964315852258, -0.007230854178750233, -0.003520726596965699, -0.0007870839046253027, -0.0007635133360674069, 0.0721372072640782, 0.03553178941230654, 0.003867661946654402, 0.0008534588424480433 },
+              { 0.04591828708383736, 0.3169426462707759, 0.04177132842617728, 0.03842858062261759, -0.009925655672296961, -0.01013320819427433, 0.2741613132482149, -0.1557007961861394, 0.307139785811479, -0.1708570793553191, -0.01105470616256208, -0.01161719682296227, -0.01238446096843792, -0.01274804219430117, -0.1902921953396234, 0.3521198099877716, 0.05940286868045866, 0.0044321855392726, 0.06810230324680332, 0.07629423197850772 },
+              { 0.03922281673230237, 0.00141590232956263, 0.03534202511640774, 0.04354059863307076, -0.0405943584870654, -0.01326738896951867, 0.7203406316237249, -0.2038587371601135, 0.1312642932055454, -0.1136627717587872, -0.04551696182039007, -0.01521037227605639, -0.008294342370705454, -0.008480642509924355, -0.1274458874425342, 0.1504876936069949, 0.1871286831914955, 0.01396210422237292, 0.2145333148376138, 0.03909339929600417 },
+              { 0.0272612052688519, -0.04188463766237058, 0.02425040418336487, -0.06395474524402384, -0.05885858484199345, 0.03536542053256185, 0.2674612099011289, 0.5434038291534241, 0.01426603086480513, -0.04823874918133422, -0.06658696213249179, 0.04054461757587723, -0.003551661406627537, -0.003599204740501824, -0.05457269782613901, 0.01635526333432478, 0.1631485251616873, 0.0121728891219892, 0.1870413093111272, 0.009976538626339394 },
+              { 0.01257193314170114, 0.06060203549741002, 0.0110533069845138, 0.2139855659883352, -0.04029009233427114, 0.05793071267540092, -0.2967764787949939, 0.8901285668133212, -0.004347222545096837, -0.009068271747387207, -0.04594534762516109, 0.06641455285847908, -0.0006730137504475132, -0.0006766047465008359, -0.01034112541456567, -0.004983864830503119, 0.04487127461709788, 0.003347949668162389, 0.05144258550007479, 0.0007535380444298762 },
+              { 0.03799461324998427, -0.02331412978759636, 0.033420639302547, 0.0384285806226176, -0.01205889589785208, -0.04912612531484772, 0.128698381601996, -0.1194152292121012, 0.6989860961220251, -0.1592026169326474, -0.008932545551935872, -0.008909846676427212, -0.04851440294788401, -0.01187847577494821, -0.1179282614083723, 0.1267728506062191, 0.2208726021441834, 0.01647981612657452, 0.04005895045692463, 0.2175679992715402 },
+              { 0.03190450350680576, -0.06369420044470796, 0.05299126439225883, 0.04354059863307076, -0.08320474854718042, -0.06432073639675995, 0.2955071788300039, -0.1563501177974808, 0.2610611663292174, -0.1786773717062808, -0.03633987898311893, -0.01166564421144786, -0.03210389415633511, -0.01333153230918556, -0.07803778243673351, 0.04734782053856708, 0.6957845658035813, 0.05191409707151603, 0.1261921993929503, 0.1114825124912598 },
+              { 0.02166719204875139, 0.004163310008531683, 0.06401438304842305, -0.06395474524402384, -0.186307671683133, 0.1714527174006553, -0.01890120888351309, 0.4167653242794799, -0.00488762055045246, -0.117107805778746, -0.05231626848804154, 0.031095825581728, -0.01352834469800386, -0.008737684472791548, -0.03288454712474929, -0.0008864519527641418, 0.6066211967352646, 0.0452614117080655, 0.1100209271328049, 0.02845006093251414 },
+              { 0.009782360656033809, 0.06411797206788244, 0.04295564970017648, 0.2139855659883352, -0.1680882052973492, 0.2808499930040158, -0.2892297853109991, 0.6826869832263218, -0.0205395515393152, -0.02901565553587066, -0.03558094966457037, 0.05093685611686363, -0.002526768633691761, -0.002164925225587826, -0.006142040586845533, -0.003725192122215995, 0.1668410197412737, 0.01244839469003711, 0.03025941687251714, 0.002148861852987847 },
+              { 0.0241979596905522, -0.01748602809877371, -0.06177310709815984, 0.03842858062261757, 0.08069701158893546, -0.1035588232346618, 0.008538797452701761, -0.06876189389380313, 0.09776125279593613, 0.613462784549029, -0.005508574471708086, -0.005130484074911019, -0.06306803088571836, 0.04577187841190321, -0.04187646317714565, 0.004843262359947535, 0.2681047794011663, 0.02000391820576625, 0.01328237670302937, 0.1520708031532969 },
+              { 0.01988094330190397, 0.01889383703961692, -0.04934966142771521, 0.04354059863307075, 0.1588898148220526, -0.1355893575596559, -0.03639206337658404, -0.09002980843572778, -0.06777281322056301, 0.1964742389558563, -0.02207516696234513, -0.006717332410304814, -0.04111050675720684, 0.01465939777124326, -0.02729691411376893, -0.00335758294734685, 0.8445735945272721, 0.06301559092459846, 0.04184164363275834, 0.07792154760284636 },
+              { 0.01309805464882746, 0.05903572070550178, 0.02512919290070734, -0.06395474524402384, -0.1012913431147969, 0.3614256475674169, -0.1909661136946048, 0.2399825650028395, -0.1040971418715295, -0.03666194896406959, -0.03112736681092264, 0.01790565469160699, -0.01696777431511034, -0.002735432878068318, -0.01126641130737682, -0.005157153315709575, 0.7363432157357879, 0.05494027182898273, 0.03647972257700167, 0.01988538585754049 },
+              { 0.005746515921331271, 0.05317409734377718, 0.06287538273839535, 0.2139855659883352, -0.2741750605931531, 0.592037222446455, -0.2160734693961718, 0.3931060570164849, -0.03234625322186905, -0.02725280495364045, -0.02076401284726201, 0.0293305528842614, -0.003108377994469285, -0.002033394862963594, -0.002063928028162475, -0.001602489598223657, 0.202518892603981, 0.01511040337222276, 0.01003313789129269, 0.001501963289378409 },
+              { 0.008853058872630531, 0.06336457808996053, 0.2713729123748657, 0.03842858062261757, 0.2600253875229913, -0.152650645395551, -0.01698165123776939, -0.02307860748082876, -0.2865903097010131, 0.6634501441226384, -0.00195933827339017, -0.001721948326996032, -0.03306671151808065, 0.04950155102149267, -0.004999216700526471, -0.003232830775422947, 0.1326410236856318, 0.00989665381744728, 0.001496233364979848, 0.02525113591432214 },
+              { 0.007144618132984946, 0.05926778057119939, -0.01107368371109865, 0.04354059863307073, 0.6786176269932491, -0.1998651809064005, -0.0747372528781832, -0.03021677404161215, -0.2051622728554401, 0.2816413798656125, -0.007757170457657565, -0.002254543457675805, -0.02129431656544961, 0.02101391530122929, -0.003219397941706027, -0.002314296356826361, 0.4178407651149236, 0.03117606671191429, 0.004713378083505831, 0.01293875976436034 },
+              { 0.004588098980638947, 0.04617258560480271, -0.03856873960872394, -0.06395474524402384, 0.2381484100578316, 0.5327586451871232, -0.1186048715912712, 0.08054553338069299, -0.09530080327165913, 0.02893028259636271, -0.01075076343804639, 0.006009688694047111, -0.008638400579026633, 0.002158555352948051, -0.001306003362835127, -0.00107502368122826, 0.3642953256458811, 0.02718091752500613, 0.004109368322046503, 0.003301939429433502 },
+              { 0.001963389085501118, 0.02346274581426415, 0.06120422296004721, 0.2139855659883352, -0.2975836345159674, 0.8726911071580412, -0.08751318058692434, 0.1319384891031534, -0.019311123576163, -0.009927824116443284, -0.007052503606407412, 0.009844236086006874, -0.001556242931079413, -0.0007407379384661416, -0.0002352818074116379, -0.0002178356786386483, 0.1001933396736596, 0.007475657002725074, 0.001130213063824145, 0.0002493988219434261 } } } };
     {
-        // Quadrature loop body setup for quadrature rule 818
-        // Varying computations for quadrature rule 818
+    double t0 = 0;
+    double t1 = 0;
+    if ((cell_permutation & 1 << 12) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE11_C0_Q738[0][0][i2][5];
+            t1 = FE11_C0_Q738[0][0][i2][4];
+            FE11_C0_Q738[0][0][i2][4] = t0;
+            FE11_C0_Q738[0][0][i2][5] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 13) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE11_C0_Q738[0][0][i2][7];
+            t1 = FE11_C0_Q738[0][0][i2][6];
+            FE11_C0_Q738[0][0][i2][6] = t0;
+            FE11_C0_Q738[0][0][i2][7] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 14) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE11_C0_Q738[0][0][i2][9];
+            t1 = FE11_C0_Q738[0][0][i2][8];
+            FE11_C0_Q738[0][0][i2][8] = t0;
+            FE11_C0_Q738[0][0][i2][9] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 15) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE11_C0_Q738[0][0][i2][11];
+            t1 = FE11_C0_Q738[0][0][i2][10];
+            FE11_C0_Q738[0][0][i2][10] = t0;
+            FE11_C0_Q738[0][0][i2][11] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 16) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE11_C0_Q738[0][0][i2][13];
+            t1 = FE11_C0_Q738[0][0][i2][12];
+            FE11_C0_Q738[0][0][i2][12] = t0;
+            FE11_C0_Q738[0][0][i2][13] = t1;
+        }
+    }
+    if ((cell_permutation & 1 << 17) != 0)
+    {
+        for (int i2 = 0; i2 < 64; ++i2)
+        {
+            t0 = FE11_C0_Q738[0][0][i2][15];
+            t1 = FE11_C0_Q738[0][0][i2][14];
+            FE11_C0_Q738[0][0][i2][14] = t0;
+            FE11_C0_Q738[0][0][i2][15] = t1;
+        }
+    }
+    }
+    static const double FE9_C0_D001_Q738[1][1][1][4] = { { { { -1.0, 0.0, 0.0, 1.0 } } } };
+    static const double FE9_C0_D010_Q738[1][1][1][3] = { { { { -1.0, 0.0, 1.0 } } } };
+    static const double FE9_C0_D100_Q738[1][1][1][2] = { { { { -1.0, 1.0 } } } };
+    // Quadrature loop independent computations for quadrature rule 738
+    const double J_c0 = coordinate_dofs[0] * FE9_C0_D100_Q738[0][0][0][0] + coordinate_dofs[3] * FE9_C0_D100_Q738[0][0][0][1];
+    const double J_c4 = coordinate_dofs[1] * FE9_C0_D010_Q738[0][0][0][0] + coordinate_dofs[4] * FE9_C0_D010_Q738[0][0][0][1] + coordinate_dofs[7] * FE9_C0_D010_Q738[0][0][0][2];
+    const double J_c8 = coordinate_dofs[2] * FE9_C0_D001_Q738[0][0][0][0] + coordinate_dofs[5] * FE9_C0_D001_Q738[0][0][0][1] + coordinate_dofs[8] * FE9_C0_D001_Q738[0][0][0][2] + coordinate_dofs[11] * FE9_C0_D001_Q738[0][0][0][3];
+    const double J_c5 = coordinate_dofs[1] * FE9_C0_D001_Q738[0][0][0][0] + coordinate_dofs[4] * FE9_C0_D001_Q738[0][0][0][1] + coordinate_dofs[7] * FE9_C0_D001_Q738[0][0][0][2] + coordinate_dofs[10] * FE9_C0_D001_Q738[0][0][0][3];
+    const double J_c7 = coordinate_dofs[2] * FE9_C0_D010_Q738[0][0][0][0] + coordinate_dofs[5] * FE9_C0_D010_Q738[0][0][0][1] + coordinate_dofs[8] * FE9_C0_D010_Q738[0][0][0][2];
+    const double J_c1 = coordinate_dofs[0] * FE9_C0_D010_Q738[0][0][0][0] + coordinate_dofs[3] * FE9_C0_D010_Q738[0][0][0][1] + coordinate_dofs[6] * FE9_C0_D010_Q738[0][0][0][2];
+    const double J_c6 = coordinate_dofs[2] * FE9_C0_D100_Q738[0][0][0][0] + coordinate_dofs[5] * FE9_C0_D100_Q738[0][0][0][1];
+    const double J_c3 = coordinate_dofs[1] * FE9_C0_D100_Q738[0][0][0][0] + coordinate_dofs[4] * FE9_C0_D100_Q738[0][0][0][1];
+    const double J_c2 = coordinate_dofs[0] * FE9_C0_D001_Q738[0][0][0][0] + coordinate_dofs[3] * FE9_C0_D001_Q738[0][0][0][1] + coordinate_dofs[6] * FE9_C0_D001_Q738[0][0][0][2] + coordinate_dofs[9] * FE9_C0_D001_Q738[0][0][0][3];
+    ufc_scalar_t sp_738[15];
+    sp_738[0] = J_c4 * J_c8;
+    sp_738[1] = J_c5 * J_c7;
+    sp_738[2] = sp_738[0] + -1 * sp_738[1];
+    sp_738[3] = J_c0 * sp_738[2];
+    sp_738[4] = J_c5 * J_c6;
+    sp_738[5] = J_c3 * J_c8;
+    sp_738[6] = sp_738[4] + -1 * sp_738[5];
+    sp_738[7] = J_c1 * sp_738[6];
+    sp_738[8] = sp_738[3] + sp_738[7];
+    sp_738[9] = J_c3 * J_c7;
+    sp_738[10] = J_c4 * J_c6;
+    sp_738[11] = sp_738[9] + -1 * sp_738[10];
+    sp_738[12] = J_c2 * sp_738[11];
+    sp_738[13] = sp_738[8] + sp_738[12];
+    sp_738[14] = fabs(sp_738[13]);
+    for (int iq = 0; iq < 64; ++iq)
+    {
+        // Quadrature loop body setup for quadrature rule 738
+        // Varying computations for quadrature rule 738
         ufc_scalar_t w0 = 0.0;
         for (int ic = 0; ic < 20; ++ic)
-            w0 += w[ic] * FE11_C0_Q818[0][0][iq][ic];
-        ufc_scalar_t sv_818[1];
-        sv_818[0] = sp_818[14] * w0;
-        const ufc_scalar_t fw0 = sv_818[0] * weights_818[iq];
+            w0 += w[ic] * FE11_C0_Q738[0][0][iq][ic];
+        ufc_scalar_t sv_738[1];
+        sv_738[0] = sp_738[14] * w0;
+        const ufc_scalar_t fw0 = sv_738[0] * weights_738[iq];
         for (int i = 0; i < 20; ++i)
-            A[i] += fw0 * FE11_C0_Q818[0][0][iq][i];
+            A[i] += fw0 * FE11_C0_Q738[0][0][iq][i];
     }
 }
 
 
-ufc_integral* create_integral_cell_otherwise_b2e4b1e5b423dd359e732fc7707ef351a42630b5(void)
+ufc_integral* create_integral_cell_otherwise_d7784bb426acb67ec050072a6ec8e2234c9eb501(void)
 {
   static const bool enabled[1] = { true };
   ufc_integral* integral = (ufc_integral*)malloc(sizeof(*integral));
   integral->enabled_coefficients = enabled;
-  integral->tabulate_tensor = tabulate_tensor_integral_cell_otherwise_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
+  integral->tabulate_tensor = tabulate_tensor_integral_cell_otherwise_d7784bb426acb67ec050072a6ec8e2234c9eb501;
   integral->needs_permutation_data = 1;
   return integral;
 }
 
-// End of code for integral integral_cell_otherwise_b2e4b1e5b423dd359e732fc7707ef351a42630b5
-#define a_num_dofs space_dimension_element_546828c8d3d3a706cfb29da4de8c7144551ec821
+// End of code for integral integral_cell_otherwise_d7784bb426acb67ec050072a6ec8e2234c9eb501
+#define a_num_dofs space_dimension_element_428b642cdbd29d9b27503f3b645dc2918edc7850
 
-// Code for form form_32dfa35028340e7d6c012f81fa6d228b6edd4b97
+// Code for form form_726e602d497be77b561b62144fa710a5219a470c
 
-int original_coefficient_position_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(int i)
+int original_coefficient_position_form_726e602d497be77b561b62144fa710a5219a470c(int i)
 {
 // Invalid original coefficient index.
 return -1;
 }
 
 // Return a list of the coefficient names.
-const char** coefficient_name_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(void)
+const char** coefficient_name_form_726e602d497be77b561b62144fa710a5219a470c(void)
 {
 return NULL;
 }
 
 // Return a list of the constant names.
-const char** constant_name_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(void)
+const char** constant_name_form_726e602d497be77b561b62144fa710a5219a470c(void)
 {
 return NULL;
 }
 
-ufc_coordinate_mapping* create_coordinate_mapping_ca6860ef5739dc6bf7913612e9e04487ca134710(void);
+ufc_coordinate_mapping* create_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd(void);
 
-ufc_coordinate_mapping* create_coordinate_mapping_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(void)
+ufc_coordinate_mapping* create_coordinate_mapping_form_726e602d497be77b561b62144fa710a5219a470c(void)
 {
-return create_coordinate_mapping_ca6860ef5739dc6bf7913612e9e04487ca134710();
+return create_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd();
 }
 
-ufc_finite_element* create_element_546828c8d3d3a706cfb29da4de8c7144551ec821(void);
+ufc_finite_element* create_element_428b642cdbd29d9b27503f3b645dc2918edc7850(void);
 
-ufc_finite_element* create_finite_element_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(int i)
+ufc_finite_element* create_finite_element_form_726e602d497be77b561b62144fa710a5219a470c(int i)
 {
 switch (i)
 {
 case 0:
-    return create_element_546828c8d3d3a706cfb29da4de8c7144551ec821();
+    return create_element_428b642cdbd29d9b27503f3b645dc2918edc7850();
 case 1:
-    return create_element_546828c8d3d3a706cfb29da4de8c7144551ec821();
+    return create_element_428b642cdbd29d9b27503f3b645dc2918edc7850();
 default:
     return NULL;
 }
 }
 
-ufc_dofmap* create_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821(void);
+ufc_dofmap* create_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850(void);
 
-ufc_dofmap* create_dofmap_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(int i)
+ufc_dofmap* create_dofmap_form_726e602d497be77b561b62144fa710a5219a470c(int i)
 {
 switch (i)
 {
 case 0:
-    return create_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821();
+    return create_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850();
 case 1:
-    return create_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821();
+    return create_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850();
 default:
     return NULL;
 }
 }
 
-ufc_integral* create_cell_integral_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(int subdomain_id)
+ufc_integral* create_cell_integral_form_726e602d497be77b561b62144fa710a5219a470c(int subdomain_id)
 {
   switch (subdomain_id)
 {
 case -1:
-    return create_integral_cell_otherwise_32dfa35028340e7d6c012f81fa6d228b6edd4b97();
+    return create_integral_cell_otherwise_726e602d497be77b561b62144fa710a5219a470c();
 default:
     return NULL;
 }
 }
 
-void get_cell_integral_ids_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(int *ids)
+void get_cell_integral_ids_form_726e602d497be77b561b62144fa710a5219a470c(int *ids)
 {
   ids[0] = -1;
 return;
 }
 
-ufc_integral* create_exterior_facet_integral_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(int subdomain_id)
+ufc_integral* create_exterior_facet_integral_form_726e602d497be77b561b62144fa710a5219a470c(int subdomain_id)
 {
   return NULL;
 }
 
-void get_exterior_facet_integral_ids_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(int *ids)
+void get_exterior_facet_integral_ids_form_726e602d497be77b561b62144fa710a5219a470c(int *ids)
 {
   return;
 }
 
-ufc_integral* create_interior_facet_integral_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(int subdomain_id)
+ufc_integral* create_interior_facet_integral_form_726e602d497be77b561b62144fa710a5219a470c(int subdomain_id)
 {
 return NULL;
 }
 
-void get_interior_facet_integral_ids_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(int *ids)
+void get_interior_facet_integral_ids_form_726e602d497be77b561b62144fa710a5219a470c(int *ids)
 {
   return;
 }
 
-ufc_integral* create_vertex_integral_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(int subdomain_id)
+ufc_integral* create_vertex_integral_form_726e602d497be77b561b62144fa710a5219a470c(int subdomain_id)
 {
 return NULL;
 }
 
-void get_vertex_integral_ids_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(int *ids)
+void get_vertex_integral_ids_form_726e602d497be77b561b62144fa710a5219a470c(int *ids)
 {
   return;
 }
 
-ufc_custom_integral* create_custom_integral_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(int subdomain_id)
+ufc_custom_integral* create_custom_integral_form_726e602d497be77b561b62144fa710a5219a470c(int subdomain_id)
 {
 return NULL;
 }
 
-void get_custom_integral_ids_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(int *ids)
+void get_custom_integral_ids_form_726e602d497be77b561b62144fa710a5219a470c(int *ids)
 {
   return;
 }
 
-ufc_form* create_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(void)
+ufc_form* create_form_726e602d497be77b561b62144fa710a5219a470c(void)
 {
   ufc_form* form = (ufc_form*)malloc(sizeof(*form));
 
@@ -2784,20 +1836,20 @@ ufc_form* create_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(void)
   form->rank = 2;
   form->num_coefficients = 0;
   form->num_constants = 0;
-  form->original_coefficient_position = original_coefficient_position_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
+  form->original_coefficient_position = original_coefficient_position_form_726e602d497be77b561b62144fa710a5219a470c;
 
-  form->coefficient_name_map = coefficient_name_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
-  form->constant_name_map = constant_name_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
+  form->coefficient_name_map = coefficient_name_form_726e602d497be77b561b62144fa710a5219a470c;
+  form->constant_name_map = constant_name_form_726e602d497be77b561b62144fa710a5219a470c;
 
-  form->create_coordinate_mapping = create_coordinate_mapping_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
-  form->create_finite_element = create_finite_element_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
-  form->create_dofmap = create_dofmap_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
+  form->create_coordinate_mapping = create_coordinate_mapping_form_726e602d497be77b561b62144fa710a5219a470c;
+  form->create_finite_element = create_finite_element_form_726e602d497be77b561b62144fa710a5219a470c;
+  form->create_dofmap = create_dofmap_form_726e602d497be77b561b62144fa710a5219a470c;
 
-  form->get_cell_integral_ids = get_cell_integral_ids_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
-  form->get_exterior_facet_integral_ids = get_exterior_facet_integral_ids_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
-  form->get_interior_facet_integral_ids = get_interior_facet_integral_ids_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
-  form->get_vertex_integral_ids = get_vertex_integral_ids_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
-  form->get_custom_integral_ids = get_custom_integral_ids_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
+  form->get_cell_integral_ids = get_cell_integral_ids_form_726e602d497be77b561b62144fa710a5219a470c;
+  form->get_exterior_facet_integral_ids = get_exterior_facet_integral_ids_form_726e602d497be77b561b62144fa710a5219a470c;
+  form->get_interior_facet_integral_ids = get_interior_facet_integral_ids_form_726e602d497be77b561b62144fa710a5219a470c;
+  form->get_vertex_integral_ids = get_vertex_integral_ids_form_726e602d497be77b561b62144fa710a5219a470c;
+  form->get_custom_integral_ids = get_custom_integral_ids_form_726e602d497be77b561b62144fa710a5219a470c;
 
   form->num_cell_integrals = 1;
   form->num_exterior_facet_integrals = 0;
@@ -2805,18 +1857,18 @@ ufc_form* create_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97(void)
   form->num_vertex_integrals = 0;
   form->num_custom_integrals = 0;
 
-  form->create_cell_integral = create_cell_integral_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
-  form->create_exterior_facet_integral = create_exterior_facet_integral_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
-  form->create_interior_facet_integral = create_interior_facet_integral_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
-  form->create_vertex_integral = create_vertex_integral_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
-  form->create_custom_integral = create_custom_integral_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97;
+  form->create_cell_integral = create_cell_integral_form_726e602d497be77b561b62144fa710a5219a470c;
+  form->create_exterior_facet_integral = create_exterior_facet_integral_form_726e602d497be77b561b62144fa710a5219a470c;
+  form->create_interior_facet_integral = create_interior_facet_integral_form_726e602d497be77b561b62144fa710a5219a470c;
+  form->create_vertex_integral = create_vertex_integral_form_726e602d497be77b561b62144fa710a5219a470c;
+  form->create_custom_integral = create_custom_integral_form_726e602d497be77b561b62144fa710a5219a470c;
 
   return form;
 }
 
 ufc_form* create_form_problem_a(void)
 {
-  return create_form_32dfa35028340e7d6c012f81fa6d228b6edd4b97();
+  return create_form_726e602d497be77b561b62144fa710a5219a470c();
 }
 
 ufc_function_space* create_functionspace_form_problem_a(const char* function_name)
@@ -2824,29 +1876,29 @@ ufc_function_space* create_functionspace_form_problem_a(const char* function_nam
   if (strcmp(function_name, "v") == 0)
 {
     ufc_function_space* space = (ufc_function_space*)malloc(sizeof(*space));
-    space->create_element = create_element_546828c8d3d3a706cfb29da4de8c7144551ec821;
-    space->create_dofmap = create_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821;
-    space->create_coordinate_mapping = create_coordinate_mapping_ca6860ef5739dc6bf7913612e9e04487ca134710;
+    space->create_element = create_element_428b642cdbd29d9b27503f3b645dc2918edc7850;
+    space->create_dofmap = create_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850;
+    space->create_coordinate_mapping = create_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd;
     return space;
 }
 else if (strcmp(function_name, "u") == 0)
 {
     ufc_function_space* space = (ufc_function_space*)malloc(sizeof(*space));
-    space->create_element = create_element_546828c8d3d3a706cfb29da4de8c7144551ec821;
-    space->create_dofmap = create_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821;
-    space->create_coordinate_mapping = create_coordinate_mapping_ca6860ef5739dc6bf7913612e9e04487ca134710;
+    space->create_element = create_element_428b642cdbd29d9b27503f3b645dc2918edc7850;
+    space->create_dofmap = create_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850;
+    space->create_coordinate_mapping = create_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd;
     return space;
 }
 return NULL;
 
 }
 
-// End of code for form form_32dfa35028340e7d6c012f81fa6d228b6edd4b97
-#define L_num_dofs space_dimension_element_546828c8d3d3a706cfb29da4de8c7144551ec821
+// End of code for form form_726e602d497be77b561b62144fa710a5219a470c
+#define L_num_dofs space_dimension_element_428b642cdbd29d9b27503f3b645dc2918edc7850
 
-// Code for form form_b2e4b1e5b423dd359e732fc7707ef351a42630b5
+// Code for form form_d7784bb426acb67ec050072a6ec8e2234c9eb501
 
-int original_coefficient_position_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(int i)
+int original_coefficient_position_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(int i)
 {
 if (i >= 1)
 {
@@ -2858,113 +1910,113 @@ return position[i];
 }
 
 // Return a list of the coefficient names.
-const char** coefficient_name_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(void)
+const char** coefficient_name_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(void)
 {
 static const char* names[1] = { "f" };
 return names;
 }
 
 // Return a list of the constant names.
-const char** constant_name_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(void)
+const char** constant_name_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(void)
 {
 return NULL;
 }
 
-ufc_coordinate_mapping* create_coordinate_mapping_ca6860ef5739dc6bf7913612e9e04487ca134710(void);
+ufc_coordinate_mapping* create_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd(void);
 
-ufc_coordinate_mapping* create_coordinate_mapping_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(void)
+ufc_coordinate_mapping* create_coordinate_mapping_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(void)
 {
-return create_coordinate_mapping_ca6860ef5739dc6bf7913612e9e04487ca134710();
+return create_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd();
 }
 
-ufc_finite_element* create_element_546828c8d3d3a706cfb29da4de8c7144551ec821(void);
+ufc_finite_element* create_element_428b642cdbd29d9b27503f3b645dc2918edc7850(void);
 
-ufc_finite_element* create_finite_element_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(int i)
+ufc_finite_element* create_finite_element_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(int i)
 {
 switch (i)
 {
 case 0:
-    return create_element_546828c8d3d3a706cfb29da4de8c7144551ec821();
+    return create_element_428b642cdbd29d9b27503f3b645dc2918edc7850();
 case 1:
-    return create_element_546828c8d3d3a706cfb29da4de8c7144551ec821();
+    return create_element_428b642cdbd29d9b27503f3b645dc2918edc7850();
 default:
     return NULL;
 }
 }
 
-ufc_dofmap* create_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821(void);
+ufc_dofmap* create_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850(void);
 
-ufc_dofmap* create_dofmap_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(int i)
+ufc_dofmap* create_dofmap_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(int i)
 {
 switch (i)
 {
 case 0:
-    return create_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821();
+    return create_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850();
 case 1:
-    return create_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821();
+    return create_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850();
 default:
     return NULL;
 }
 }
 
-ufc_integral* create_cell_integral_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(int subdomain_id)
+ufc_integral* create_cell_integral_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(int subdomain_id)
 {
   switch (subdomain_id)
 {
 case -1:
-    return create_integral_cell_otherwise_b2e4b1e5b423dd359e732fc7707ef351a42630b5();
+    return create_integral_cell_otherwise_d7784bb426acb67ec050072a6ec8e2234c9eb501();
 default:
     return NULL;
 }
 }
 
-void get_cell_integral_ids_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(int *ids)
+void get_cell_integral_ids_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(int *ids)
 {
   ids[0] = -1;
 return;
 }
 
-ufc_integral* create_exterior_facet_integral_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(int subdomain_id)
+ufc_integral* create_exterior_facet_integral_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(int subdomain_id)
 {
   return NULL;
 }
 
-void get_exterior_facet_integral_ids_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(int *ids)
+void get_exterior_facet_integral_ids_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(int *ids)
 {
   return;
 }
 
-ufc_integral* create_interior_facet_integral_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(int subdomain_id)
+ufc_integral* create_interior_facet_integral_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(int subdomain_id)
 {
 return NULL;
 }
 
-void get_interior_facet_integral_ids_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(int *ids)
+void get_interior_facet_integral_ids_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(int *ids)
 {
   return;
 }
 
-ufc_integral* create_vertex_integral_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(int subdomain_id)
+ufc_integral* create_vertex_integral_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(int subdomain_id)
 {
 return NULL;
 }
 
-void get_vertex_integral_ids_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(int *ids)
+void get_vertex_integral_ids_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(int *ids)
 {
   return;
 }
 
-ufc_custom_integral* create_custom_integral_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(int subdomain_id)
+ufc_custom_integral* create_custom_integral_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(int subdomain_id)
 {
 return NULL;
 }
 
-void get_custom_integral_ids_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(int *ids)
+void get_custom_integral_ids_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(int *ids)
 {
   return;
 }
 
-ufc_form* create_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(void)
+ufc_form* create_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(void)
 {
   ufc_form* form = (ufc_form*)malloc(sizeof(*form));
 
@@ -2972,20 +2024,20 @@ ufc_form* create_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(void)
   form->rank = 1;
   form->num_coefficients = 1;
   form->num_constants = 0;
-  form->original_coefficient_position = original_coefficient_position_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
+  form->original_coefficient_position = original_coefficient_position_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
 
-  form->coefficient_name_map = coefficient_name_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
-  form->constant_name_map = constant_name_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
+  form->coefficient_name_map = coefficient_name_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
+  form->constant_name_map = constant_name_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
 
-  form->create_coordinate_mapping = create_coordinate_mapping_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
-  form->create_finite_element = create_finite_element_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
-  form->create_dofmap = create_dofmap_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
+  form->create_coordinate_mapping = create_coordinate_mapping_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
+  form->create_finite_element = create_finite_element_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
+  form->create_dofmap = create_dofmap_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
 
-  form->get_cell_integral_ids = get_cell_integral_ids_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
-  form->get_exterior_facet_integral_ids = get_exterior_facet_integral_ids_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
-  form->get_interior_facet_integral_ids = get_interior_facet_integral_ids_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
-  form->get_vertex_integral_ids = get_vertex_integral_ids_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
-  form->get_custom_integral_ids = get_custom_integral_ids_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
+  form->get_cell_integral_ids = get_cell_integral_ids_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
+  form->get_exterior_facet_integral_ids = get_exterior_facet_integral_ids_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
+  form->get_interior_facet_integral_ids = get_interior_facet_integral_ids_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
+  form->get_vertex_integral_ids = get_vertex_integral_ids_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
+  form->get_custom_integral_ids = get_custom_integral_ids_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
 
   form->num_cell_integrals = 1;
   form->num_exterior_facet_integrals = 0;
@@ -2993,18 +2045,18 @@ ufc_form* create_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5(void)
   form->num_vertex_integrals = 0;
   form->num_custom_integrals = 0;
 
-  form->create_cell_integral = create_cell_integral_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
-  form->create_exterior_facet_integral = create_exterior_facet_integral_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
-  form->create_interior_facet_integral = create_interior_facet_integral_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
-  form->create_vertex_integral = create_vertex_integral_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
-  form->create_custom_integral = create_custom_integral_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5;
+  form->create_cell_integral = create_cell_integral_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
+  form->create_exterior_facet_integral = create_exterior_facet_integral_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
+  form->create_interior_facet_integral = create_interior_facet_integral_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
+  form->create_vertex_integral = create_vertex_integral_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
+  form->create_custom_integral = create_custom_integral_form_d7784bb426acb67ec050072a6ec8e2234c9eb501;
 
   return form;
 }
 
 ufc_form* create_form_problem_L(void)
 {
-  return create_form_b2e4b1e5b423dd359e732fc7707ef351a42630b5();
+  return create_form_d7784bb426acb67ec050072a6ec8e2234c9eb501();
 }
 
 ufc_function_space* create_functionspace_form_problem_L(const char* function_name)
@@ -3012,21 +2064,21 @@ ufc_function_space* create_functionspace_form_problem_L(const char* function_nam
   if (strcmp(function_name, "v") == 0)
 {
     ufc_function_space* space = (ufc_function_space*)malloc(sizeof(*space));
-    space->create_element = create_element_546828c8d3d3a706cfb29da4de8c7144551ec821;
-    space->create_dofmap = create_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821;
-    space->create_coordinate_mapping = create_coordinate_mapping_ca6860ef5739dc6bf7913612e9e04487ca134710;
+    space->create_element = create_element_428b642cdbd29d9b27503f3b645dc2918edc7850;
+    space->create_dofmap = create_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850;
+    space->create_coordinate_mapping = create_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd;
     return space;
 }
 else if (strcmp(function_name, "f") == 0)
 {
     ufc_function_space* space = (ufc_function_space*)malloc(sizeof(*space));
-    space->create_element = create_element_546828c8d3d3a706cfb29da4de8c7144551ec821;
-    space->create_dofmap = create_dofmap_546828c8d3d3a706cfb29da4de8c7144551ec821;
-    space->create_coordinate_mapping = create_coordinate_mapping_ca6860ef5739dc6bf7913612e9e04487ca134710;
+    space->create_element = create_element_428b642cdbd29d9b27503f3b645dc2918edc7850;
+    space->create_dofmap = create_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850;
+    space->create_coordinate_mapping = create_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd;
     return space;
 }
 return NULL;
 
 }
 
-// End of code for form form_b2e4b1e5b423dd359e732fc7707ef351a42630b5
+// End of code for form form_d7784bb426acb67ec050072a6ec8e2234c9eb501

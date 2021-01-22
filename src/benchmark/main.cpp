@@ -50,23 +50,23 @@ int main(int argc, char* argv[])
 
   fem::Function<PetscScalar> u(V);
 
-  la::PETScMatrix A = dolfinx::fem::create_matrix(*a);
+  Mat A = dolfinx::fem::create_matrix(*a);
   la::PETScVector b(*L->function_spaces()[0]->dofmap()->index_map,
                     L->function_spaces()[0]->dofmap()->index_map_bs());
 
-  MatZeroEntries(A.mat());
+  MatZeroEntries(A);
 
   // Assemble Matrix
-  fem::assemble_matrix(la::PETScMatrix::add_fn(A.mat()), *a, {});
-  MatAssemblyBegin(A.mat(), MAT_FINAL_ASSEMBLY);
-  MatAssemblyEnd(A.mat(), MAT_FINAL_ASSEMBLY);
-  
+  fem::assemble_matrix(la::PETScMatrix::add_fn(A), *a, {});
+  MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
+  MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
+
   for (int i = 0; i < 5; i++)
   {
     dolfinx::common::Timer t0("ZZZ Assemble Matrix");
-    fem::assemble_matrix(la::PETScMatrix::add_fn(A.mat()), *a, {});
-    MatAssemblyBegin(A.mat(), MAT_FINAL_ASSEMBLY);
-    MatAssemblyEnd(A.mat(), MAT_FINAL_ASSEMBLY);
+    fem::assemble_matrix(la::PETScMatrix::add_fn(A), *a, {});
+    MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
+    MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
     t0.stop();
   }
 
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
   la::PETScOptions::set("pc_type", "jacobi");
   la::PETScOptions::set("rtol", 1e-5);
   solver.set_from_options();
-  solver.set_operator(A.mat());
+  solver.set_operator(A);
   solver.solve(u.vector(), b.vec());
 
   io::VTKFile file("u.pvd");
