@@ -26,7 +26,7 @@ export HIPSYCL_PLATFORM=omp
 
 mkdir build
 cd build
-cmake -DSYCL_IMPL=hipSYCL -DCMAKE_BUILD_TYPE=Release ..
+cmake -DSYCL_IMPL=hipSYCL ..
 make -j8
 ```
 
