@@ -31,14 +31,7 @@ struct CsrMatrix
   std::int32_t* indices;
 
   std::int32_t nrows;
-  std::int32_t ncols;
-};
-
-struct matrix_acc_map_t
-{
-  std::int32_t* forward;
-  std::int32_t* reverse;
-  std::int32_t size;
+  std::int32_t nnz;
 };
 
 struct AdjacencyList

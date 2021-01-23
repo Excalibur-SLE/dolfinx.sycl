@@ -9,14 +9,6 @@ using namespace dolfinx;
 namespace
 {
 //--------------------------------------------------------------------------
-// Data structure for C++ 17 binding
-struct coo_pattern_t
-{
-  std::int32_t* rows;
-  std::int32_t* cols;
-  std::int32_t store_nz;
-};
-//--------------------------------------------------------------------------
 inline void swap(std::int32_t* a, std::int32_t* b)
 {
   std::int32_t t = *a;
@@ -24,52 +16,14 @@ inline void swap(std::int32_t* a, std::int32_t* b)
   *b = t;
 }
 //--------------------------------------------------------------------------
-coo_pattern_t
-create_coo_pattern(cl::sycl::queue& queue,
-                   const experimental::sycl::memory::form_data_t& data)
-{
-  const int ncells = data.ncells;
-  const int ndofs_cell = data.ndofs_cell;
-  std::int32_t stored_nz = ncells * ndofs_cell * ndofs_cell;
-
-  std::int32_t* dofs = data.dofs;
-
-  auto rows = cl::sycl::malloc_device<std::int32_t>(stored_nz, queue);
-  auto cols = cl::sycl::malloc_device<std::int32_t>(stored_nz, queue);
-
-  int local_size = ndofs_cell * ndofs_cell;
-  auto kernel = [=](cl::sycl::id<1> ID) {
-    const int i = ID.get(0);
-
-    std::int32_t pos = local_size * i;
-    for (int j = 0; j < ndofs_cell; j++)
-      for (int k = 0; k < ndofs_cell; k++)
-      {
-        rows[pos + j * ndofs_cell + k] = dofs[i * ndofs_cell + j];
-        cols[pos + j * ndofs_cell + k] = dofs[i * ndofs_cell + k];
-      }
-  };
-
-  cl::sycl::range<1> range(ncells);
-  queue.parallel_for<class CooPattern>(range, kernel);
-
-  queue.wait();
-
-  return {rows, cols, stored_nz};
-}
-//--------------------------------------------------------------------------
-std::pair<experimental::sycl::la::CsrMatrix,
-          experimental::sycl::la::matrix_acc_map_t>
-coo_to_csr(cl::sycl::queue& queue, coo_pattern_t coo_pattern,
+experimental::sycl::la::CsrMatrix
+create_csr(cl::sycl::queue& queue,
            const experimental::sycl::memory::form_data_t& data)
 {
-  std::int32_t* rows = coo_pattern.rows;
-  std::int32_t* cols = coo_pattern.cols;
-
   std::int32_t ndofs = data.ndofs;
   std::int32_t ncells = data.ncells;
   std::int32_t ndofs_cell = data.ndofs_cell;
-  std::int32_t stored_nz = coo_pattern.store_nz;
+  std::int32_t stored_nz = ncells * ndofs_cell * ndofs_cell;
 
   auto counter = cl::sycl::malloc_device<std::int32_t>(ndofs, queue);
   queue.fill(counter, 0, ndofs).wait();
@@ -78,19 +32,19 @@ coo_to_csr(cl::sycl::queue& queue, coo_pattern_t coo_pattern,
   auto row_ptr = cl::sycl::malloc_device<std::int32_t>(ndofs + 1, queue);
   auto indices = cl::sycl::malloc_device<std::int32_t>(stored_nz, queue);
 
-  auto forward = cl::sycl::malloc_device<std::int32_t>(stored_nz, queue);
-  auto reverse = cl::sycl::malloc_device<std::int32_t>(stored_nz, queue);
-
   // Count the number of stored nonzeros per row
   auto count_nonzeros = [=](cl::sycl::id<1> Id) {
     int i = Id.get(0);
-    std::int32_t dofs_pos = i * ndofs_cell * ndofs_cell;
-    for (int j = 0; j < ndofs_cell * ndofs_cell; j++)
+    std::int32_t offset = i * ndofs_cell;
+    for (int j = 0; j < ndofs_cell; j++)
     {
-      std::int32_t row = rows[dofs_pos + j];
-      auto global_ptr = cl::sycl::global_ptr<std::int32_t>(&counter[row]);
-      cl::sycl::atomic<std::int32_t> counter{global_ptr};
-      counter.fetch_add(1);
+      for (int k = 0; k < ndofs_cell; k++)
+      {
+        std::int32_t row = data.dofs[offset + j];
+        auto global_ptr = cl::sycl::global_ptr<std::int32_t>(&counter[row]);
+        cl::sycl::atomic<std::int32_t> counter{global_ptr};
+        counter.fetch_add(1);
+      }
     }
   };
 
@@ -106,21 +60,18 @@ coo_to_csr(cl::sycl::queue& queue, coo_pattern_t coo_pattern,
   auto populate_indices = [=](cl::sycl::id<1> id) {
     int i = id.get(0);
 
-    std::int32_t offset = i * ndofs_cell * ndofs_cell;
-    for (int j = 0; j < ndofs_cell * ndofs_cell; j++)
+    std::int32_t offset = i * ndofs_cell;
+    for (int j = 0; j < ndofs_cell; j++)
     {
-      std::int32_t row = rows[offset + j];
+      std::int32_t row = data.dofs[offset + j];
       auto global_ptr = cl::sycl::global_ptr<std::int32_t>(&counter[row]);
       cl::sycl::atomic<std::int32_t> state{global_ptr};
-
-      std::int32_t current_count = state.fetch_add(1);
-      std::int32_t pos = current_count + row_ptr[row];
-      indices[pos] = cols[offset + j];
-      // Map old to new data position
-      forward[offset + j] = pos;
-
-      // Map new to old data position
-      reverse[pos] = offset + j;
+      for (int k = 0; k < ndofs_cell; k++)
+      {
+        std::int32_t current_count = state.fetch_add(1);
+        std::int32_t pos = current_count + row_ptr[row];
+        indices[pos] = data.dofs[offset + k];
+      }
     }
   };
 
@@ -130,20 +81,17 @@ coo_to_csr(cl::sycl::queue& queue, coo_pattern_t coo_pattern,
   experimental::sycl::la::CsrMatrix matrix{};
   matrix.indices = indices;
   matrix.indptr = row_ptr;
-  matrix.ncols = ndofs;
   matrix.nrows = ndofs;
-
-  experimental::sycl::la::matrix_acc_map_t map{forward, reverse, stored_nz};
+  matrix.nnz = stored_nz;
 
   cl::sycl::free(counter, queue);
 
-  return {matrix, map};
+  return matrix;
 }
 //--------------------------------------------------------------------------
 experimental::sycl::la::CsrMatrix
 csr_remove_duplicate(cl::sycl::queue& queue,
-                     experimental::sycl::la::CsrMatrix mat,
-                     experimental::sycl::la::matrix_acc_map_t map)
+                     experimental::sycl::la::CsrMatrix mat)
 {
 
   std::int32_t nrows = mat.nrows;
@@ -161,19 +109,15 @@ csr_remove_duplicate(cl::sycl::queue& queue,
         std::int32_t end = row_ptr[i + 1];
         std::int32_t size = end - begin;
 
+#ifdef __LLVM__
         // TODO: Improve performance of sorting algorithm
         for (std::int32_t j = 0; j < size - 1; j++)
           for (std::int32_t k = 0; k < size - j - 1; k++)
             if (indices[begin + k] > indices[begin + k + 1])
-            {
               swap(&indices[begin + k], &indices[begin + k + 1]);
-
-              map.forward[map.reverse[begin + k]]++;
-              map.forward[map.reverse[begin + k + 1]]--;
-
-              swap(&map.reverse[begin + k], &map.reverse[begin + k + 1]);
-            }
-
+#else
+      std::sort(indices + begin, indices + end);
+#endif
         // Count number of unique column indices per row
         std::int32_t temp = -1;
         for (std::int32_t j = 0; j < size; j++)
@@ -192,15 +136,13 @@ csr_remove_duplicate(cl::sycl::queue& queue,
   out.indptr = cl::sycl::malloc_device<std::int32_t>(nrows + 1, queue);
   experimental::sycl::algorithms::exclusive_scan(queue, counter, out.indptr,
                                                  nrows);
-  out.ncols = mat.ncols;
   out.nrows = mat.nrows;
 
   // number of nonzeros cannot be acessed directly on the host, instead use
   // memcpy
-  std::int32_t nnz;
-  queue.memcpy(&nnz, &out.indptr[nrows], sizeof(std::int32_t)).wait();
-  out.indices = cl::sycl::malloc_device<std::int32_t>(nnz, queue);
-  out.data = cl::sycl::malloc_shared<double>(nnz, queue);
+  queue.memcpy(&out.nnz, &out.indptr[nrows], sizeof(std::int32_t)).wait();
+  out.indices = cl::sycl::malloc_device<std::int32_t>(out.nnz, queue);
+  out.data = cl::sycl::malloc_shared<double>(out.nnz, queue);
 
   queue.parallel_for<class UniqueIndices>(
       cl::sycl::range<1>(nrows), [=](cl::sycl::id<1> it) {
@@ -219,67 +161,11 @@ csr_remove_duplicate(cl::sycl::queue& queue,
             out.indices[out.indptr[i] + counter] = indices[row_ptr[i] + j];
             counter++;
           }
-          map.forward[map.reverse[row_ptr[i] + j]]
-              = out.indptr[i] + (counter - 1);
         }
       });
   queue.wait();
 
   return out;
-}
-//--------------------------------------------------------------------------
-experimental::sycl::la::AdjacencyList
-transpose_map(cl::sycl::queue& queue,
-              experimental::sycl::la::matrix_acc_map_t map, std::int32_t nnz)
-{
-  // Transpose original to csr position
-  auto counter = cl::sycl::malloc_device<std::int32_t>(nnz, queue);
-  queue.fill<std::int32_t>(counter, 0, nnz).wait_and_throw();
-
-  // Count the number times the entry appears
-  cl::sycl::range<1> range(map.size);
-  queue.parallel_for<class CountSharedEntries>(range, [=](cl::sycl::id<1> Id) {
-    int i = Id.get(0);
-
-    std::int32_t entry = map.forward[i];
-    auto global_ptr = cl::sycl::global_ptr<std::int32_t>(&counter[entry]);
-    cl::sycl::atomic<std::int32_t> state{global_ptr};
-    state.fetch_add(1);
-  });
-  queue.wait_and_throw();
-
-  // Create accumulator adjacency list
-  experimental::sycl::la::AdjacencyList tmap;
-
-  tmap.num_nodes = nnz;
-  tmap.num_links = map.size;
-  tmap.indptr
-      = cl::sycl::malloc_device<std::int32_t>(tmap.num_nodes + 1, queue);
-  tmap.indices = cl::sycl::malloc_device<std::int32_t>(tmap.num_links, queue);
-  experimental::sycl::algorithms::exclusive_scan(queue, counter, tmap.indptr,
-                                                 tmap.num_nodes);
-
-  queue.fill<std::int32_t>(counter, 0, nnz).wait_and_throw();
-
-  // Position to accumulate
-  queue.parallel_for<class GatherEntries>(range, [=](cl::sycl::id<1> Id) {
-    int i = Id.get(0);
-    std::int32_t entry = map.forward[i];
-    auto global_ptr = cl::sycl::global_ptr<std::int32_t>(&counter[entry]);
-    cl::sycl::atomic<std::int32_t> state{global_ptr};
-    std::int32_t current_count = state.fetch_add(1);
-    std::int32_t pos = tmap.indptr[entry] + current_count;
-    tmap.indices[pos] = i;
-  });
-
-  return tmap;
-}
-//--------------------------------------------------------------------------
-void free_coo(cl::sycl::queue& queue, coo_pattern_t& coo_pattern)
-{
-  queue.wait();
-  cl::sycl::free(coo_pattern.cols, queue);
-  cl::sycl::free(coo_pattern.rows, queue);
 }
 //--------------------------------------------------------------------------
 void free_csr(cl::sycl::queue& queue, experimental::sycl::la::CsrMatrix& mat)
@@ -288,7 +174,7 @@ void free_csr(cl::sycl::queue& queue, experimental::sycl::la::CsrMatrix& mat)
   cl::sycl::free(mat.indices, queue);
   cl::sycl::free(mat.indptr, queue);
 }
-
+//--------------------------------------------------------------------------
 int32_t*
 compute_lookup_table(cl::sycl::queue& queue,
                      const experimental::sycl::la::CsrMatrix& mat,
@@ -330,38 +216,12 @@ experimental::sycl::la::create_sparsity_pattern(
     MPI_Comm comm, cl::sycl::queue& queue,
     const experimental::sycl::memory::form_data_t& data, int verbose_mode)
 {
-  std::string step{"Create Local CSR Sparsity Pattern on Device"};
-  std::map<std::string, std::chrono::duration<double>> timings;
-  auto start = std::chrono::system_clock::now();
-
-  auto timer_start = std::chrono::system_clock::now();
-  coo_pattern_t coo_matrix = create_coo_pattern(queue, data);
-  auto timer_end = std::chrono::system_clock::now();
-  timings["0 - Create Extended COO pattern"] = (timer_end - timer_start);
-
-  timer_start = std::chrono::system_clock::now();
-  auto [csr_mat, acc_map] = coo_to_csr(queue, coo_matrix, data);
-  free_coo(queue, coo_matrix);
-  timer_end = std::chrono::system_clock::now();
-  timings["1 - Convert COO pattern to CSR"] = (timer_end - timer_start);
-
-  timer_start = std::chrono::system_clock::now();
-  auto new_mat = csr_remove_duplicate(queue, csr_mat, acc_map);
+  CsrMatrix csr_mat = create_csr(queue, data);
+  auto new_mat = csr_remove_duplicate(queue, csr_mat);
   free_csr(queue, csr_mat);
-  timer_end = std::chrono::system_clock::now();
-  timings["2 - Remove duplicated entries"] = (timer_end - timer_start);
-
-  std::int32_t nnz;
-  queue.memcpy(&nnz, &new_mat.indptr[new_mat.nrows], sizeof(std::int32_t))
-      .wait();
-  auto map = transpose_map(queue, acc_map, nnz);
-
-  auto end = std::chrono::system_clock::now();
-  timings["Total"] = (end - start);
-  experimental::sycl::timing::print_timing_info(comm, timings, step,
-                                                verbose_mode);
 
   int32_t* lookup = compute_lookup_table(queue, new_mat, data);
+  AdjacencyList map;
 
   return {new_mat, map, lookup};
 }
