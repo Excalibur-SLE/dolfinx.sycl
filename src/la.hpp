@@ -42,10 +42,23 @@ struct AdjacencyList
   std::int32_t num_links;
 };
 
-std::tuple<CsrMatrix, AdjacencyList, std::int32_t*>
-create_sparsity_pattern(MPI_Comm comm, cl::sycl::queue& queue,
-                        const experimental::sycl::memory::form_data_t& data,
-                        int verbose_mode = 1);
+/// Create a CSR matrix
+/// @param[in] comm Form data
+/// @param[in] queue Form data
+/// @param[in] data Form data
+CsrMatrix
+create_csr_matrix(MPI_Comm comm, cl::sycl::queue& queue,
+                  const experimental::sycl::memory::form_data_t& data);
+
+int32_t*
+compute_lookup_table(cl::sycl::queue& queue,
+                     const experimental::sycl::la::CsrMatrix& mat,
+                     const experimental::sycl::memory::form_data_t& data);
+
+AdjacencyList
+compute_matrix_acc_map(cl::sycl::queue& queue,
+                       const experimental::sycl::la::CsrMatrix& mat,
+                       const experimental::sycl::memory::form_data_t& data);
 
 AdjacencyList
 compute_vector_acc_map(MPI_Comm comm, cl::sycl::queue& queue,

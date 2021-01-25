@@ -174,11 +174,98 @@ void free_csr(cl::sycl::queue& queue, experimental::sycl::la::CsrMatrix& mat)
   cl::sycl::free(mat.indices, queue);
   cl::sycl::free(mat.indptr, queue);
 }
+
+} // namespace
+
 //--------------------------------------------------------------------------
-int32_t*
-compute_lookup_table(cl::sycl::queue& queue,
-                     const experimental::sycl::la::CsrMatrix& mat,
-                     const experimental::sycl::memory::form_data_t& data)
+experimental::sycl::la::CsrMatrix experimental::sycl::la::create_csr_matrix(
+    MPI_Comm comm, cl::sycl::queue& queue,
+    const experimental::sycl::memory::form_data_t& data)
+{
+  // Create csr matrix, with possible duplicate entries
+  CsrMatrix csr_mat = create_csr(queue, data);
+
+  // Remove duplicates and reorder columns
+  CsrMatrix new_matrix = csr_remove_duplicate(queue, csr_mat);
+  free_csr(queue, csr_mat);
+
+  return new_matrix;
+}
+//--------------------------------------------------------------------------
+experimental::sycl::la::AdjacencyList
+experimental::sycl::la::compute_matrix_acc_map(
+    cl::sycl::queue& queue, const experimental::sycl::la::CsrMatrix& mat,
+    const experimental::sycl::memory::form_data_t& data)
+{
+
+  experimental::sycl::la::AdjacencyList acc_map;
+  acc_map.num_links = data.ndofs_cell * data.ndofs_cell * data.ncells;
+  acc_map.num_nodes = mat.nnz;
+  acc_map.indptr = cl::sycl::malloc_device<std::int32_t>(mat.nnz + 1, queue);
+  acc_map.indices
+      = cl::sycl::malloc_device<std::int32_t>(acc_map.num_links, queue);
+
+  cl::sycl::range<1> range(data.ncells);
+
+  auto counter = cl::sycl::malloc_device<std::int32_t>(mat.nnz, queue);
+  queue.fill(counter, 0, mat.nnz).wait();
+
+  queue.parallel_for<class AllocateDataAccMap>(range, [=](cl::sycl::id<1> Id) {
+    int i = Id.get(0);
+    int dof_offset = data.ndofs_cell * i;
+    for (int j = 0; j < data.ndofs_cell; j++)
+    {
+      int row = data.dofs[dof_offset + j];
+      int first = mat.indptr[row];
+      int last = mat.indptr[row + 1];
+      for (int k = 0; k < data.ndofs_cell; k++)
+      {
+        int ind = data.dofs[dof_offset + k];
+        int pos = experimental::sycl::algorithms::binary_search(
+            mat.indices, first, last, ind);
+        auto global_ptr = cl::sycl::global_ptr<std::int32_t>(&counter[pos]);
+        cl::sycl::atomic<std::int32_t> state{global_ptr};
+        state.fetch_add(1);
+      }
+    }
+  });
+  queue.wait_and_throw();
+
+  // TODO: Improve exclusive scan implementation for GPUs
+  experimental::sycl::algorithms::exclusive_scan(queue, counter, acc_map.indptr,
+                                                 acc_map.num_nodes);
+  queue.fill(counter, 0, mat.nnz).wait();
+
+  queue.parallel_for<class AddDataAccMap>(range, [=](cl::sycl::id<1> Id) {
+    int i = Id.get(0);
+    int dof_offset = data.ndofs_cell * i;
+    int mat_offset = data.ndofs_cell * data.ndofs_cell * i;
+    for (int j = 0; j < data.ndofs_cell; j++)
+    {
+      int row = data.dofs[dof_offset + j];
+      int first = mat.indptr[row];
+      int last = mat.indptr[row + 1];
+      for (int k = 0; k < data.ndofs_cell; k++)
+      {
+        int ind = data.dofs[dof_offset + k];
+        int pos = experimental::sycl::algorithms::binary_search(
+            mat.indices, first, last, ind);
+        auto global_ptr = cl::sycl::global_ptr<std::int32_t>(&counter[pos]);
+        cl::sycl::atomic<std::int32_t> state{global_ptr};
+        std::int32_t current_count = state.fetch_add(1);
+        std::int32_t pos_list = current_count + acc_map.indptr[pos];
+        acc_map.indices[pos_list] = mat_offset + j * data.ndofs_cell + k;
+      }
+    }
+  });
+  queue.wait_and_throw();
+
+  return acc_map;
+}
+//--------------------------------------------------------------------------
+int32_t* experimental::sycl::la::compute_lookup_table(
+    cl::sycl::queue& queue, const experimental::sycl::la::CsrMatrix& mat,
+    const experimental::sycl::memory::form_data_t& data)
 {
   auto ext_nz = data.ndofs_cell * data.ndofs_cell * data.ncells;
   auto lookup = cl::sycl::malloc_device<std::int32_t>(ext_nz, queue);
@@ -204,26 +291,6 @@ compute_lookup_table(cl::sycl::queue& queue,
   queue.wait_and_throw();
 
   return lookup;
-}
-
-} // namespace
-
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-std::tuple<experimental::sycl::la::CsrMatrix,
-           experimental::sycl::la::AdjacencyList, std::int32_t*>
-experimental::sycl::la::create_sparsity_pattern(
-    MPI_Comm comm, cl::sycl::queue& queue,
-    const experimental::sycl::memory::form_data_t& data, int verbose_mode)
-{
-  CsrMatrix csr_mat = create_csr(queue, data);
-  auto new_mat = csr_remove_duplicate(queue, csr_mat);
-  free_csr(queue, csr_mat);
-
-  int32_t* lookup = compute_lookup_table(queue, new_mat, data);
-  AdjacencyList map;
-
-  return {new_mat, map, lookup};
 }
 //--------------------------------------------------------------------------
 experimental::sycl::la::AdjacencyList

@@ -8,12 +8,12 @@
 #ifdef SYCL_DEVICE_ONLY
 #undef SYCL_DEVICE_ONLY
 #include <dolfinx.h>
+#include <dolfinx/fem/petsc.h>
 #define SYCL_DEVICE_ONLY
 #else
 #include <dolfinx.h>
-#endif
-
 #include <dolfinx/fem/petsc.h>
+#endif
 
 #include <iostream>
 #include <math.h>
@@ -85,6 +85,8 @@ int main(int argc, char* argv[])
   const int *ia, *ja;
   PetscBool done;
   MatGetRowIJ(A, 0, PETSC_FALSE, PETSC_FALSE, &nrows, &ia, &ja, &done);
+  double* array;
+  MatSeqAIJGetArray(A, &array);
 
   std::cout << std::endl << "Petsc Matrix Norm: " << norm;
   std::cout << std::endl << "Number of rows: " << nrows << std::endl;
@@ -93,11 +95,17 @@ int main(int argc, char* argv[])
   auto form_data = memory::send_form_data(mpi_comm, queue, *L, *a, 0);
 
   dolfinx::common::Timer t1("ZZZ Assemble Matrix");
-  auto [mat, acc_map, lookup]
-      = dolfinx::experimental::sycl::la::create_sparsity_pattern(
-          mpi_comm, queue, form_data, 0);
+  auto mat = dolfinx::experimental::sycl::la::create_csr_matrix(mpi_comm, queue,
+                                                                form_data);
   queue.wait();
   t1.stop();
+
+  dolfinx::common::Timer t2("ZZZ ACC Matrix");
+  auto acc_map = dolfinx::experimental::sycl::la::compute_matrix_acc_map(
+      queue, mat, form_data);
+  queue.wait();
+  t2.stop();
+
   dolfinx::list_timings(mpi_comm, {dolfinx::TimingType::wall});
 
   // for (int i = 0; i < nrows; i++)
@@ -106,9 +114,6 @@ int main(int argc, char* argv[])
   // for (int i = 0; i < nrows; i++)
   //   std::cout << mat.indptr[i] << " ";
 
-  // std::cout << std::endl;
-  // for (int i = 0; i < ia[nrows]; i++)
-  //   std::cout << ja[i] << " ";
   // std::cout << std::endl;
   // for (int i = 0; i < mat.indptr[nrows]; i++)
   //   std::cout << mat.indices[i] << " ";
@@ -122,9 +127,15 @@ int main(int argc, char* argv[])
   //   double* b = assemble::assemble_vector_atomic(mpi_comm, queue, form_data);
   //   assemble::assemble_matrix_search(mpi_comm, queue, form_data, mat);
   // #else
-  //   double* b = assemble::assemble_vector(mpi_comm, queue, form_data);
-  //   assemble::assemble_matrix(mpi_comm, queue, form_data, mat, acc_map);
-  // #endif
+  double* b = assemble::assemble_vector(mpi_comm, queue, form_data);
+  assemble::assemble_matrix(mpi_comm, queue, form_data, mat, acc_map);
+
+  std::cout << std::endl;
+  double error = 0;
+  for (int i = 0; i < ia[nrows]; i++)
+    error += std::abs(mat.data[i] - array[i]);
+
+  std::cout << "Diff PETSC " << error << " ";
 
   //   double* x = cl::sycl::malloc_device<double>(form_data.ndofs, queue);
 
