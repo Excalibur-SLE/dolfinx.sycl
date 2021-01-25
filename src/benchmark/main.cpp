@@ -89,8 +89,11 @@ int main(int argc, char* argv[])
 
   dolfinx::list_timings(mpi_comm, {dolfinx::TimingType::wall});
 
-  std::cout << "Number of degrees of freedom: "
-            << V->dofmap()->index_map->size_global() << std::endl;
+  MatDestroy(&A);
+
+  if (mpi_rank == 0)
+    std::cout << "Number of degrees of freedom: "
+              << V->dofmap()->index_map->size_global() << std::endl;
 
   return 0;
 }

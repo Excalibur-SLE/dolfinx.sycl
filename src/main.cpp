@@ -70,8 +70,11 @@ int main(int argc, char* argv[])
   auto a = dolfinx::fem::create_form<PetscScalar>(create_form_problem_a, {V, V},
                                                   {}, {}, {});
 
+  dolfinx::common::Timer t0("ZZZ PETSCCC");
   Mat A = dolfinx::fem::create_matrix(*a);
   MatZeroEntries(A);
+  t0.stop();
+
   fem::assemble_matrix(dolfinx::la::PETScMatrix::add_fn(A), *a, {});
   MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
   MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
@@ -89,24 +92,26 @@ int main(int argc, char* argv[])
   auto queue = utils::select_queue(mpi_comm, platform);
   auto form_data = memory::send_form_data(mpi_comm, queue, *L, *a, 0);
 
+  dolfinx::common::Timer t1("ZZZ Assemble Matrix");
   auto [mat, acc_map, lookup]
       = dolfinx::experimental::sycl::la::create_sparsity_pattern(
           mpi_comm, queue, form_data, 0);
+  queue.wait();
+  t1.stop();
+  dolfinx::list_timings(mpi_comm, {dolfinx::TimingType::wall});
 
-  std::cout << std::endl << "Number of rows: " << mat.nrows << std::endl;
+  // for (int i = 0; i < nrows; i++)
+  //   std::cout << ia[i] << " ";
+  // std::cout << std::endl;
+  // for (int i = 0; i < nrows; i++)
+  //   std::cout << mat.indptr[i] << " ";
 
-  for (int i = 0; i < nrows; i++)
-    std::cout << ia[i] << " ";
-  std::cout << std::endl;
-  for (int i = 0; i < nrows; i++)
-    std::cout << mat.indptr[i] << " ";
-  
-  std::cout << std::endl;
-  for (int i = 0; i < ia[nrows]; i++)
-    std::cout << ja[i] << " ";
-  std::cout << std::endl;
-  for (int i = 0; i < mat.indptr[nrows]; i++)
-    std::cout << mat.indices[i] << " ";
+  // std::cout << std::endl;
+  // for (int i = 0; i < ia[nrows]; i++)
+  //   std::cout << ja[i] << " ";
+  // std::cout << std::endl;
+  // for (int i = 0; i < mat.indptr[nrows]; i++)
+  //   std::cout << mat.indices[i] << " ";
 
   // // Assemble vector on device
   // #ifdef USE_ATOMICS_LOOKUP
