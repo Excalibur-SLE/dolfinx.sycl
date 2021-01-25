@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Igor A. Baratta and Chris Richardson
+// Copyright (C) 2020-2021 Igor A. Baratta and Chris Richardson
 // SPDX-License-Identifier:    MIT
 
 #include <CL/sycl.hpp>
@@ -8,11 +8,9 @@
 #ifdef SYCL_DEVICE_ONLY
 #undef SYCL_DEVICE_ONLY
 #include <dolfinx.h>
-#include <dolfinx/fem/petsc.h>
 #define SYCL_DEVICE_ONLY
 #else
 #include <dolfinx.h>
-#include <dolfinx/fem/petsc.h>
 #endif
 
 #include <iostream>
@@ -70,107 +68,69 @@ int main(int argc, char* argv[])
   auto a = dolfinx::fem::create_form<PetscScalar>(create_form_problem_a, {V, V},
                                                   {}, {}, {});
 
-  dolfinx::common::Timer t0("ZZZ PETSCCC");
-  Mat A = dolfinx::fem::create_matrix(*a);
-  MatZeroEntries(A);
-  t0.stop();
-
-  fem::assemble_matrix(dolfinx::la::PETScMatrix::add_fn(A), *a, {});
-  MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
-  MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
-
-  double norm;
-  MatNorm(A, NORM_FROBENIUS, &norm);
-  int nrows;
-  const int *ia, *ja;
-  PetscBool done;
-  MatGetRowIJ(A, 0, PETSC_FALSE, PETSC_FALSE, &nrows, &ia, &ja, &done);
-  double* array;
-  MatSeqAIJGetArray(A, &array);
-
-  std::cout << std::endl << "Petsc Matrix Norm: " << norm;
-  std::cout << std::endl << "Number of rows: " << nrows << std::endl;
-
   auto queue = utils::select_queue(mpi_comm, platform);
-  auto form_data = memory::send_form_data(mpi_comm, queue, *L, *a, 0);
 
-  dolfinx::common::Timer t1("ZZZ Assemble Matrix");
+  int verb_mode = 2;
+  if (verb_mode)
+  {
+    utils::print_device_info(queue.get_device());
+    utils::print_function_space_info(V);
+  }
+
+  // Send form data to device (Geometry, Dofmap, Coefficients)
+  auto form_data = memory::send_form_data(mpi_comm, queue, *L, *a, verb_mode);
+
+  // Send form data to device (Geometry, Dofmap, Coefficients)
   auto mat = dolfinx::experimental::sycl::la::create_csr_matrix(mpi_comm, queue,
                                                                 form_data);
-  queue.wait();
-  t1.stop();
 
-  dolfinx::common::Timer t2("ZZZ ACC Matrix");
+// Assemble vector on device
+#ifdef USE_ATOMICS_LOOKUP
+  std::int32_t* lookup = dolfinx::experimental::sycl::la::compute_lookup_table(
+      queue, mat, form_data);
+  double* b = assemble::assemble_vector_atomic(mpi_comm, queue, form_data);
+  assemble::assemble_matrix_lookup(mpi_comm, queue, form_data, mat, lookup);
+  cl::sycl::free(lookup, queue);
+#elif USE_ATOMICS_SEARCH
+  double* b = assemble::assemble_vector_atomic(mpi_comm, queue, form_data);
+  assemble::assemble_matrix_search(mpi_comm, queue, form_data, mat);
+#else
   auto acc_map = dolfinx::experimental::sycl::la::compute_matrix_acc_map(
       queue, mat, form_data);
-  queue.wait();
-  t2.stop();
-
-  dolfinx::list_timings(mpi_comm, {dolfinx::TimingType::wall});
-
-  // for (int i = 0; i < nrows; i++)
-  //   std::cout << ia[i] << " ";
-  // std::cout << std::endl;
-  // for (int i = 0; i < nrows; i++)
-  //   std::cout << mat.indptr[i] << " ";
-
-  // std::cout << std::endl;
-  // for (int i = 0; i < mat.indptr[nrows]; i++)
-  //   std::cout << mat.indices[i] << " ";
-
-  // // Assemble vector on device
-  // #ifdef USE_ATOMICS_LOOKUP
-  //   double* b = assemble::assemble_vector_atomic(mpi_comm, queue, form_data);
-  //   assemble::assemble_matrix_lookup(mpi_comm, queue, form_data, mat,
-  //   lookup);
-  // #elif USE_ATOMICS_SEARCH
-  //   double* b = assemble::assemble_vector_atomic(mpi_comm, queue, form_data);
-  //   assemble::assemble_matrix_search(mpi_comm, queue, form_data, mat);
-  // #else
   double* b = assemble::assemble_vector(mpi_comm, queue, form_data);
   assemble::assemble_matrix(mpi_comm, queue, form_data, mat, acc_map);
+  cl::sycl::free(acc_map.indices, queue);
+  cl::sycl::free(acc_map.indptr, queue);
+#endif
 
-  std::cout << std::endl;
-  double error = 0;
-  for (int i = 0; i < ia[nrows]; i++)
-    error += std::abs(mat.data[i] - array[i]);
+  double* x = cl::sycl::malloc_device<double>(form_data.ndofs, queue);
+  queue.submit(
+      [&](cl::sycl::handler& h) { h.fill<double>(x, 0., form_data.ndofs); });
+  queue.wait();
 
-  std::cout << "Diff PETSC " << error << " ";
+  auto device = queue.get_device();
+  std::string executor = "omp";
 
-  //   double* x = cl::sycl::malloc_device<double>(form_data.ndofs, queue);
+  if (device.is_gpu())
+    executor = "cuda";
 
-  //   queue.submit(
-  //       [&](cl::sycl::handler& h) { h.fill<double>(x, 0., form_data.ndofs);
-  //       });
-  //   queue.wait();
+  std::cout << "\nUsing " << executor << " executor.\n";
 
-  //   auto device = queue.get_device();
-  //   std::string executor = "omp";
+  double norm = solve::ginkgo(mat.data, mat.indptr, mat.indices, mat.nrows,
+                              mat.nnz, b, x, executor);
 
-  //   if (device.is_gpu())
-  //     executor = "cuda";
+  double ex_norm = 0;
+  VecNorm(f->vector(), NORM_2, &ex_norm);
 
-  //   std::cout << "\nUsing " << executor << " executor.\n";
+  std::cout << "\nNorm of the computed solution " << norm << "\n";
+  std::cout << "Norm of the reference solution "
+            << ex_norm / (12. * M_PI * M_PI + 1.) << "\n\n";
 
-  //   std::int32_t nnz; // Todo: Store nnz
-  //   queue.memcpy(&nnz, &mat.indptr[mat.nrows], sizeof(std::int32_t)).wait();
-  //   double norm = solve::ginkgo(mat.data, mat.indptr, mat.indices, mat.nrows,
-  //   nnz,
-  //                               b, x, executor);
-
-  //   auto vec = f->vector();
-  //   double ex_norm = 0;
-  //   VecNorm(vec, NORM_2, &ex_norm);
-
-  //   std::cout << "\nComputed norm " << norm << "\n";
-  //   std::cout << "Reference norm " << ex_norm / (12. * M_PI * M_PI + 1.)
-  //             << "\n\n";
-
-  //   // Free device data
-  //   cl::sycl::free(b, queue);
-  //   cl::sycl::free(mat.data, queue);
-  //   cl::sycl::free(mat.indices, queue);
-  //   cl::sycl::free(mat.indptr, queue);
+  // Free device data
+  cl::sycl::free(b, queue);
+  cl::sycl::free(mat.data, queue);
+  cl::sycl::free(mat.indices, queue);
+  cl::sycl::free(mat.indptr, queue);
 
   return 0;
 }
