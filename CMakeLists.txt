@@ -9,7 +9,6 @@ set(CMAKE_CXX_FLAGS "-O3 -DNDEBUG ${CMAKE_CXX_FLAGS} -Wall")
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 
 find_package(DOLFINX REQUIRED)
-find_package(Ginkgo REQUIRED)
 
 set(supported_implementations
   ComputeCpp
@@ -45,33 +44,30 @@ add_executable(${PROJECT_NAME}
   src/la.cpp 
   src/memory.cpp 
   src/timing.cpp
-  src/solve.cpp
   )
 
-  add_executable(${PROJECT_NAME}-lookup
+add_executable(${PROJECT_NAME}-lookup
   src/main.cpp 
   src/problem.c 
   src/assemble_impl.cpp 
   src/la.cpp 
   src/memory.cpp 
   src/timing.cpp
-  src/solve.cpp
   )
 
-  add_executable(${PROJECT_NAME}-search
+add_executable(${PROJECT_NAME}-search
   src/main.cpp 
   src/problem.c 
   src/assemble_impl.cpp 
   src/la.cpp 
   src/memory.cpp 
   src/timing.cpp
-  src/solve.cpp
   )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Ginkgo::ginkgo dolfinx)
-target_link_libraries(${PROJECT_NAME}-lookup PRIVATE Ginkgo::ginkgo dolfinx)
+target_link_libraries(${PROJECT_NAME} PRIVATE dolfinx)
+target_link_libraries(${PROJECT_NAME}-lookup PRIVATE dolfinx)
 set_target_properties(${PROJECT_NAME}-lookup PROPERTIES COMPILE_FLAGS "-DUSE_ATOMICS_LOOKUP")
-target_link_libraries(${PROJECT_NAME}-search PRIVATE Ginkgo::ginkgo dolfinx)
+target_link_libraries(${PROJECT_NAME}-search PRIVATE dolfinx)
 set_target_properties(${PROJECT_NAME}-search PROPERTIES COMPILE_FLAGS "-DUSE_ATOMICS_SEARCH")
 
 
