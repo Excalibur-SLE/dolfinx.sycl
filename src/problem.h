@@ -31,9 +31,13 @@ ufc_finite_element* create_element_29953d5d1a0c11d7cf01f22e6ced6740eb369686(void
 
 ufc_finite_element* create_element_445ef1924184cca3ac2920e3df00b14f41104dec(void);
 
+ufc_finite_element* create_element_428b642cdbd29d9b27503f3b645dc2918edc7850(void);
+
 ufc_dofmap* create_dofmap_29953d5d1a0c11d7cf01f22e6ced6740eb369686(void);
 
 ufc_dofmap* create_dofmap_445ef1924184cca3ac2920e3df00b14f41104dec(void);
+
+ufc_dofmap* create_dofmap_428b642cdbd29d9b27503f3b645dc2918edc7850(void);
 
 ufc_coordinate_mapping* create_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20d765fb89fd(void);
 
@@ -43,11 +47,11 @@ ufc_coordinate_mapping* create_coordinate_mapping_1f89a57b7e70aa7fa9dd34a9d04c20
 //
 ufc_coordinate_mapping* create_coordinate_map_problem(void);
 
-ufc_integral* create_integral_cell_otherwise_d203a4a2c772dac5857abbd4fdd2a004b73df6a4(void);
+ufc_integral* create_integral_cell_otherwise_726e602d497be77b561b62144fa710a5219a470c(void);
 
-ufc_integral* create_integral_cell_otherwise_17724f7a3e41d0a56ce5c3d3fd327eac39ee3fcb(void);
+ufc_integral* create_integral_cell_otherwise_d7784bb426acb67ec050072a6ec8e2234c9eb501(void);
 
-ufc_form* create_form_d203a4a2c772dac5857abbd4fdd2a004b73df6a4(void);
+ufc_form* create_form_726e602d497be77b561b62144fa710a5219a470c(void);
 
 // Helper used to create form using name which was given to the
 // form in the UFL file.
@@ -64,7 +68,7 @@ ufc_form* create_form_problem_a(void);
 ufc_function_space* create_functionspace_form_problem_a(const char* fs_name);
 
 
-ufc_form* create_form_17724f7a3e41d0a56ce5c3d3fd327eac39ee3fcb(void);
+ufc_form* create_form_d7784bb426acb67ec050072a6ec8e2234c9eb501(void);
 
 // Helper used to create form using name which was given to the
 // form in the UFL file.
