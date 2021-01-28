@@ -50,11 +50,14 @@ int main(int argc, char* argv[])
 
   fem::Function<PetscScalar> u(V);
 
+  dolfinx::common::Timer t0("ZZZ Create PETSc matrix");
   Mat A = dolfinx::fem::create_matrix(*a);
+  MatZeroEntries(A);
+  t0.stop();
+
   la::PETScVector b(*L->function_spaces()[0]->dofmap()->index_map,
                     L->function_spaces()[0]->dofmap()->index_map_bs());
 
-  MatZeroEntries(A);
 
   // Assemble Matrix
   fem::assemble_matrix(la::PETScMatrix::add_fn(A), *a, {});

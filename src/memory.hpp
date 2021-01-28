@@ -15,8 +15,6 @@
 
 #include <cstdint>
 
-#include "timing.hpp"
-
 using namespace dolfinx;
 
 namespace dolfinx::experimental::sycl::memory

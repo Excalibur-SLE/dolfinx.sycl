@@ -46,7 +46,6 @@ set(LIB_SOURCES
   src/assemble_impl.cpp 
   src/la.cpp 
   src/memory.cpp 
-  src/timing.cpp 
   src/solve.cpp
   src/problem.c
   )
@@ -56,7 +55,6 @@ set(LIB_HEADERS
   src/assemble_impl.hpp
   src/la.hpp 
   src/memory.hpp 
-  src/timing.hpp
   src/solve.hpp
   src/problem.h
   )
@@ -86,7 +84,7 @@ add_executable(binary-search src/main.cpp)
 target_link_libraries(binary-search PUBLIC ${PROJECT_NAME})
 set_target_properties(binary-search PROPERTIES COMPILE_FLAGS "-DUSE_ATOMICS_SEARCH")
 
-if(SYCL_IMPL STREQUAL "LLVM")
+if(SYCL_IMPL MATCHES "LLVM")
   foreach(EXECUTABLE ${EXECUTABLES})
     target_compile_definitions(${EXECUTABLE} PRIVATE __LLVM_SYCL__)
   endforeach(EXECUTABLE ${EXECUTABLES})
@@ -94,10 +92,10 @@ elseif(SYCL_IMPL STREQUAL "hipSYCL")
   target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
   add_sycl_to_target(TARGET ${PROJECT_NAME} SOURCES ${LIB_SOURCES})
   foreach(EXECUTABLE ${EXECUTABLES})
-    add_sycl_to_target(TARGET ${EXECUTABLE} SOURCES src/main.cpp)
+    add_sycl_to_target(${EXECUTABLE} SOURCES src/main.cpp)
   endforeach(EXECUTABLE ${EXECUTABLES})
 endif()
 
-add_subdirectory(src/benchmark)
+# add_subdirectory(src/benchmark)
 
-message(STATUS ${CMAKE_CXX_FLAGS})
+# message(STATUS ${CMAKE_CXX_FLAGS})
