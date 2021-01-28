@@ -2,7 +2,6 @@
 // SPDX-License-Identifier:    MIT
 
 #include "solve.hpp"
-#include "timing.hpp"
 
 #include <ginkgo/ginkgo.hpp>
 #include <map>
@@ -14,11 +13,6 @@ double dolfinx::experimental::sycl::solve::ginkgo(
 {
   using mtx = gko::matrix::Csr<double, std::int32_t>;
   using cg = gko::solver::Cg<double>;
-
-  std::string step{"Solve Using Ginkgo"};
-  std::map<std::string, std::chrono::duration<double>> timings;
-
-  auto start = std::chrono::system_clock::now();
 
   std::map<std::string, std::function<std::shared_ptr<gko::Executor>()>>
       exec_map{{"omp", [] { return gko::OmpExecutor::create(); }},
@@ -78,13 +72,7 @@ double dolfinx::experimental::sycl::solve::ginkgo(
   auto res = gko::initialize<gko::matrix::Dense<double>>({0.0}, ref_exec);
   out->compute_norm2(gko::lend(res));
 
-  auto end = std::chrono::system_clock::now();
-  timings["Total"] = (end - start);
-
-  dolfinx::experimental::sycl::timing::print_timing_info(MPI_COMM_WORLD,
-                                                         timings, step, 2);
-
   double norm = res->get_values()[0];
-  
+
   return norm;
 }

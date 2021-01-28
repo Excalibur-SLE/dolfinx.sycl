@@ -28,7 +28,7 @@ double* assemble_vector(MPI_Comm comm, cl::sycl::queue& queue,
   std::int32_t ndofs_ext = data.ndofs_cell * data.ncells;
   auto b_ext = cl::sycl::malloc_device<double>(ndofs_ext, queue);
   queue.fill<double>(b_ext, 0., ndofs_ext).wait();
-  
+
   // Assemble local contributions
   assemble_vector_impl(queue, b_ext, data.x, data.xdofs, data.coeffs_L,
                        data.ncells, data.ndofs, data.ndofs_cell);
@@ -82,45 +82,30 @@ double* assemble_vector_atomic(MPI_Comm comm, cl::sycl::queue& queue,
                                int verbose_mode = 1)
 {
 
-  std::string step{"Assemble vector on device with atomics."};
-  std::map<std::string, std::chrono::duration<double>> timings;
-
-  auto timer_start = std::chrono::system_clock::now();
+  dolfinx::common::Timer t0("x Assemble Vector");
 
   double* b = cl::sycl::malloc_shared<double>(data.ndofs, queue);
   queue.fill<double>(b, 0., data.ndofs).wait();
   assemble_vector_search_impl(queue, b, data.x, data.xdofs, data.coeffs_L,
                               data.dofs, data.ncells, data.ndofs,
                               data.ndofs_cell);
-  auto timer_end = std::chrono::system_clock::now();
+  t0.stop();
 
-  timings["Assemble cells and accumulate"] = (timer_end - timer_start);
-  timings["Total"] = (timer_end - timer_start);
-  experimental::sycl::timing::print_timing_info(comm, timings, step,
-                                                verbose_mode);
   return b;
 }
 //--------------------------------------------------------------------------
 void assemble_matrix_search(MPI_Comm comm, cl::sycl::queue& queue,
                             const memory::form_data_t& data,
-                            experimental::sycl::la::CsrMatrix mat,
-                            int verbose_mode = 1)
+                            experimental::sycl::la::CsrMatrix mat)
 {
 
-  std::string step{"Assemble matrix on device with atomics."};
-  std::map<std::string, std::chrono::duration<double>> timings;
+  dolfinx::common::Timer t0("x Assemble Matrix");
 
-  auto timer_start = std::chrono::system_clock::now();
   assemble_matrix_search_impl(queue, mat.data, mat.indptr, mat.indices, data.x,
                               data.xdofs, data.coeffs_a, data.dofs, data.ncells,
                               data.ndofs, data.ndofs_cell);
-  auto timer_end = std::chrono::system_clock::now();
 
-  timings["Assemble cells and accumulate"] = (timer_end - timer_start);
-  timings["Total"] = (timer_end - timer_start);
-
-  experimental::sycl::timing::print_timing_info(comm, timings, step,
-                                                verbose_mode);
+  t0.stop();
 }
 //--------------------------------------------------------------------------
 void assemble_matrix_lookup(MPI_Comm comm, cl::sycl::queue& queue,
@@ -128,21 +113,14 @@ void assemble_matrix_lookup(MPI_Comm comm, cl::sycl::queue& queue,
                             experimental::sycl::la::CsrMatrix mat,
                             std::int32_t* lookup_table, int verbose_mode = 1)
 {
-  std::string step{"Assemble matrix on device with atomics."};
-  std::map<std::string, std::chrono::duration<double>> timings;
-
-  auto timer_start = std::chrono::system_clock::now();
+  dolfinx::common::Timer t0("x Assemble Matrix");
 
   assemble_matrix_lookup_impl(queue, mat.data, mat.indptr, mat.indices,
                               lookup_table, data.x, data.xdofs, data.coeffs_a,
                               data.dofs, data.ncells, data.ndofs,
                               data.ndofs_cell);
 
-  auto timer_end = std::chrono::system_clock::now();
-  timings["Total"] = (timer_end - timer_start);
-
-  experimental::sycl::timing::print_timing_info(comm, timings, step,
-                                                verbose_mode);
+  t0.stop();
 }
 
 } // namespace dolfinx::experimental::sycl::assemble

@@ -43,7 +43,6 @@ add_executable(${PROJECT_NAME}
   src/assemble_impl.cpp 
   src/la.cpp 
   src/memory.cpp 
-  src/timing.cpp
   )
 
 add_executable(${PROJECT_NAME}-lookup
@@ -52,7 +51,6 @@ add_executable(${PROJECT_NAME}-lookup
   src/assemble_impl.cpp 
   src/la.cpp 
   src/memory.cpp 
-  src/timing.cpp
   )
 
 add_executable(${PROJECT_NAME}-search
@@ -61,7 +59,6 @@ add_executable(${PROJECT_NAME}-search
   src/assemble_impl.cpp 
   src/la.cpp 
   src/memory.cpp 
-  src/timing.cpp
   )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE dolfinx)
