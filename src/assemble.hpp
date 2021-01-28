@@ -33,7 +33,7 @@ double* assemble_vector(MPI_Comm comm, cl::sycl::queue& queue,
   assemble_vector_impl(queue, b_ext, data.x, data.xdofs, data.coeffs_L,
                        data.ncells, data.ndofs, data.ndofs_cell);
 
-  double* b = cl::sycl::malloc_shared<double>(data.ndofs, queue);
+  double* b = cl::sycl::malloca_device<double>(data.ndofs, queue);
   accumulate_impl(queue, b, b_ext, acc.indptr, acc.indices, acc.num_nodes);
 
   t0.stop();
@@ -84,7 +84,7 @@ double* assemble_vector_atomic(MPI_Comm comm, cl::sycl::queue& queue,
 
   dolfinx::common::Timer t0("x Assemble Vector");
 
-  double* b = cl::sycl::malloc_shared<double>(data.ndofs, queue);
+  double* b = cl::sycl::malloca_device<double>(data.ndofs, queue);
   queue.fill<double>(b, 0., data.ndofs).wait();
   assemble_vector_search_impl(queue, b, data.x, data.xdofs, data.coeffs_L,
                               data.dofs, data.ncells, data.ndofs,

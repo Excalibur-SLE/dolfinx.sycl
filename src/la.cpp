@@ -142,7 +142,7 @@ csr_remove_duplicate(cl::sycl::queue& queue,
   // memcpy
   queue.memcpy(&out.nnz, &out.indptr[nrows], sizeof(std::int32_t)).wait();
   out.indices = cl::sycl::malloc_device<std::int32_t>(out.nnz, queue);
-  out.data = cl::sycl::malloc_shared<double>(out.nnz, queue);
+  out.data = cl::sycl::malloca_device<double>(out.nnz, queue);
 
   queue.parallel_for<class UniqueIndices>(
       cl::sycl::range<1>(nrows), [=](cl::sycl::id<1> it) {

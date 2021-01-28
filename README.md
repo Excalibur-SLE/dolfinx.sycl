@@ -90,3 +90,6 @@ docker run --gpus all -v $(pwd):/home/fenics/shared --name sycl igorbaratta/dolf
 singularity pull --arch amd64 library://igorbaratta/default/dolfinx_sycl:latest
 singularity run --nv dolfinx_sycl_latest.sif
 ```
+
+SINGULARITY_CACHEDIR=/home/ia397/rds/hpc-work/singularity/cache_dir
+SINGULARITY_TMPDIR=/home/ia397/rds/hpc-work/singularity/tmp_dir
