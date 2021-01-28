@@ -40,14 +40,14 @@ memory::form_data_t dolfinx::experimental::sycl::memory::send_form_data(
   });
 
   // Send RHS coefficients to device
-  auto coeffs = dolfinx::fem::pack_coefficients(a);
+  auto coeffs = dolfinx::fem::pack_coefficients(L);
   auto coeff_d = cl::sycl::malloc_device<double>(coeffs.size(), queue);
   queue.submit([&](cl::sycl::handler& h) {
     h.memcpy(coeff_d, coeffs.data(), sizeof(double) * coeffs.size());
   });
 
   // Send LHS coefficients to device
-  auto coeffs_a = dolfinx::fem::pack_coefficients(L);
+  auto coeffs_a = dolfinx::fem::pack_coefficients(a);
   auto coeff_a_d = cl::sycl::malloc_device<double>(coeffs_a.size(), queue);
   queue.submit([&](cl::sycl::handler& h) {
     h.memcpy(coeff_a_d, coeffs_a.data(), sizeof(double) * coeffs_a.size());
