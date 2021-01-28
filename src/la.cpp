@@ -109,7 +109,7 @@ csr_remove_duplicate(cl::sycl::queue& queue,
         std::int32_t end = row_ptr[i + 1];
         std::int32_t size = end - begin;
 
-#ifdef __LLVM__
+#ifdef __LLVM_SYCL__
         // TODO: Improve performance of sorting algorithm
         for (std::int32_t j = 0; j < size - 1; j++)
           for (std::int32_t k = 0; k < size - j - 1; k++)
