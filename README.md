@@ -4,6 +4,7 @@ Simple code to assemble the Poisson equation on manycore architectures using Dol
 ## Requirements:
   - FEniCS/DOLFIN-X installation (development version of dolfinx required)
   - A SYCL implementation
+  - Eigen3 (development version of eigen required)
 
 ### Supported SYCL Implementations
 Supported (tested) SYCL implementation:
@@ -86,6 +87,6 @@ docker run --gpus all -v $(pwd):/home/fenics/shared --name sycl igorbaratta/dolf
 ## Singularity
 
 ```bash
-singularity pull library://igorbaratta/default/dolfinx_sycl:latest
+singularity pull --arch amd64 library://igorbaratta/default/dolfinx_sycl:latest
 singularity run --nv dolfinx_sycl_latest.sif
 ```
