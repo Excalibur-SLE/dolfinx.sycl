@@ -23,6 +23,7 @@ void swap(T* a, T* b)
 void exclusive_scan(cl::sycl::queue& queue, std::int32_t* input,
                     std::int32_t* output, std::int32_t size)
 {
+  common::Timer t0("xxx Exclusive Scan");
   // FIXME: do not copy data back to host!!!!!!!!!!!!!!
   std::vector<std::int32_t> in(size, 0);
   std::vector<std::int32_t> out(size + 1, 0);
@@ -32,6 +33,8 @@ void exclusive_scan(cl::sycl::queue& queue, std::int32_t* input,
   std::partial_sum(in.begin(), in.end(), out.begin() + 1);
 
   queue.memcpy(output, out.data(), (size + 1) * sizeof(std::int32_t)).wait();
+  
+  t0.stop();
 }
 //--------------------------------------------------------------------------
 int binary_search(int* arr, int first, int last, int x)
