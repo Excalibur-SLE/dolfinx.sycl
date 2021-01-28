@@ -43,28 +43,25 @@ add_executable(${PROJECT_NAME}
   src/problem.c 
   src/assemble_impl.cpp 
   src/la.cpp 
-  src/memory.cpp 
-  src/timing.cpp
+  src/memory.cpp
   src/solve.cpp
   )
 
-  add_executable(${PROJECT_NAME}-lookup
+add_executable(${PROJECT_NAME}-lookup
+  src/main.cpp 
+  src/problem.c 
+  src/assemble_impl.cpp 
+  src/la.cpp 
+  src/memory.cpp
+  src/solve.cpp
+  )
+
+add_executable(${PROJECT_NAME}-search
   src/main.cpp 
   src/problem.c 
   src/assemble_impl.cpp 
   src/la.cpp 
   src/memory.cpp 
-  src/timing.cpp
-  src/solve.cpp
-  )
-
-  add_executable(${PROJECT_NAME}-search
-  src/main.cpp 
-  src/problem.c 
-  src/assemble_impl.cpp 
-  src/la.cpp 
-  src/memory.cpp 
-  src/timing.cpp
   src/solve.cpp
   )
 

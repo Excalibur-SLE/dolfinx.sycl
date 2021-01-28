@@ -9,7 +9,7 @@ using namespace dolfinx;
 namespace
 {
 //--------------------------------------------------------------------------
-inline void swap(std::int32_t* a, std::int32_t* b)
+[[maybe_unused]] inline void swap(std::int32_t* a, std::int32_t* b)
 {
   std::int32_t t = *a;
   *a = *b;
@@ -109,7 +109,7 @@ csr_remove_duplicate(cl::sycl::queue& queue,
         std::int32_t end = row_ptr[i + 1];
         std::int32_t size = end - begin;
 
-#ifdef __LLVM__
+#ifdef __LLVM_SYCL__
         // TODO: Improve performance of sorting algorithm
         for (std::int32_t j = 0; j < size - 1; j++)
           for (std::int32_t k = 0; k < size - j - 1; k++)
@@ -182,12 +182,20 @@ experimental::sycl::la::CsrMatrix experimental::sycl::la::create_csr_matrix(
     MPI_Comm comm, cl::sycl::queue& queue,
     const experimental::sycl::memory::form_data_t& data)
 {
+  dolfinx::common::Timer t0("x Create CSR matrix");
+
   // Create csr matrix, with possible duplicate entries
+  dolfinx::common::Timer t1("xx Create CSR matrix - extended");
   CsrMatrix csr_mat = create_csr(queue, data);
+  t1.stop();
 
   // Remove duplicates and reorder columns
+  dolfinx::common::Timer t2("xx Create CSR matrix - Remove duplicates");
   CsrMatrix new_matrix = csr_remove_duplicate(queue, csr_mat);
   free_csr(queue, csr_mat);
+  t2.stop();
+
+  t0.stop();
 
   return new_matrix;
 }

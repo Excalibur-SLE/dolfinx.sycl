@@ -9,7 +9,6 @@ From: dolfinx/dev-env:latest
     export EIGEN3_INCLUDE_DIR=/usr/local/include/eigen3/Eigen
     export PATH=${DPCPP_HOME}/llvm/build/bin:${CUDA_PATH}/bin${PATH:+:${PATH}}
     export LD_LIBRARY_PATH=${DPCPP_HOME}/llvm/build/lib:${GINKGO_DIR}/lib:${CUDA_PATH}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-    export OCL_ICD_FILENAMES='libintelocl_emu.so:libalteracl.so:/opt/intel/oneapi/compiler/2021.1.1/linux/lib/x64/libintelocl.so'
 
 %post
     export DEBIAN_FRONTEND=noninteractive
