@@ -5,7 +5,6 @@
 
 #include <ginkgo/ginkgo.hpp>
 #include <map>
-#include <mpi.h>
 
 double dolfinx::experimental::sycl::solve::ginkgo(
     double* A, std::int32_t* indptr, std::int32_t* indices, std::int32_t nrows,
@@ -65,8 +64,6 @@ double dolfinx::experimental::sycl::solve::ginkgo(
   auto solver = solver_gen->generate(gko::give(matrix));
   solver->apply(gko::lend(in), gko::lend(out));
   auto timer_end = std::chrono::system_clock::now();
-
-  timings["0 - Solve Linear System"] = (timer_end - timer_start);
 
   auto ref_exec = gko::ReferenceExecutor::create();
   auto res = gko::initialize<gko::matrix::Dense<double>>({0.0}, ref_exec);
