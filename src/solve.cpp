@@ -3,6 +3,7 @@
 
 #include "solve.hpp"
 
+#include <dolfinx/common/Timer.h>
 #include <ginkgo/ginkgo.hpp>
 #include <map>
 
@@ -60,10 +61,12 @@ double dolfinx::experimental::sycl::solve::ginkgo(
                     .on(exec))
             .on(exec);
 
-  auto timer_start = std::chrono::system_clock::now();
+  dolfinx::common::Timer t0("x Solve");
+
   auto solver = solver_gen->generate(gko::give(matrix));
   solver->apply(gko::lend(in), gko::lend(out));
-  auto timer_end = std::chrono::system_clock::now();
+
+  t0.stop();
 
   auto ref_exec = gko::ReferenceExecutor::create();
   auto res = gko::initialize<gko::matrix::Dense<double>>({0.0}, ref_exec);

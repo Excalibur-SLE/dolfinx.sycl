@@ -101,13 +101,39 @@ int main(int argc, char* argv[])
   cl::sycl::free(acc_map.indptr, queue);
 #endif
 
+  double* x = cl::sycl::malloc_device<double>(form_data.ndofs, queue);
+  queue.submit(
+      [&](cl::sycl::handler& h) { h.fill<double>(x, 0., form_data.ndofs); });
+  queue.wait();
+
+  auto device = queue.get_device();
+  std::string executor = "omp";
+
+  double norm = solve::ginkgo(mat.data, mat.indptr, mat.indices, mat.nrows,
+                              mat.nnz, b, x, executor);
+
+  double ex_norm = 0;
+  VecNorm(f->vector(), NORM_2, &ex_norm);
+
+  dolfinx::list_timings(mpi_comm, {dolfinx::TimingType::wall});
+
+  if (mpi_rank == 0)
+  {
+    if (device.is_gpu())
+      executor = "cuda";
+
+    std::cout << "\nUsing " << executor << " executor.\n";
+
+    std::cout << "\nNorm of the computed solution " << norm << "\n";
+    std::cout << "Norm of the reference solution "
+              << ex_norm / (12. * M_PI * M_PI + 1.) << "\n\n";
+  }
+
   // Free device data
   cl::sycl::free(b, queue);
   cl::sycl::free(mat.data, queue);
   cl::sycl::free(mat.indices, queue);
   cl::sycl::free(mat.indptr, queue);
-
-  dolfinx::list_timings(mpi_comm, {dolfinx::TimingType::wall});
 
   return 0;
 }
