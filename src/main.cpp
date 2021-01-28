@@ -56,11 +56,13 @@ int main(int argc, char* argv[])
   auto V = fem::create_functionspace(create_functionspace_form_problem_a, "u",
                                      mesh);
 
+  common::Timer t0("interpolate");
   auto f = std::make_shared<fem::Function<PetscScalar>>(V);
   f->interpolate([](auto& x) {
     return (12 * M_PI * M_PI + 1) * Eigen::cos(2 * M_PI * x.row(0))
            * Eigen::cos(2 * M_PI * x.row(1)) * Eigen::cos(2 * M_PI * x.row(2));
   });
+  t0.stop();
 
   // Define variational forms
   auto L = dolfinx::fem::create_form<PetscScalar>(create_form_problem_L, {V},
@@ -70,15 +72,11 @@ int main(int argc, char* argv[])
 
   auto queue = utils::select_queue(mpi_comm, platform);
 
-  int verb_mode = 2;
-  if (verb_mode)
-  {
-    utils::print_device_info(queue.get_device());
-    utils::print_function_space_info(V);
-  }
+  utils::print_device_info(queue.get_device());
+  utils::print_function_space_info(V);
 
   // Send form data to device (Geometry, Dofmap, Coefficients)
-  auto form_data = memory::send_form_data(mpi_comm, queue, *L, *a, verb_mode);
+  auto form_data = memory::send_form_data(mpi_comm, queue, *L, *a);
 
   // Send form data to device (Geometry, Dofmap, Coefficients)
   auto mat = dolfinx::experimental::sycl::la::create_csr_matrix(mpi_comm, queue,
@@ -108,6 +106,8 @@ int main(int argc, char* argv[])
   cl::sycl::free(mat.data, queue);
   cl::sycl::free(mat.indices, queue);
   cl::sycl::free(mat.indptr, queue);
+
+  dolfinx::list_timings(mpi_comm, {dolfinx::TimingType::wall});
 
   return 0;
 }

@@ -21,44 +21,27 @@ double* assemble_vector(MPI_Comm comm, cl::sycl::queue& queue,
                         const memory::form_data_t& data, int verbose_mode = 1)
 {
 
-  std::string step{"Assemble vector on device"};
-  std::map<std::string, std::chrono::duration<double>> timings;
+  auto acc = experimental::sycl::la::compute_vector_acc_map(comm, queue, data);
 
-  auto timer_start = std::chrono::system_clock::now();
-  experimental::sycl::la::AdjacencyList acc
-      = experimental::sycl::la::compute_vector_acc_map(comm, queue, data);
-  auto timer_end = std::chrono::system_clock::now();
-  timings["0 - Create  accumulator from dofmap"] = (timer_end - timer_start);
-
-  auto start = std::chrono::system_clock::now();
-
-  timer_start = std::chrono::system_clock::now();
-
+  dolfinx::common::Timer t0("x Assemble vector");
   // Allocated unassembled vector on device
   std::int32_t ndofs_ext = data.ndofs_cell * data.ncells;
   auto b_ext = cl::sycl::malloc_device<double>(ndofs_ext, queue);
   queue.fill<double>(b_ext, 0., ndofs_ext).wait();
+  
   // Assemble local contributions
   assemble_vector_impl(queue, b_ext, data.x, data.xdofs, data.coeffs_L,
                        data.ncells, data.ndofs, data.ndofs_cell);
-  timer_end = std::chrono::system_clock::now();
-  timings["1 - Compute cell contributions"] = (timer_end - timer_start);
 
-  timer_start = std::chrono::system_clock::now();
   double* b = cl::sycl::malloc_shared<double>(data.ndofs, queue);
   accumulate_impl(queue, b, b_ext, acc.indptr, acc.indices, acc.num_nodes);
-  timer_end = std::chrono::system_clock::now();
-  timings["2 - Accumulate cells contributions"] = (timer_end - timer_start);
+
+  t0.stop();
 
   // Free temporary device data
   cl::sycl::free(b_ext, queue);
   cl::sycl::free(acc.indices, queue);
   cl::sycl::free(acc.indptr, queue);
-
-  auto end = std::chrono::system_clock::now();
-  timings["Total"] = (end - start);
-  experimental::sycl::timing::print_timing_info(comm, timings, step,
-                                                verbose_mode);
 
   return b;
 }
@@ -71,34 +54,25 @@ void assemble_matrix(MPI_Comm comm, cl::sycl::queue& queue,
                      experimental::sycl::la::AdjacencyList acc_map,
                      int verbose_mode = 1)
 {
+  dolfinx::common::Timer t0("x Assemble Matrix");
 
-  std::string step{"Assemble matrix on device"};
-  std::map<std::string, std::chrono::duration<double>> timings;
-
-  auto start = std::chrono::system_clock::now();
-
-  // Number of stored nonzeros on the extended COO format
+  // Number of stored nonzeros using the extended unassembled matrix
   std::int32_t stored_nz = data.ncells * data.ndofs_cell * data.ndofs_cell;
 
-  auto timer_start = std::chrono::system_clock::now();
   auto A_ext = cl::sycl::malloc_device<double>(stored_nz, queue);
   queue.fill<double>(A_ext, 0., stored_nz).wait_and_throw();
+
+  dolfinx::common::Timer t1("xx Assemble Matrix: Local Assembly");
   assemble_matrix_impl(queue, A_ext, data.x, data.xdofs, data.coeffs_a,
                        data.ncells, data.ndofs, data.ndofs_cell);
-  auto timer_end = std::chrono::system_clock::now();
-  timings["0 - Compute cell contributions"] = (timer_end - timer_start);
+  t1.stop();
 
-  timer_start = std::chrono::system_clock::now();
+  dolfinx::common::Timer t2("xx Assemble Matrix: Global Assembly");
   accumulate_impl(queue, mat.data, A_ext, acc_map.indptr, acc_map.indices,
                   acc_map.num_nodes);
-  timer_end = std::chrono::system_clock::now();
-  timings["2 - Accumulate contributions"] = (timer_end - timer_start);
+  t2.stop();
 
-  auto end = std::chrono::system_clock::now();
-  timings["Total"] = (end - start);
-
-  experimental::sycl::timing::print_timing_info(comm, timings, step,
-                                                verbose_mode);
+  t0.stop();
 }
 
 //--------------------------------------------------------------------------

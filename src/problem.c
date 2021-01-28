@@ -1458,43 +1458,28 @@ void tabulate_tensor_integral_cell_otherwise_726e602d497be77b561b62144fa710a5219
     sp_738[79] = sp_738[72] * sp_738[73];
     for (int iq = 0; iq < 64; ++iq)
     {
-        const ufc_scalar_t fw0 = sp_738[73] * weights_738[iq];
+        const double c = weights_738[iq];
+        const ufc_scalar_t fw0 = sp_738[73] * c;
+        const ufc_scalar_t fw1 = sp_738[74] * c;
+        const ufc_scalar_t fw2 = sp_738[75] * c;
+        const ufc_scalar_t fw3 = sp_738[76] * c;
+        const ufc_scalar_t fw4 = sp_738[77] * c;
+        const ufc_scalar_t fw5 = sp_738[78] * c;
+        const ufc_scalar_t fw6 = sp_738[79] * c;
         for (int i = 0; i < 20; ++i)
             for (int j = 0; j < 20; ++j)
+            {
                 A[20 * i + j] += fw0 * FE17_C0_Q738[0][0][iq][i] * FE17_C0_Q738[0][0][iq][j];
-        const ufc_scalar_t fw1 = sp_738[74] * weights_738[iq];
-        for (int i = 0; i < 20; ++i)
-            for (int j = 0; j < 20; ++j)
                 A[20 * i + j] += fw1 * FE17_C0_D100_Q738[0][0][iq][i] * FE17_C0_D100_Q738[0][0][iq][j];
-        const ufc_scalar_t fw2 = sp_738[75] * weights_738[iq];
-        for (int i = 0; i < 20; ++i)
-            for (int j = 0; j < 20; ++j)
                 A[20 * i + j] += fw2 * FE17_C0_D100_Q738[0][0][iq][i] * FE17_C0_D010_Q738[0][0][iq][j];
-        const ufc_scalar_t fw3 = sp_738[76] * weights_738[iq];
-        for (int i = 0; i < 20; ++i)
-            for (int j = 0; j < 20; ++j)
                 A[20 * i + j] += fw3 * FE17_C0_D100_Q738[0][0][iq][i] * FE17_C0_D001_Q738[0][0][iq][j];
-        for (int i = 0; i < 20; ++i)
-            for (int j = 0; j < 20; ++j)
                 A[20 * i + j] += fw2 * FE17_C0_D010_Q738[0][0][iq][i] * FE17_C0_D100_Q738[0][0][iq][j];
-        const ufc_scalar_t fw4 = sp_738[77] * weights_738[iq];
-        for (int i = 0; i < 20; ++i)
-            for (int j = 0; j < 20; ++j)
                 A[20 * i + j] += fw4 * FE17_C0_D010_Q738[0][0][iq][i] * FE17_C0_D010_Q738[0][0][iq][j];
-        const ufc_scalar_t fw5 = sp_738[78] * weights_738[iq];
-        for (int i = 0; i < 20; ++i)
-            for (int j = 0; j < 20; ++j)
                 A[20 * i + j] += fw5 * FE17_C0_D010_Q738[0][0][iq][i] * FE17_C0_D001_Q738[0][0][iq][j];
-        for (int i = 0; i < 20; ++i)
-            for (int j = 0; j < 20; ++j)
                 A[20 * i + j] += fw3 * FE17_C0_D001_Q738[0][0][iq][i] * FE17_C0_D100_Q738[0][0][iq][j];
-        for (int i = 0; i < 20; ++i)
-            for (int j = 0; j < 20; ++j)
                 A[20 * i + j] += fw5 * FE17_C0_D001_Q738[0][0][iq][i] * FE17_C0_D010_Q738[0][0][iq][j];
-        const ufc_scalar_t fw6 = sp_738[79] * weights_738[iq];
-        for (int i = 0; i < 20; ++i)
-            for (int j = 0; j < 20; ++j)
                 A[20 * i + j] += fw6 * FE17_C0_D001_Q738[0][0][iq][i] * FE17_C0_D001_Q738[0][0][iq][j];
+            }
     }
 }
 
