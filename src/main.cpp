@@ -46,8 +46,8 @@ int main(int argc, char* argv[])
   }
 
   auto cmap = fem::create_coordinate_map(create_coordinate_map_problem);
-  std::array<Eigen::Vector3d, 2> pts{Eigen::Vector3d(-1, -1, -1),
-                                     Eigen::Vector3d(1.0, 1.0, 1.0)};
+  std::array<std::array<double, 3>, 2> pts
+      = {{{-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0}}};
 
   auto mesh = std::make_shared<mesh::Mesh>(generation::BoxMesh::create(
       mpi_comm, pts, {{nx, nx, nx}}, cmap, mesh::GhostMode::none));
@@ -57,10 +57,13 @@ int main(int argc, char* argv[])
                                      mesh);
 
   common::Timer t0("interpolate");
-  auto f = std::make_shared<fem::Function<PetscScalar>>(V);
+  auto f = std::make_shared<fem::Function<double>>(V);
   f->interpolate([](auto& x) {
-    return (12 * M_PI * M_PI + 1) * Eigen::cos(2 * M_PI * x.row(0))
-           * Eigen::cos(2 * M_PI * x.row(1)) * Eigen::cos(2 * M_PI * x.row(2));
+    std::vector<double> f(x.shape[1]);
+    for (std::size_t i = 0; i < x.shape[1]; i++)
+      f[i] = (12 * M_PI * M_PI + 1) * std::cos(2 * M_PI * x(0, i))
+             * std::cos(2 * M_PI * x(1, i)) * std::cos(2 * M_PI * x(2, i));
+    return f;
   });
   t0.stop();
 
@@ -108,6 +111,8 @@ int main(int argc, char* argv[])
 
   auto device = queue.get_device();
   std::string executor = "omp";
+  if (device.is_gpu())
+    executor = "cuda";
 
   double norm = solve::ginkgo(mat.data, mat.indptr, mat.indices, mat.nrows,
                               mat.nnz, b, x, executor);
@@ -119,9 +124,6 @@ int main(int argc, char* argv[])
 
   if (mpi_rank == 0)
   {
-    if (device.is_gpu())
-      executor = "cuda";
-
     std::cout << "\nUsing " << executor << " executor.\n";
 
     std::cout << "\nNorm of the computed solution " << norm << "\n";

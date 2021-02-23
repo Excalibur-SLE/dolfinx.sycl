@@ -26,8 +26,8 @@ int main(int argc, char* argv[])
     nx = std::stoi(argv[1]);
 
   auto cmap = fem::create_coordinate_map(create_coordinate_map_problem);
-  std::array<Eigen::Vector3d, 2> pts{Eigen::Vector3d(-1, -1, -1),
-                                     Eigen::Vector3d(1.0, 1.0, 1.0)};
+  std::array<std::array<double, 3>, 2> pts
+      = {{{-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0}}};
 
   auto mesh = std::make_shared<mesh::Mesh>(generation::BoxMesh::create(
       mpi_comm, pts, {{nx, nx, nx}}, cmap, mesh::GhostMode::none));
@@ -36,11 +36,16 @@ int main(int argc, char* argv[])
   auto V = fem::create_functionspace(create_functionspace_form_problem_a, "u",
                                      mesh);
 
-  auto f = std::make_shared<fem::Function<PetscScalar>>(V);
+  common::Timer t0("interpolate");
+  auto f = std::make_shared<fem::Function<double>>(V);
   f->interpolate([](auto& x) {
-    return (12 * M_PI * M_PI + 1) * Eigen::cos(2 * M_PI * x.row(0))
-           * Eigen::cos(2 * M_PI * x.row(1)) * Eigen::cos(2 * M_PI * x.row(2));
+    std::vector<double> f(x.shape[1]);
+    for (std::size_t i = 0; i < x.shape[1]; i++)
+      f[i] = (12 * M_PI * M_PI + 1) * std::cos(2 * M_PI * x(0, i))
+             * std::cos(2 * M_PI * x(1, i)) * std::cos(2 * M_PI * x(2, i));
+    return f;
   });
+  t0.stop();
 
   // Define variational forms
   auto L = dolfinx::fem::create_form<PetscScalar>(create_form_problem_L, {V},
@@ -50,14 +55,13 @@ int main(int argc, char* argv[])
 
   fem::Function<PetscScalar> u(V);
 
-  dolfinx::common::Timer t0("ZZZ Create PETSc matrix");
+  dolfinx::common::Timer t1("ZZZ Create PETSc matrix");
   Mat A = dolfinx::fem::create_matrix(*a);
   MatZeroEntries(A);
-  t0.stop();
+  t1.stop();
 
   la::PETScVector b(*L->function_spaces()[0]->dofmap()->index_map,
                     L->function_spaces()[0]->dofmap()->index_map_bs());
-
 
   // Assemble Matrix
   fem::assemble_matrix(la::PETScMatrix::add_fn(A), *a, {});
@@ -66,21 +70,21 @@ int main(int argc, char* argv[])
 
   for (int i = 0; i < 5; i++)
   {
-    dolfinx::common::Timer t0("ZZZ Assemble Matrix");
+    dolfinx::common::Timer t2("ZZZ Assemble Matrix");
     fem::assemble_matrix(la::PETScMatrix::add_fn(A), *a, {});
     MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
     MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
-    t0.stop();
+    t2.stop();
   }
 
-  dolfinx::common::Timer t1("ZZZ Assemble Vector");
+  dolfinx::common::Timer t3("ZZZ Assemble Vector");
   fem::assemble_vector_petsc(b.vec(), *L);
   VecGhostUpdateBegin(b.vec(), ADD_VALUES, SCATTER_REVERSE);
   VecGhostUpdateEnd(b.vec(), ADD_VALUES, SCATTER_REVERSE);
-  t1.stop();
+  t3.stop();
 
   la::PETScKrylovSolver solver(mpi_comm);
-  la::PETScOptions::set("ksp_type", "cg");
+  la::PETScOptions::set("ksp_type", "gmres");
   la::PETScOptions::set("pc_type", "jacobi");
   la::PETScOptions::set("rtol", 1e-5);
   solver.set_from_options();

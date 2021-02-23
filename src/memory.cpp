@@ -1,9 +1,8 @@
 // Copyright (C) 2020 Igor A. Baratta
 // SPDX-License-Identifier:    MIT
 
-#include <cassert>
-
 #include "memory.hpp"
+#include <cassert>
 
 using namespace dolfinx::experimental::sycl;
 

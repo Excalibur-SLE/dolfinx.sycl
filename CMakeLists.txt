@@ -88,5 +88,4 @@ endif()
 
 
 add_subdirectory(src/benchmark)
-
 message(STATUS ${CMAKE_CXX_FLAGS})
