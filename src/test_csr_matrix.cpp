@@ -9,7 +9,6 @@
 #include <math.h>
 #include <mpi.h>
 #include <numeric>
-#include <xtensor/xadapt.hpp>
 #include <xtensor/xmath.hpp>
 
 #include "dolfinx_sycl.hpp"
@@ -18,27 +17,14 @@
 using namespace dolfinx;
 using namespace dolfinx::experimental::sycl;
 
-using insert_func_t = std::function<int(std::int32_t, const std::int32_t*, std::int32_t,
-                                        const std::int32_t*, const double*)>;
-
 int main(int argc, char* argv[]) {
   common::subsystem::init_logging(argc, argv);
-  common::subsystem::init_mpi(argc, argv);
+  common::subsystem::init_petsc(argc, argv);
+
   {
     MPI_Comm mpi_comm{MPI_COMM_WORLD};
 
-    int mpi_size, mpi_rank;
-    MPI_Comm_size(mpi_comm, &mpi_size);
-    MPI_Comm_rank(mpi_comm, &mpi_rank);
-
-    std::size_t nx = 20;
-    std::string platform = "cpu";
-    if (argc == 2)
-      nx = std::stoi(argv[1]);
-    else if (argc == 3) {
-      nx = std::stoi(argv[1]);
-      platform = argv[2];
-    }
+    std::size_t nx = 2;
 
     auto mesh = std::make_shared<mesh::Mesh>(generation::BoxMesh::create(
         mpi_comm, {{{-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0}}}, {{nx, nx, nx}},
@@ -47,26 +33,22 @@ int main(int argc, char* argv[]) {
 
     auto V = fem::create_functionspace(functionspace_form_problem_a, "u", mesh);
 
+    std::size_t num_cells
+        = mesh->topology().index_map(3)->size_local() + mesh->topology().index_map(3)->num_ghosts();
     std::size_t num_dofs
         = V->dofmap()->index_map->size_local() + V->dofmap()->index_map->num_ghosts();
 
     common::Timer t0("interpolate");
-    auto f = std::make_shared<fem::Function<double>>(V);
-    f->interpolate([](auto& x) {
-      return (12 * M_PI * M_PI + 1) * xt::cos(2 * M_PI * xt::row(x, 0))
-             * xt::cos(2 * M_PI * xt::row(x, 1)) * xt::cos(2 * M_PI * xt::row(x, 2));
-    });
-    t0.stop();
-
+    std::shared_ptr<fem::Function<double>> f = std::make_shared<fem::Function<double>>(V);
+    auto& m_array = f->x()->mutable_array();
+    std::fill(m_array.begin(), m_array.end(), 3);
     auto k = std::make_shared<fem::Constant<PetscScalar>>(1.0);
 
     // Define variational forms
     auto L = dolfinx::fem::create_form<double>(*form_problem_L, {V}, {{"f", f}, {}}, {}, {});
     auto a = fem::create_form<double>(*form_problem_a, {V, V}, {}, {{"k", k}}, {});
 
-    auto queue = utils::select_queue(mpi_comm, platform);
-    utils::print_device_info(queue.get_device());
-    utils::print_function_space_info(V);
+    auto queue = cl::sycl::queue(cl::sycl::cpu_selector());
 
     // Send form data to device (Geometry, Dofmap, Coefficients)
     auto form_data = memory::send_form_data(mpi_comm, queue, L, a);
@@ -74,24 +56,48 @@ int main(int argc, char* argv[]) {
     // Send form data to device (Geometry, Dofmap, Coefficients)
     auto mat = dolfinx::experimental::sycl::la::create_csr_matrix(mpi_comm, queue, form_data);
 
+    assert(form_data.ndofs == num_dofs);
+    assert(mat.nrows == num_dofs);
+
+    Mat A = dolfinx::fem::create_matrix(a);
+    MatZeroEntries(A);
+    fem::assemble_matrix(dolfinx::la::PETScMatrix::set_fn(A, ADD_VALUES), a, {});
+    MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
+    MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
+
+    MatInfo info;
+    MatGetInfo(A, MAT_LOCAL, &info);
+
+    assert(std::size_t(form_data.ndofs) == num_dofs);
+    assert(std::size_t(form_data.ncells) == num_cells);
+    assert(mat.nnz == info.nz_allocated);
+
     // Assemble csr matrix using binary search and
     assemble::assemble_matrix(queue, form_data, mat);
 
-    dolfinx::common::Timer t10("z Assemble Matrix SYCL");
-    assemble::assemble_matrix(queue, form_data, mat);
-    t10.stop();
+    double* array;
+    MatSeqAIJGetArray(A, &array);
 
-    double* b = cl::sycl::malloc_device<double>(num_dofs, queue);
-    dolfinx::common::Timer t11("z Assemble Vector SYCL");
-    assemble::assemble_vector(queue, form_data, b);
-    t11.stop();
+    double l1norm = 0;
+    for (int i = 0; i < mat.nnz; i++)
+      l1norm += std::fabs(array[i] - mat.data[i]);
 
+    assert(l1norm < 1e-8);
 
-    
+    // Test Assemble Vector
+    std::vector<double> b(num_dofs);
+    dolfinx::fem::assemble_vector<double>(b, L);
 
-    dolfinx::list_timings(mpi_comm, {dolfinx::TimingType::wall});
+    double* c = cl::sycl::malloc_device<double>(num_dofs, queue);
+    assemble::assemble_vector(queue, form_data, c);
+    queue.wait();
+
+    auto _b = xt::adapt(b, {num_dofs});
+    auto _c = xt::adapt(c, num_dofs, xt::no_ownership(), std::vector<std::size_t>{num_dofs});
+
+    assert(xt::allclose(_b, _c));
   }
 
-  common::subsystem::finalize_mpi();
+  common::subsystem::finalize_petsc();
   return 0;
 }

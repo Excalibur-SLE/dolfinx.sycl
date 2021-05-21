@@ -1,18 +1,10 @@
-// Copyright (C) 2020 Igor A. Baratta
+// Copyright (C) 2021 Igor A. Baratta
 // SPDX-License-Identifier:    MIT
 
 #pragma once
 
 #include <CL/sycl.hpp>
-
-#ifdef SYCL_DEVICE_ONLY
-#undef SYCL_DEVICE_ONLY
 #include <dolfinx.h>
-#define SYCL_DEVICE_ONLY
-#else
-#include <dolfinx.h>
-#endif
-
 #include <mpi.h>
 
 using namespace dolfinx;

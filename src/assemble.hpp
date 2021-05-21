@@ -2,124 +2,91 @@
 // SPDX-License-Identifier:    MIT
 
 #include <CL/sycl.hpp>
-
-#undef SYCL_DEVICE_ONLY
 #include <dolfinx.h>
-#define SYCL_DEVICE_ONLY
 
-#include "assemble_impl.hpp"
+#include "kernel.hpp"
 #include "la.hpp"
 #include "memory.hpp"
 
 using namespace dolfinx::experimental::sycl;
+using atomic_ref = sycl::ONEAPI::atomic_ref<double, sycl::ONEAPI::memory_order::relaxed,
+                                            sycl::ONEAPI::memory_scope::system,
+                                            cl::sycl::access::address_space::global_space>;
 
-namespace dolfinx::experimental::sycl::assemble
-{
-//--------------------------------------------------------------------------
-// Submit vector assembly kernels to queue
-double* assemble_vector(MPI_Comm comm, cl::sycl::queue& queue,
-                        const memory::form_data_t& data, int verbose_mode = 1)
-{
+namespace {
+int binary_search(int* arr, int left, int right, int x) {
+  while (left <= right) {
+    int middle = left + (right - left) / 2;
 
-  auto acc = experimental::sycl::la::compute_vector_acc_map(comm, queue, data);
+    if (arr[middle] == x)
+      return middle;
 
-  dolfinx::common::Timer t0("x Assemble vector");
-  // Allocated unassembled vector on device
-  std::int32_t ndofs_ext = data.ndofs_cell * data.ncells;
-  auto b_ext = cl::sycl::malloc_device<double>(ndofs_ext, queue);
-  queue.fill<double>(b_ext, 0., ndofs_ext).wait();
+    if (arr[middle] < x)
+      left = middle + 1;
+    else
+      right = middle - 1;
+  }
 
-  // Assemble local contributions
-  assemble_vector_impl(queue, b_ext, data.x, data.xdofs, data.coeffs_L,
-                       data.ncells, data.ndofs, data.ndofs_cell);
-
-  double* b = cl::sycl::malloc_shared<double>(data.ndofs, queue);
-  accumulate_impl(queue, b, b_ext, acc.indptr, acc.indices, acc.num_nodes);
-
-  t0.stop();
-
-  // Free temporary device data
-  cl::sycl::free(b_ext, queue);
-  cl::sycl::free(acc.indices, queue);
-  cl::sycl::free(acc.indptr, queue);
-
-  return b;
+  return -1;
 }
+} // namespace
 
-//--------------------------------------------------------------------------
-// Submit vector assembly kernels to queue
-void assemble_matrix(MPI_Comm comm, cl::sycl::queue& queue,
-                     const memory::form_data_t& data,
-                     experimental::sycl::la::CsrMatrix mat,
-                     experimental::sycl::la::AdjacencyList acc_map,
-                     int verbose_mode = 1)
-{
+template <typename T, int dim>
+using local_accessor
+    = cl::sycl::accessor<T, dim, cl::sycl::access_mode::read_write, cl::sycl::target::local>;
+namespace dolfinx::experimental::sycl::assemble {
+
+void assemble_matrix(cl::sycl::queue& queue, const memory::form_data_t& data,
+                     experimental::sycl::la::CsrMatrix mat) {
   dolfinx::common::Timer t0("x Assemble Matrix");
+  std::size_t ncells = data.dofs.get_range()[0];
+  std::size_t ndofs_cell = data.dofs.get_range()[1];
+  constexpr std::int32_t gdim = 3;
 
-  // Number of stored nonzeros using the extended unassembled matrix
-  std::int32_t stored_nz = data.ncells * data.ndofs_cell * data.ndofs_cell;
+  // get buffers
+  cl::sycl::buffer<std::int32_t, 2> x_dofs = data.x_dofs;
+  cl::sycl::buffer<std::int32_t, 2> dofs_ = data.dofs;
+  cl::sycl::buffer<double, 2> x_ = data.x;
 
-  auto A_ext = cl::sycl::malloc_device<double>(stored_nz, queue);
-  queue.fill<double>(A_ext, 0., stored_nz).wait_and_throw();
+  cl::sycl::event event = queue.submit([&](cl::sycl::handler& h) {
+    // accessors
+    cl::sycl::accessor x{x_, h, cl::sycl::read_only};
+    cl::sycl::accessor xdofs{x_dofs, h, cl::sycl::read_only};
+    cl::sycl::accessor dofs{dofs_, h, cl::sycl::read_only};
 
-  dolfinx::common::Timer t1("xx Assemble Matrix: Local Assembly");
-  assemble_matrix_impl(queue, A_ext, data.x, data.xdofs, data.coeffs_a,
-                       data.ncells, data.ndofs, data.ndofs_cell);
-  t1.stop();
+    h.parallel_for(cl::sycl::range<1>(ncells), [=](cl::sycl::id<1> ID) {
+      const int i = ID.get(0);
 
-  dolfinx::common::Timer t2("xx Assemble Matrix: Global Assembly");
-  accumulate_impl(queue, mat.data, A_ext, acc_map.indptr, acc_map.indices,
-                  acc_map.num_nodes);
-  t2.stop();
+      double Ae[4][4] = {{0}};
+      double cell_geom[12] = {0};
 
-  t0.stop();
-}
+      // Pull out points for this cell
+      for (std::size_t j = 0; j < 4; ++j) {
+        const std::size_t pos = xdofs[i][j];
+        for (int k = 0; k < gdim; ++k)
+          cell_geom[j * gdim + k] = x[pos][k];
+      }
 
-//--------------------------------------------------------------------------
-// Submit vector assembly kernels to queue
-double* assemble_vector_atomic(MPI_Comm comm, cl::sycl::queue& queue,
-                               const memory::form_data_t& data,
-                               int verbose_mode = 1)
-{
+      // Get local values
+      tabulate_a(Ae, cell_geom);
 
-  dolfinx::common::Timer t0("x Assemble Vector");
+      for (int j = 0; j < ndofs_cell; j++) {
+        int row = dofs[i][j];
+        for (int k = 0; k < ndofs_cell; k++) {
+          int ind = dofs[i][k];
+          int pos = binary_search(mat.indices, mat.indptr[row], mat.indptr[row + 1], ind);
+          atomic_ref atomic_A(mat.data[pos]);
+          atomic_A += Ae[j][k];
+        }
+      }
+    });
+  });
 
-  double* b = cl::sycl::malloc_shared<double>(data.ndofs, queue);
-  queue.fill<double>(b, 0., data.ndofs).wait();
-  assemble_vector_search_impl(queue, b, data.x, data.xdofs, data.coeffs_L,
-                              data.dofs, data.ncells, data.ndofs,
-                              data.ndofs_cell);
-  t0.stop();
-
-  return b;
-}
-//--------------------------------------------------------------------------
-void assemble_matrix_search(MPI_Comm comm, cl::sycl::queue& queue,
-                            const memory::form_data_t& data,
-                            experimental::sycl::la::CsrMatrix mat)
-{
-
-  dolfinx::common::Timer t0("x Assemble Matrix");
-
-  assemble_matrix_search_impl(queue, mat.data, mat.indptr, mat.indices, data.x,
-                              data.xdofs, data.coeffs_a, data.dofs, data.ncells,
-                              data.ndofs, data.ndofs_cell);
-
-  t0.stop();
-}
-//--------------------------------------------------------------------------
-void assemble_matrix_lookup(MPI_Comm comm, cl::sycl::queue& queue,
-                            const memory::form_data_t& data,
-                            experimental::sycl::la::CsrMatrix mat,
-                            std::int32_t* lookup_table, int verbose_mode = 1)
-{
-  dolfinx::common::Timer t0("x Assemble Matrix");
-
-  assemble_matrix_lookup_impl(queue, mat.data, mat.indptr, mat.indices,
-                              lookup_table, data.x, data.xdofs, data.coeffs_a,
-                              data.dofs, data.ncells, data.ndofs,
-                              data.ndofs_cell);
-
+  try {
+    queue.wait_and_throw();
+  } catch (cl::sycl::exception const& e) {
+    std::cout << "Caught synchronous SYCL exception:\n" << e.what() << std::endl;
+  }
   t0.stop();
 }
 

@@ -4,28 +4,17 @@
 #pragma once
 
 #include <CL/sycl.hpp>
-
-#ifdef SYCL_DEVICE_ONLY
-#undef SYCL_DEVICE_ONLY
-#include <dolfinx.h>
-#define SYCL_DEVICE_ONLY
-#else
-#include <dolfinx.h>
-#endif
-
-#include <mpi.h>
-
 #include <cstdint>
+#include <dolfinx.h>
+#include <mpi.h>
 
 #include "memory.hpp"
 
 using namespace dolfinx;
 
-namespace dolfinx::experimental::sycl::la
-{
+namespace dolfinx::experimental::sycl::la {
 
-struct CsrMatrix
-{
+struct CsrMatrix {
   double* data;
   std::int32_t* indptr;
   std::int32_t* indices;
@@ -34,8 +23,7 @@ struct CsrMatrix
   std::int32_t nnz;
 };
 
-struct AdjacencyList
-{
+struct AdjacencyList {
   std::int32_t* indptr;
   std::int32_t* indices;
   std::int32_t num_nodes;
@@ -46,22 +34,7 @@ struct AdjacencyList
 /// @param[in] comm Form data
 /// @param[in] queue Form data
 /// @param[in] data Form data
-CsrMatrix
-create_csr_matrix(MPI_Comm comm, cl::sycl::queue& queue,
-                  const experimental::sycl::memory::form_data_t& data);
-
-int32_t*
-compute_lookup_table(cl::sycl::queue& queue,
-                     const experimental::sycl::la::CsrMatrix& mat,
-                     const experimental::sycl::memory::form_data_t& data);
-
-AdjacencyList
-compute_matrix_acc_map(cl::sycl::queue& queue,
-                       const experimental::sycl::la::CsrMatrix& mat,
-                       const experimental::sycl::memory::form_data_t& data);
-
-AdjacencyList
-compute_vector_acc_map(MPI_Comm comm, cl::sycl::queue& queue,
-                       const experimental::sycl::memory::form_data_t& data);
+CsrMatrix create_csr_matrix(MPI_Comm comm, cl::sycl::queue& queue,
+                            const experimental::sycl::memory::form_data_t& data);
 
 } // namespace dolfinx::experimental::sycl::la

@@ -11,15 +11,6 @@
 namespace dolfinx::experimental::sycl::algorithms
 {
 //--------------------------------------------------------------------------
-// A utility function to swap two elements
-template <typename T>
-void swap(T* a, T* b)
-{
-  T t = *a;
-  *a = *b;
-  *b = t;
-}
-//--------------------------------------------------------------------------
 void exclusive_scan(cl::sycl::queue& queue, std::int32_t* input,
                     std::int32_t* output, std::int32_t size)
 {

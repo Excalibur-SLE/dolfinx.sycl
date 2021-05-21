@@ -10,8 +10,7 @@
 
 using namespace dolfinx;
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
   common::subsystem::init_logging(argc, argv);
   common::subsystem::init_petsc(argc, argv);
 
@@ -25,82 +24,99 @@ int main(int argc, char* argv[])
   if (argc >= 2)
     nx = std::stoi(argv[1]);
 
-  auto cmap = fem::create_coordinate_map(create_coordinate_map_problem);
-  std::array<std::array<double, 3>, 2> pts
-      = {{{-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0}}};
-
-  auto mesh = std::make_shared<mesh::Mesh>(generation::BoxMesh::create(
-      mpi_comm, pts, {{nx, nx, nx}}, cmap, mesh::GhostMode::none));
+  auto mesh = std::make_shared<mesh::Mesh>(
+      generation::BoxMesh::create(mpi_comm, {{{-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0}}}, {{nx, nx, nx}},
+                                  mesh::CellType::tetrahedron, mesh::GhostMode::none));
 
   mesh->topology_mutable().create_entity_permutations();
-  auto V = fem::create_functionspace(create_functionspace_form_problem_a, "u",
-                                     mesh);
+  auto V = fem::create_functionspace(functionspace_form_problem_a, "u", mesh);
+  std::size_t num_dofs
+      = V->dofmap()->index_map->size_local() + V->dofmap()->index_map->num_ghosts();
 
   common::Timer t0("interpolate");
   auto f = std::make_shared<fem::Function<double>>(V);
   f->interpolate([](auto& x) {
-    std::vector<double> f(x.shape[1]);
-    for (std::size_t i = 0; i < x.shape[1]; i++)
-      f[i] = (12 * M_PI * M_PI + 1) * std::cos(2 * M_PI * x(0, i))
-             * std::cos(2 * M_PI * x(1, i)) * std::cos(2 * M_PI * x(2, i));
-    return f;
+    return (12 * M_PI * M_PI + 1) * xt::cos(2 * M_PI * xt::row(x, 0))
+           * xt::cos(2 * M_PI * xt::row(x, 1)) * xt::cos(2 * M_PI * xt::row(x, 2));
   });
   t0.stop();
 
+  auto k = std::make_shared<fem::Constant<PetscScalar>>(1.0);
+
   // Define variational forms
-  auto L = dolfinx::fem::create_form<PetscScalar>(create_form_problem_L, {V},
-                                                  {{"f", f}, {}}, {}, {});
-  auto a = dolfinx::fem::create_form<PetscScalar>(create_form_problem_a, {V, V},
-                                                  {}, {}, {});
+  auto L = dolfinx::fem::create_form<double>(*form_problem_L, {V}, {{"f", f}, {}}, {}, {});
+  auto a = fem::create_form<double>(*form_problem_a, {V, V}, {}, {{"k", k}}, {});
 
   fem::Function<PetscScalar> u(V);
 
   dolfinx::common::Timer t1("ZZZ Create PETSc matrix");
-  Mat A = dolfinx::fem::create_matrix(*a);
+  Mat A = dolfinx::fem::create_matrix(a);
   MatZeroEntries(A);
   t1.stop();
 
-  la::PETScVector b(*L->function_spaces()[0]->dofmap()->index_map,
-                    L->function_spaces()[0]->dofmap()->index_map_bs());
+  la::PETScVector b(*L.function_spaces()[0]->dofmap()->index_map,
+                    L.function_spaces()[0]->dofmap()->index_map_bs());
 
   // Assemble Matrix
-  fem::assemble_matrix(la::PETScMatrix::add_fn(A), *a, {});
+  fem::assemble_matrix(la::PETScMatrix::set_fn(A, INSERT_VALUES), a, {});
   MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
   MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
 
-  for (int i = 0; i < 5; i++)
-  {
+  for (int i = 0; i < 1; i++) {
     dolfinx::common::Timer t2("ZZZ Assemble Matrix");
-    fem::assemble_matrix(la::PETScMatrix::add_fn(A), *a, {});
+    fem::assemble_matrix(la::PETScMatrix::set_fn(A, INSERT_VALUES), a, {});
     MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
     MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
     t2.stop();
   }
 
+  std::vector<double> b_(num_dofs, 0);
+  const std::vector<double> constants = pack_constants(L);
+  const array2d<double> coeffs = pack_coefficients(L);
+  // fem::assemble_vector<double>(b_, L, constants, coeffs);
+
+  int id = L.integral_ids(dolfinx::fem::IntegralType::cell)[0];
+  const auto& fn = L.kernel(dolfinx::fem::IntegralType::cell, id);
+  const std::vector<std::int32_t>& active_cells = L.domains(dolfinx::fem::IntegralType::cell, id);
+  std::shared_ptr<const fem::DofMap> dofmap = L.function_spaces().at(0)->dofmap();
+  const graph::AdjacencyList<std::int32_t>& dofs = dofmap->list();
+  const std::int32_t num_cells = mesh->topology().connectivity(3, 0)->num_nodes();
+
+  const std::vector<std::uint32_t> cell_info(num_cells);
+
   dolfinx::common::Timer t3("ZZZ Assemble Vector");
-  fem::assemble_vector_petsc(b.vec(), *L);
-  VecGhostUpdateBegin(b.vec(), ADD_VALUES, SCATTER_REVERSE);
-  VecGhostUpdateEnd(b.vec(), ADD_VALUES, SCATTER_REVERSE);
+  dolfinx::fem::impl::assemble_cells<double>(b_, mesh->geometry(), active_cells, dofs, 1, fn,
+                                             constants, coeffs, cell_info);
   t3.stop();
 
-  la::PETScKrylovSolver solver(mpi_comm);
-  la::PETScOptions::set("ksp_type", "gmres");
-  la::PETScOptions::set("pc_type", "jacobi");
-  la::PETScOptions::set("rtol", 1e-5);
-  solver.set_from_options();
-  solver.set_operator(A);
-  solver.solve(u.vector(), b.vec());
+  Vec v;
+  VecDuplicate(b.vec(), &v);
+  dolfinx::common::Timer t4("ZZZ Matrix Vector Multiplication");
+  MatMult(A, f->vector(), v);
+  t4.stop();
 
-  io::VTKFile file("u.pvd");
-  file.write(u);
+  // la::PETScKrylovSolver solver(mpi_comm);
+  // la::PETScOptions::set("ksp_type", "gmres");
+  // la::PETScOptions::set("pc_type", "jacobi");
+  // la::PETScOptions::set("rtol", 1e-5);
+  // solver.set_from_options();
+  // solver.set_operator(A);
+  // solver.solve(u.vector(), b.vec());
+
+  // io::VTKFile file("u.pvd");
+  // file.write(u);
 
   dolfinx::list_timings(mpi_comm, {dolfinx::TimingType::wall});
 
   MatDestroy(&A);
 
+  double norm;
+
+  VecNorm(v, NORM_1, &norm);
+
   if (mpi_rank == 0)
-    std::cout << "Number of degrees of freedom: "
-              << V->dofmap()->index_map->size_global() << std::endl;
+    std::cout << "Number of degrees of freedom: " << V->dofmap()->index_map->size_global()
+              << std::endl;
 
   return 0;
 }

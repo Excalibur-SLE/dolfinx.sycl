@@ -4,38 +4,23 @@
 #pragma once
 
 #include <CL/sycl.hpp>
-
-#ifdef SYCL_DEVICE_ONLY
-#undef SYCL_DEVICE_ONLY
-#include <dolfinx.h>
-#define SYCL_DEVICE_ONLY
-#else
-#include <dolfinx.h>
-#endif
-
 #include <cstdint>
+#include <dolfinx.h>
 
 using namespace dolfinx;
 
-namespace dolfinx::experimental::sycl::memory
-{
+namespace dolfinx::experimental::sycl::memory {
 
-// TODO: create class ?
-struct form_data_t
-{
-  double* x;
-  std::int32_t* xdofs;
-  double* coeffs_L;
-  double* coeffs_a;
-  std::int32_t* dofs;
-
-  std::int32_t ndofs;
-  std::int32_t ncells;
-  int ndofs_cell;
+struct form_data_t {
+  cl::sycl::buffer<double, 2> x;
+  cl::sycl::buffer<std::int32_t, 2> x_dofs;
+  cl::sycl::buffer<double, 2> coeffs;
+  cl::sycl::buffer<std::int32_t, 2> dofs;
+  std::size_t ndofs;
+  std::size_t ncells;
 };
 
-form_data_t send_form_data(MPI_Comm comm, cl::sycl::queue& queue,
-                           const fem::Form<double>& L,
-                           const fem::Form<double>& a, int verbose_mode = 1);
+form_data_t send_form_data(MPI_Comm comm, cl::sycl::queue& queue, const fem::Form<double>& L,
+                           const fem::Form<double>& a);
 
 } // namespace dolfinx::experimental::sycl::memory

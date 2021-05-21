@@ -1,12 +1,10 @@
 BootStrap: docker
-From: dolfinx/dev-env:latest
+From: dolfinx/dolfinx
 
 %environment
-    export PETSC_ARCH=linux-gnu-real-32
     export GINKGO_DIR=/usr/local/ginkgo
     export CUDA_PATH=/usr/local/cuda-10.2
     export DPCPP_HOME=/usr/local/sycl_workspace
-    export EIGEN3_INCLUDE_DIR=/usr/local/include/eigen3/Eigen
     export PATH=${DPCPP_HOME}/llvm/build/bin:${CUDA_PATH}/bin${PATH:+:${PATH}}
     export LD_LIBRARY_PATH=${DPCPP_HOME}/llvm/build/lib:${GINKGO_DIR}/lib:${CUDA_PATH}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
@@ -44,20 +42,6 @@ From: dolfinx/dev-env:latest
     apt-get install -y libc++1 libc++abi-dev libc++abi1 libclang-dev libclang1 liblldb-dev libllvm-ocaml-dev
     apt-get install -y libomp-dev libomp5 lld lldb llvm-dev llvm-runtime llvm python-clang
 
-    echo "=== Installing Eigen3 Development Version"
-    mkdir -p /tmp/ && cd /tmp
-    apt-get -y purge libeigen3-dev
-    git clone https://gitlab.com/libeigen/eigen.git
-    cd eigen && mkdir build && cd build
-    cmake .. && make install
-
-    echo " === Installing hipSYCL..."
-    cd /tmp
-    git clone --recurse-submodules https://github.com/illuhad/hipSYCL
-    cd hipSYCL && mkdir build
-    cd build && cmake ..
-    make -j4 && make install
-
     echo " === Installing INTEL SYCL..."
     export DPCPP_HOME=/usr/local/sycl_workspace
     mkdir -p $DPCPP_HOME
@@ -78,19 +62,6 @@ From: dolfinx/dev-env:latest
     -DGINKGO_BUILD_TESTS=OFF -DGINKGO_BUILD_BENCHMARKS=OFF \
     -DGINKGO_BUILD_REFERENCE=ON -DCMAKE_INSTALL_PREFIX=/usr/local/ginkgo ..
     make -j3 && make install
-
-    echo " === Installing dolfinx..."
-    pip3 install git+https://github.com/FEniCS/fiat.git --upgrade
-    pip3 install git+https://github.com/FEniCS/ufl.git --upgrade
-    pip3 install git+https://github.com/FEniCS/ffcx.git@igor/sycl --upgrade
-
-    cd /tmp/
-    export PETSC_ARCH=linux-gnu-real-32
-    export EIGEN3_INCLUDE_DIR=/usr/local/include/eigen3/Eigen
-    git clone https://github.com/FEniCS/dolfinx.git
-    cd dolfinx && mkdir -p build && cd build
-    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ../cpp/
-    ninja -j3 install
 
 
 %labels
