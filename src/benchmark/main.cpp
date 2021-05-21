@@ -73,20 +73,8 @@ int main(int argc, char* argv[]) {
   std::vector<double> b_(num_dofs, 0);
   const std::vector<double> constants = pack_constants(L);
   const array2d<double> coeffs = pack_coefficients(L);
-  // fem::assemble_vector<double>(b_, L, constants, coeffs);
-
-  int id = L.integral_ids(dolfinx::fem::IntegralType::cell)[0];
-  const auto& fn = L.kernel(dolfinx::fem::IntegralType::cell, id);
-  const std::vector<std::int32_t>& active_cells = L.domains(dolfinx::fem::IntegralType::cell, id);
-  std::shared_ptr<const fem::DofMap> dofmap = L.function_spaces().at(0)->dofmap();
-  const graph::AdjacencyList<std::int32_t>& dofs = dofmap->list();
-  const std::int32_t num_cells = mesh->topology().connectivity(3, 0)->num_nodes();
-
-  const std::vector<std::uint32_t> cell_info(num_cells);
-
   dolfinx::common::Timer t3("ZZZ Assemble Vector");
-  dolfinx::fem::impl::assemble_cells<double>(b_, mesh->geometry(), active_cells, dofs, 1, fn,
-                                             constants, coeffs, cell_info);
+  fem::assemble_vector<double>(b_, L, constants, coeffs);
   t3.stop();
 
   Vec v;
