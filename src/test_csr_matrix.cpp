@@ -85,17 +85,17 @@ int main(int argc, char* argv[]) {
     assert(l1norm < 1e-8);
 
     // Test Assemble Vector
-    std::vector<double> b(num_dofs);
+    xt::xtensor<double, 1> b = xt::zeros<double>({num_dofs});
     dolfinx::fem::assemble_vector<double>(b, L);
 
     double* c = cl::sycl::malloc_device<double>(num_dofs, queue);
+    queue.fill<double>(c, 0, num_dofs);
     assemble::assemble_vector(queue, form_data, c);
     queue.wait();
 
-    auto _b = xt::adapt(b, {num_dofs});
     auto _c = xt::adapt(c, num_dofs, xt::no_ownership(), std::vector<std::size_t>{num_dofs});
 
-    assert(xt::allclose(_b, _c));
+    assert(xt::allclose(b, _c));
   }
 
   common::subsystem::finalize_petsc();

@@ -57,7 +57,7 @@ void assemble_matrix(cl::sycl::queue& queue, const memory::form_data_t& data,
     h.parallel_for(cl::sycl::range<1>(ncells), [=](cl::sycl::id<1> ID) {
       const int i = ID.get(0);
 
-      double Ae[4][4] = {{0}};
+      double Ae[10][10] = {{0}};
       double cell_geom[12] = {0};
 
       // Pull out points for this cell

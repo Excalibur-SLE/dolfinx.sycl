@@ -86,9 +86,6 @@ int main(int argc, char* argv[]) {
     assemble::assemble_vector(queue, form_data, b);
     t11.stop();
 
-
-    
-
     dolfinx::list_timings(mpi_comm, {dolfinx::TimingType::wall});
   }
 

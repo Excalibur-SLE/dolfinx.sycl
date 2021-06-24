@@ -1,5 +1,5 @@
 BootStrap: docker
-From: dolfinx/dolfinx
+From: dolfinx/dev-env:latest
 
 %environment
     export GINKGO_DIR=/usr/local/ginkgo
@@ -7,13 +7,14 @@ From: dolfinx/dolfinx
     export DPCPP_HOME=/usr/local/sycl_workspace
     export PATH=${DPCPP_HOME}/llvm/build/bin:${CUDA_PATH}/bin${PATH:+:${PATH}}
     export LD_LIBRARY_PATH=${DPCPP_HOME}/llvm/build/lib:${GINKGO_DIR}/lib:${CUDA_PATH}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+    export PETSC_ARCH=linux-gnu-real-32
+    export PETSC_DIR=/usr/local/petsc
 
 %post
     export DEBIAN_FRONTEND=noninteractive
     
     apt-get -y update
     apt-get -y install software-properties-common
-    apt-get -y install libboost-fiber-dev
 
     mkdir -p /tmp/ && cd /tmp
     wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
@@ -61,7 +62,22 @@ From: dolfinx/dolfinx
     cmake -DGINKGO_BUILD_CUDA=ON -DGINKGO_BUILD_OMP=ON \
     -DGINKGO_BUILD_TESTS=OFF -DGINKGO_BUILD_BENCHMARKS=OFF \
     -DGINKGO_BUILD_REFERENCE=ON -DCMAKE_INSTALL_PREFIX=/usr/local/ginkgo ..
-    make -j3 && make install
+    make -j8 && make install
+    
+    cd /tmp/
+    git clone https://github.com/FEniCS/basix.git --branch main --single-branch
+    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -B build-dir -S ./basix
+    cmake --build build-dir --parallel 8
+    cmake --install build-dir
+    pip3 install ./basix/python
+    pip3 install git+https://github.com/FEniCS/ufl.git
+    pip3 install git+https://github.com/FEniCS/ffcx.git
+
+    git clone https://github.com/FEniCS/dolfinx.git --branch main --single-branch
+    cd dolfinx
+    mkdir -p build && cd build && cmake -G Ninja -DCMAKE_BUILD_TYPE=Developer ../cpp/
+    ninja -j8 install
+
 
 
 %labels

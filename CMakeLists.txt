@@ -6,8 +6,8 @@ project(${PROJECT_NAME})
 set(CMAKE_CONFIGURATION_TYPES "Release" CACHE STRING "" FORCE)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-Ofast -march=native ${CMAKE_CXX_FLAGS} -Wall")
-set(CMAKE_C_FLAGS "-Ofast -march=native ${CMAKE_C_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "-Ofast -march=native -fsycl -fsycl-unnamed-lambda ${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_C_FLAGS "-Ofast -march=native  ${CMAKE_C_FLAGS} -Wall")
 
 find_package(DOLFINX REQUIRED)
 
@@ -19,8 +19,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE dolfinx)
 
 # Test CSR Matrix
 add_executable(test_csr_matrix src/test_csr_matrix.cpp src/problem.c src/memory.cpp src/la.cpp)
-target_link_libraries(test_csr_matrix PRIVATE -fsycl )
 target_link_libraries(test_csr_matrix PRIVATE dolfinx)
+target_link_libraries(test_csr_matrix PRIVATE -fsycl )
 
 
 add_subdirectory(src/benchmark)

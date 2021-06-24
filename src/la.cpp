@@ -3,16 +3,17 @@
 
 #include "la.hpp"
 #include "algorithms.hpp"
+#include <CL/sycl.hpp>
 
 using namespace dolfinx;
 
 namespace {
-//--------------------------------------------------------------------------
-inline void swap(std::int32_t* a, std::int32_t* b) {
-  std::int32_t t = *a;
-  *a = *b;
-  *b = t;
-}
+// //--------------------------------------------------------------------------
+// inline void swap(std::int32_t* a, std::int32_t* b) {
+//   std::int32_t t = *a;
+//   *a = *b;
+//   *b = t;
+// }
 //--------------------------------------------------------------------------
 experimental::sycl::la::CsrMatrix create_csr(cl::sycl::queue& queue,
                                              const experimental::sycl::memory::form_data_t& data) {
@@ -85,46 +86,46 @@ experimental::sycl::la::CsrMatrix create_csr(cl::sycl::queue& queue,
 experimental::sycl::la::CsrMatrix csr_remove_duplicate(cl::sycl::queue& queue,
                                                        experimental::sycl::la::CsrMatrix mat) {
 
-  std::int32_t nrows = mat.nrows;
-  std::int32_t* row_ptr = mat.indptr;
-  std::int32_t* indices = mat.indices;
+  auto counter = cl::sycl::malloc_device<std::int32_t>(mat.nrows, queue);
+  auto aux = cl::sycl::malloc_device<std::int32_t>(mat.nnz, queue);
+  queue.fill(counter, 0, mat.nrows).wait();
 
-  auto counter = cl::sycl::malloc_device<std::int32_t>(nrows, queue);
-  queue.fill(counter, 0, nrows).wait();
-  queue.wait();
-
-  queue.parallel_for<class SortIndices>(cl::sycl::range<1>(nrows), [=](cl::sycl::id<1> it) {
+  queue.parallel_for<class SortIndices>(cl::sycl::range<1>(mat.nrows), [=](cl::sycl::id<1> it) {
     int i = it.get(0);
 
-    // TODO: Improve performance of sorting algorithm
-    for (int j = mat.indptr[i]; j < mat.indptr[i + 1]; j++)
-      for (int k = mat.indptr[i]; k < j; k++)
-        if (indices[k] > indices[j])
-          swap(&indices[k], &indices[j]);
+    // // TODO: Improve performance of sorting algorithm
+    // for (int j = mat.indptr[i]; j < mat.indptr[i + 1]; j++)
+    //   for (int k = mat.indptr[i]; k < j; k++)
+    //     if (mat.indices[k] > mat.indices[j])
+    //       std::swap(mat.indices[k], mat.indices[j]);
+
+    std::int32_t n = mat.indptr[i + 1] - mat.indptr[i];
+    std::int32_t pos = mat.indptr[i];
+    experimental::sycl::algorithms::radix_sort(&mat.indices[pos], &aux[pos], n);
 
     // Count number of unique column indices per row
     std::int32_t temp = -1;
     for (int j = mat.indptr[i]; j < mat.indptr[i + 1]; j++) {
-      if (temp != indices[j]) {
+      if (temp != mat.indices[j]) {
         counter[i]++;
-        temp = indices[j];
+        temp = mat.indices[j];
       }
     }
   });
   queue.wait();
 
-  // // create new csr matrix and remove repeated indices
+  // create new csr matrix and remove repeated indices
   experimental::sycl::la::CsrMatrix out;
-  out.indptr = cl::sycl::malloc_device<std::int32_t>(nrows + 1, queue);
-  experimental::sycl::algorithms::exclusive_scan(queue, counter, out.indptr, nrows);
+  out.indptr = cl::sycl::malloc_device<std::int32_t>(mat.nrows + 1, queue);
+  experimental::sycl::algorithms::exclusive_scan(queue, counter, out.indptr, mat.nrows);
   out.nrows = mat.nrows;
 
   // number of nonzeros cannot be acessed directly on the host, instead use memcpy
-  queue.memcpy(&out.nnz, &out.indptr[nrows], sizeof(std::int32_t)).wait();
+  queue.memcpy(&out.nnz, &out.indptr[out.nrows], sizeof(std::int32_t)).wait();
   out.indices = cl::sycl::malloc_device<std::int32_t>(out.nnz, queue);
   out.data = cl::sycl::malloc_shared<double>(out.nnz, queue);
 
-  queue.parallel_for<class UniqueIndices>(cl::sycl::range<1>(nrows), [=](cl::sycl::id<1> it) {
+  queue.parallel_for<class UniqueIndices>(cl::sycl::range<1>(out.nrows), [=](cl::sycl::id<1> it) {
     int i = it.get(0);
 
     std::int32_t temp = -1;
@@ -163,11 +164,12 @@ experimental::sycl::la::create_csr_matrix(MPI_Comm comm, cl::sycl::queue& queue,
   // Remove duplicates and reorder columns
   dolfinx::common::Timer t2("xx Create CSR matrix - Remove duplicates");
   CsrMatrix new_matrix = csr_remove_duplicate(queue, csr_mat);
-  free_csr(queue, csr_mat);
   queue.fill<double>(new_matrix.data, 0., new_matrix.nnz).wait();
   t2.stop();
 
   t0.stop();
+
+  free_csr(queue, csr_mat);
 
   return new_matrix;
 }
