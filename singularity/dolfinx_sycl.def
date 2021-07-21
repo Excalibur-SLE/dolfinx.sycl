@@ -2,8 +2,7 @@ BootStrap: docker
 From: dolfinx/dev-env:latest
 
 %environment
-    export GINKGO_DIR=/usr/local/ginkgo
-    export CUDA_PATH=/usr/local/cuda-10.2
+    export CUDA_PATH=/usr/local/cuda-11.0
     export DPCPP_HOME=/usr/local/sycl_workspace
     export PATH=${DPCPP_HOME}/llvm/build/bin:${CUDA_PATH}/bin${PATH:+:${PATH}}
     export LD_LIBRARY_PATH=${DPCPP_HOME}/llvm/build/lib:${GINKGO_DIR}/lib:${CUDA_PATH}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
@@ -15,68 +14,72 @@ From: dolfinx/dev-env:latest
     
     apt-get -y update
     apt-get -y install software-properties-common
-
-    mkdir -p /tmp/ && cd /tmp
-    wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-    apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-    rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-    echo "deb https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneAPI.list
-    add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
-    apt -y update
-    apt install -y intel-oneapi-common-licensing intel-oneapi-common-vars intel-oneapi-compiler-dpcpp-cpp intel-oneapi-dev-utilities \
-    intel-oneapi-dpcpp-debugger intel-oneapi-libdpstd-devel intel-oneapi-tbb-devel
-
-    apt-get update -y 
+    apt-get -y install libboost-fiber-dev libboost-context-dev libboost-dev libboost-filesystem-dev libboost-timer-dev
     apt-get install -y --no-install-recommends -o=Dpkg::Use-Pty=0 intel-opencl-icd
 
-    echo " === Installing CUDA..."
-    apt update
-    add-apt-repository ppa:graphics-drivers
-    apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
-    bash -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
-    apt update
-    apt install -yq cuda-10-2
+    echo " === Installing clang 12 ..."
+    apt purge -y clang-10
+    apt autoremove -y
+    apt-get install -y libllvm-12-ocaml-dev libllvm12 llvm-12 llvm-12-dev llvm-12-doc llvm-12-examples llvm-12-runtime
+    apt-get install -y clang-12 clang-tools-12 clang-12-doc libclang-common-12-dev libclang-12-dev libclang1-12 clang-format-12 clangd-12
+    apt-get install -y libfuzzer-12-dev
+    apt-get install -y lldb-12
+    apt-get install -y lld-12
+    apt-get install -y libc++-12-dev libc++abi-12-dev
+    apt-get install -y libomp-12-dev
+    apt-get install -y libclc-12-dev
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-12 100
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-12 100
 
-    echo " === Installing clang..."
-    apt update
-    apt-get install -y clang-format clang-tidy clang-tools clang clangd libc++-dev
-    apt-get install -y libc++1 libc++abi-dev libc++abi1 libclang-dev libclang1 liblldb-dev libllvm-ocaml-dev
-    apt-get install -y libomp-dev libomp5 lld lldb llvm-dev llvm-runtime llvm python-clang
-
-    echo " === Installing INTEL SYCL..."
-    export DPCPP_HOME=/usr/local/sycl_workspace
-    mkdir -p $DPCPP_HOME
-    cd $DPCPP_HOME
-    git clone -b sycl --single-branch https://github.com/intel/llvm
-    python3 $DPCPP_HOME/llvm/buildbot/configure.py --cuda
-    python3 $DPCPP_HOME/llvm/buildbot/compile.py
     
-    apt-get install -y gcc-8 g++-8
-    export CUDACXX=/usr/local/cuda-10.2/bin/nvcc
-    export CUDAHOSTCXX=/usr/bin/g++-8
+    echo " === Installing CUDA 11.0 ..."
+    cd /tmp/
+    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+    mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+    wget http://developer.download.nvidia.com/compute/cuda/11.0.2/local_installers/cuda-repo-ubuntu2004-11-0-local_11.0.2-450.51.05-1_amd64.deb
+    dpkg -i cuda-repo-ubuntu2004-11-0-local_11.0.2-450.51.05-1_amd64.deb
+    apt-key add /var/cuda-repo-ubuntu2004-11-0-local/7fa2af80.pub
+    apt-get update
+    apt-get -y install cuda
 
-    echo " === Installing ginkgo..."
+
+    echo "=== Installing hipSYCL ..."
+    export CXX=clang++
+    export CC=clang
+    cd /tmp/ && rm -rf hipSYCL
+    git clone --recurse-submodules https://github.com/illuhad/hipSYCL
+    cd hipSYCL && mkdir build && cd build
+    cmake .. && make -j20 && make install
+
+
+    echo " === Installing google benchmark ..."
     cd /tmp/
-    git clone https://github.com/ginkgo-project/ginkgo.git
-    cd ginkgo && mkdir build && cd build
-    cmake -DGINKGO_BUILD_CUDA=ON -DGINKGO_BUILD_OMP=ON \
-    -DGINKGO_BUILD_TESTS=OFF -DGINKGO_BUILD_BENCHMARKS=OFF \
-    -DGINKGO_BUILD_REFERENCE=ON -DCMAKE_INSTALL_PREFIX=/usr/local/ginkgo ..
-    make -j8 && make install
-    
+    export CXX=clang++
+    export CC=clang
+    rm -rf benchmark
+    git clone https://github.com/google/benchmark.git
+    git clone https://github.com/google/googletest.git benchmark/googletest
+    cd benchmark
+    mkdir build && cd build
+    cmake ..
+    make -j20
+    make install
+
+    echo "=== Installing DOLFINX and dependencies ..."
     cd /tmp/
+    export PETSC_ARCH=linux-gnu-real-32
+    export PETSC_DIR=/usr/local/petsc
     git clone https://github.com/FEniCS/basix.git --branch main --single-branch
     cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -B build-dir -S ./basix
-    cmake --build build-dir --parallel 8
+    cmake --build build-dir --parallel 20
     cmake --install build-dir
     pip3 install ./basix/python
     pip3 install git+https://github.com/FEniCS/ufl.git
     pip3 install git+https://github.com/FEniCS/ffcx.git
-
     git clone https://github.com/FEniCS/dolfinx.git --branch main --single-branch
     cd dolfinx
     mkdir -p build && cd build && cmake -G Ninja -DCMAKE_BUILD_TYPE=Developer ../cpp/
-    ninja -j8 install
+    ninja -j20 install
 
 
 
@@ -84,5 +87,5 @@ From: dolfinx/dev-env:latest
     Author IgorBaratta
 
 %help
-    This is a environment container used to install all software needed to 
-    run dolfinx_sycl.
+    This is a environment container used to install all software needed to run 
+    DOLFINx and SYCL on CPUS and GPUS.
